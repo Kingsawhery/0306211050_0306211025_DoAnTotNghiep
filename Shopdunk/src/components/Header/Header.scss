@@ -1,0 +1,41 @@
+li.nav {
+  padding-top: 22px;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-bottom: 25px;
+}
+#header{
+  background-color: #515154;
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  .header-logo{
+    img{
+      max-width: 173px;
+      max-height: 64px;
+      opacity: 1;
+      object-fit: cover;
+      cursor: pointer,
+    }
+  }
+  .categories{
+    justify-content: space-evenly;
+    list-style: none;
+  
+  
+}
+li.nav:hover {
+  background: #9999;
+  cursor: pointer;
+}
+.header{
+  justify-content: space-evenly;
+}
+.categories {
+  height: 70px;
+}
+}
+.action{
+  display: flex;
+}

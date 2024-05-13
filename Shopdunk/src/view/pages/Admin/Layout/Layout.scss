@@ -1,0 +1,107 @@
+.body-admin {
+    display: flex;
+    min-height:820px;
+
+    .side-bar {
+        width: 20%;
+        border-right: 1px solid gray;
+        .list-item-side-bar {
+            position: relative;
+
+        }
+
+        .item-side-bar {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: 0.5s;
+            position: relative;
+            &:hover {
+                background-color: rgb(215, 215, 215);
+            }
+
+            svg {
+                width: 12px;
+                color:#333;
+            }
+
+            .fa-chevron-right {
+                position: absolute;
+                right: 20px;
+                top: 18px;
+                color: rgb(85, 85, 85);
+            }
+
+
+        }
+
+        .sub-item-side-bar {
+            position: absolute;
+            display: none;
+            background-color: rgb(226, 226, 226);
+            padding-left: 12px;
+        }
+
+        //Khi click vào
+        span {
+            user-select: none;
+            margin: 0px;
+            font-family: Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+
+            line-height: 1.5;
+            letter-spacing: 0.00938em;
+            display: block;
+            cursor: pointer;
+            margin-left: 12px;
+
+        }
+    }
+    .main-content{
+        width: 80%;
+        display: block;
+     
+    }
+}
+
+.effect-chervon {
+    background-color: rgb(172, 172, 172) !important;
+
+    svg {
+        width: 12px;
+    }
+
+    .fa-chevron-right {
+        transform: rotate(90deg);
+    }
+
+
+}
+
+.effect-sub-side-bar {
+    @keyframes effect-sub {
+        0% {
+            opacity: 0;
+            transform: translateY(-12px);
+
+        }
+        100% {
+            topacity: 1;
+            transform: translateY(0);
+            ;
+        }
+    }
+
+    position: relative !important;
+    animation: effect-sub 1s ease-in;
+
+    display: block !important;
+}
+.manage-page{
+    // background-color: red;
+    display: grid;
+    gap:12px;
+    // height: 100%;
+}

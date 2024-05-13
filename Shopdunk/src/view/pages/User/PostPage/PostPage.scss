@@ -1,0 +1,32 @@
+.content {
+    .ql-editor {
+        max-height: 100%;
+        max-width: 100%;
+        height: 100%;
+        img{
+            padding:0 200px;
+        }
+    }
+}
+.suggestion-products-title{
+border-top:1px solid gray ;
+padding: 12px;
+display: block;
+}
+.products-row{
+    display: grid!important;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 80px;
+    .product-card{
+        margin: 12px;
+        width: 80%;
+        .div-img{
+            img{
+                width: 100%;
+            }
+        }
+    }
+}
