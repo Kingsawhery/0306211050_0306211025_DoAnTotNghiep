@@ -1,5 +1,4 @@
 import instance from "./customAxios";
-
 export const getProductBySubCategory = (page, id) => {
   return instance.get(
     `${process.env.REACT_APP_API_SERVER}/product?page=${page}&id=${id}`
@@ -31,12 +30,8 @@ export const getClassifyByProduct = (id) => {
   );
 };
 export const getProductById = (id) => {
-  return instance.get(
-    `${process.env.REACT_APP_API_SERVER}/product/${id}`
-  );
+  return instance.get(`${process.env.REACT_APP_API_SERVER}/product/${id}`);
 };
 export const getProductsRandom = () => {
-  return instance.get(
-    `${process.env.REACT_APP_API_SERVER}/products-random`
-  );
+  return instance.get(`${process.env.REACT_APP_API_SERVER}/products-random`);
 };

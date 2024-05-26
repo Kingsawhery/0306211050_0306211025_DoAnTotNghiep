@@ -1,0 +1,269 @@
+main {
+  background-color: #f5f5f7;
+}
+.invoide-color {
+  color: #86868a;
+}
+
+.invoide {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+.thead {
+  position: relative;
+  top: 40px;
+  border-bottom: 1px solid #f4f4f4;
+  width: 100%;
+}
+.fa-minus {
+  padding-right: 10px;
+  color: #0066cc;
+  font-size: 10px;
+}
+.fa-plus {
+  color: #0066cc;
+  font-size: 10px;
+  padding-left: 10px;
+}
+.fa-trash {
+  position: relative;
+  left: 50px;
+  color: #86868a;
+}
+.invoid-btn {
+  border: 1px solid;
+  width: 170px;
+  padding: 5px;
+  border-radius: 7px;
+  left: 332px;
+  margin-bottom: 25px;
+  margin-right: 10px;
+  position: relative;
+  color: #4467cc;
+  text-align: center;
+  cursor: pointer;
+}
+.price-promotion {
+  width: 320px;
+  background-color: #ffffff;
+}
+.form-control {
+  height: 48px;
+  width: 60%;
+}
+.input-group {
+  padding: 15px;
+}
+.input-group-text {
+  height: 48px;
+  background-color: #999999;
+}
+.ad {
+  font-size: 15px;
+  color: #ffffff;
+}
+input::placeholder {
+  font-size: 15px;
+  color: #757589;
+}
+.total {
+  margin-top: 20px;
+}
+.tongphu {
+  font-size: 15px;
+  color: #8795aa;
+}
+.td-tongcong {
+  padding-left: 15px;
+}
+.td-tongphu {
+  padding-left: 15px;
+}
+.phuthu {
+  font-size: 15px;
+  position: relative;
+  left: 120px;
+}
+.giatongcong {
+  font-size: 17px;
+  position: relative;
+  left: 102px;
+}
+.clause {
+  margin: 5px;
+  padding-left: 10px;
+  cursor: pointer;
+}
+.text-clause {
+  position: relative;
+  top: 7px;
+  padding-left: 9px;
+  font-size: 15px;
+  color: #444444;
+  font-weight: 400;
+}
+.text-clause-a {
+  font-size: 15px;
+  color: #0066cc;
+}
+.checkbox {
+  cursor: pointer;
+  width: 14px;
+}
+.func-order-btn {
+  width: 100%;
+  padding: 13px;
+  background: #0066cc;
+  color: aliceblue;
+  font-size: 15px;
+  border: none;
+  font-weight: 500;
+  border-radius: 7px;
+}
+.pt {
+  color: #e44358;
+}
+.img-card {
+  width: 100%;
+  padding: 5px;
+}
+.content {
+  background-color: #ffffff;
+  height: 100%;
+  border-radius: 7px;
+}
+.content-card-price-promotion {
+  text-decoration: line-through;
+  padding-left: 5px;
+  color: #86868a;
+}
+.body-content {
+  font-size: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.content-card-btn-buy {
+  width: 100%;
+  padding: 7px;
+  border-radius: 7px;
+  color: #0066cc;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin-bottom: 10px;
+}
+.login-abate {
+  margin-bottom: 5px;
+  background-color: #ffffff;
+}
+.btn-login-abate {
+  width: 180px;
+  height: 40px;
+  border-radius: 7px;
+  color: aliceblue;
+  background-color: #0066cc;
+  font-weight: 500;
+  border: none;
+  font-size: 14px;
+}
+.text-content-login {
+  line-height: 24px;
+  color: #1d1d1f;
+  padding-right: 80px;
+}
+.content-login-abate {
+  padding: 10px 10px 0px 10px;
+}
+.register-name {
+  width: 100%;
+  border: 1px solid #ebebeb;
+  border-radius: 5px;
+  padding: 8px 8px 8px 16px;
+}
+.register-abate {
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
+.register-name:focus {
+  border-color: #0066cc;
+}
+.register-phone {
+  width: 50%;
+  border: 1px solid #ebebeb;
+  border-radius: 5px;
+  padding: 8px 8px 8px 16px;
+}
+.register-email {
+  width: 50%;
+  border: 1px solid #ebebeb;
+  border-radius: 5px;
+  padding: 8px 8px 8px 16px;
+  margin-left: 10px;
+}
+.title-ship {
+  font-weight: 600;
+}
+.checkmark {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+.radio-shop,
+.radio-home {
+  cursor: pointer;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.ship-shop {
+  padding-right: 25px;
+}
+.select-choose-addres-city {
+  width: 349px;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 8px;
+  border: 1px solid #ebebeb;
+}
+.select-choose-addres-district {
+  width: 345px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ebebeb;
+}
+.all-addres {
+  width: 100%;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 8px;
+  border: 1px solid #ebebeb;
+}
+.abate-online {
+  background-color: #ffffff;
+}
+.information-abate-online-titile,
+p {
+  color: #777;
+}
+.input_quantity {
+  border: none;
+  width: 14px;
+  font-size: 15px;
+}
+.card-product-detail {
+  width: 100%;
+  cursor: pointer;
+}
+.main {
+  background-color: #f5f5f7;
+}

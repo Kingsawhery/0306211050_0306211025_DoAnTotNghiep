@@ -8,7 +8,15 @@ let getProductsRandom = async () => {
     try {
       let products = await db.product.findAll({
         order: Sequelize.literal("rand()"),
-        attributes: ["id","name","price","status","subCategoryId","image","promotion"],
+        attributes: [
+          "id",
+          "name",
+          "price",
+          "status",
+          "subCategoryId",
+          "image",
+          "promotion",
+        ],
         limit: 8,
       });
       if (products) {
@@ -91,7 +99,7 @@ let getDataProductById = async (id) => {
         where: {
           id: id,
         },
-        attributes:["id", "name", "price", "status", "promotion"],
+        attributes: ["id", "name", "price", "status", "promotion"],
         include: [
           {
             model: db.product_detail,
@@ -166,7 +174,7 @@ let getSubProductByProduct = async (id) => {
           productDetailId: id,
         },
       });
-      
+
       if (subProducts) {
         resolve(subProducts);
       } else {
@@ -203,21 +211,17 @@ const getProductDetailImage = (id) => {
     console.log(id);
     try {
       const listProductDetailImage = db.product_detail_image.findAll({
-        where:{
-          [Op.and]:[
-            {productDetailId:id},
-          ]
-        }
+        where: {
+          [Op.and]: [{ productDetailId: id }],
+        },
+      });
+      if (listProductDetailImage) {
+        resolve(listProductDetailImage);
+      } else {
+        resolve();
       }
-    )
-    if(listProductDetailImage){
-        resolve(listProductDetailImage)   
-    }
-    else{
-      resolve()
-    }
     } catch (e) {
-      reject("Đã có lỗi xảy ra!")
+      reject("Đã có lỗi xảy ra!");
       console.log(e);
     }
   });
@@ -226,40 +230,44 @@ const getProductDetailImages = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       const listProductDetailImage = db.product_detail_image.findAll({
-        where:{
-          [Op.and]:[
-            {productDetailId:data.productDetailId},
-            {typeClassifyDetailId:data.typeClassifyDetailId},
-          ]
-        }
+        where: {
+          [Op.and]: [
+            { productDetailId: data.productDetailId },
+            { typeClassifyDetailId: data.typeClassifyDetailId },
+          ],
+        },
+      });
+      if (listProductDetailImage) {
+        resolve(listProductDetailImage);
+      } else {
+        resolve();
       }
-    )
-    if(listProductDetailImage){
-        resolve(listProductDetailImage)   
-    }
-    else{
-      resolve()
-    }
     } catch (e) {
-      reject("Đã có lỗi xảy ra!")
+      reject("Đã có lỗi xảy ra!");
       console.log(e);
     }
   });
 };
-let getProductByCategory = async (page,id) => {
+let getProductByCategory = async (page, id) => {
   return new Promise(async (resolve, reject) => {
-    console.log(page,id);
+    console.log(page, id);
     try {
-      let categories = await db.product.findAndCountAll(
-        {
-          where:{
-            categoryId:id
-          },
-          limit: 8,
-          offset:page * 8,
-          attributes:["id","name","price","status","subCategoryId","image","promotion"]
-        }
-      );
+      let categories = await db.product.findAndCountAll({
+        where: {
+          categoryId: id,
+        },
+        limit: 8,
+        offset: page * 8,
+        attributes: [
+          "id",
+          "name",
+          "price",
+          "status",
+          "subCategoryId",
+          "image",
+          "promotion",
+        ],
+      });
       if (categories) {
         resolve(categories);
       } else {
@@ -278,5 +286,5 @@ module.exports = {
   getProductDetailImage,
   getProductByCategory,
   getProductsRandom,
-  getSubProductByProduct
+  getSubProductByProduct,
 };

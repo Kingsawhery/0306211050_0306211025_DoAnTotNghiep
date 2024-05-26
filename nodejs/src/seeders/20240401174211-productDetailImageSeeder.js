@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -10,23 +10,21 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
-    return queryInterface.bulkInsert(
-    'product_detail_images',
-    [       
+     */
+    return queryInterface.bulkInsert("product_detail_images", [
       {
-        image: '0011632_iphone-11-64gb_550.png',  
-        productDetail: 1,
+        image: "0011632_iphone-11-64gb_550.png",
+        productDetailId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        image: 'IPhone-11-pro.png',  
-        productDetail: 2,
+        image: "IPhone-11-pro.png",
+        productDetailId: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-    ])
+    ]);
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -36,5 +34,5 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+  },
 };

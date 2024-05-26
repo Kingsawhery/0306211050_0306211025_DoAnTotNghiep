@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class category_type_classify extends Model {
     /**
@@ -12,22 +10,24 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       category_type_classify.belongsTo(models.category, {
-        foreignKey: 'categoryId',
+        foreignKey: "categoryId",
       });
       category_type_classify.belongsTo(models.type_classify, {
-        foreignKey: 'typeClassifyId',
+        foreignKey: "typeClassifyId",
       });
     }
-  };
-  category_type_classify.init({
-    categoryId: DataTypes.INTEGER,
-    typeClassifyId: DataTypes.INTEGER  
-  }, {
-    sequelize,
-    modelName: 'category_type_classify',
-    deletedAt:"softDelete",
-    paranoid:true,
-
-  });
+  }
+  category_type_classify.init(
+    {
+      categoryId: DataTypes.INTEGER,
+      typeClassifyId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "category_type_classify",
+      deletedAt: "softDelete",
+      paranoid: true,
+    }
+  );
   return category_type_classify;
 };

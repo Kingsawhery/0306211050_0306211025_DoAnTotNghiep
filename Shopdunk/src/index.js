@@ -1,18 +1,20 @@
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 //import css slick
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import AOS from 'aos';
-import 'aos/dist/aos.css'; 
-
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { CartProvider } from "./components/Cart/CartContext";
 
 AOS.init();
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <App/>
+  <CartProvider>
+    <App />
+  </CartProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

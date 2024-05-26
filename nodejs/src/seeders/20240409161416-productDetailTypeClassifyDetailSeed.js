@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -10,96 +10,93 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
-    return queryInterface.bulkInsert(
-      'product_detail_type_classify_details',
-      [  
-        {
-          productDetailId:1,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:1,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:2,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:2,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:3,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:3,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:4,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:4,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:5,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:5,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:6,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:6,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-        {
-          productDetailId:7,
-          typeClassifyDetailId:1,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, 
-        {
-          productDetailId:7,
-          typeClassifyDetailId:2,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },         
-      ])
-    
+     */
+    return queryInterface.bulkInsert("product_detail_type_classify_details", [
+      {
+        productDetailId: 1,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 1,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 2,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 2,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 3,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 3,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 4,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 4,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 5,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 5,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 6,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 6,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 7,
+        typeClassifyDetailId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        productDetailId: 7,
+        typeClassifyDetailId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -109,5 +106,5 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+  },
 };
