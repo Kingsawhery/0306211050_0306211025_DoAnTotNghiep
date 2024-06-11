@@ -51,11 +51,18 @@ const clientId =
 
 const loginServices = async (value, password) => {
   try {
-    const response = await axiosFormal.post("http://localhost:8000/api/login", {
-      value,
-      password,
-    });
-    return response.data; // Trả về dữ liệu từ API
+    const res = await axios.post(
+      "http://localhost:8000/api/login",
+      {
+        value,
+        password,
+      },
+      {
+        //config cookies cho phep tat ca
+        withCredentials: true,
+      }
+    );
+    return res;
   } catch (e) {
     console.log(e); // Xử lý lỗi
     throw e; // Ném lỗi lên để nó có thể được xử lý bởi component gọi hàm này
@@ -67,7 +74,7 @@ const loginGoogle = async (access_token) => {
     const res = await axios.post("/api/auth/google", {
       access_token: access_token,
     });
-    return res.data;
+    return res;
   } catch (error) {
     console.log("error login gg api: ", error);
   }

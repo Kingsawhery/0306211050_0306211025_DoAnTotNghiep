@@ -1,40 +1,28 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Forgot_password_token extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.hasMany(models.Cart, { foreignKey: "userId", as: "carts" });
       // define association here
     }
   }
-  User.init(
+  Forgot_password_token.init(
     {
       email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      type: {
-        type: DataTypes.STRING,
-        defaultValue: "LOCAL",
-      },
-      username: DataTypes.STRING,
-      phone: DataTypes.STRING,
-      gender: DataTypes.INTEGER,
-      groupId: DataTypes.INTEGER,
-      code: DataTypes.INTEGER,
-      address: DataTypes.STRING,
       token: DataTypes.STRING,
-      role: DataTypes.STRING,
+      expires_at: DataTypes.DATE,
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: "Forgot_password_token",
       // deleteAt: "softDelete",
       // paranoid: true,
     }
   );
-  return User;
+  return Forgot_password_token;
 };

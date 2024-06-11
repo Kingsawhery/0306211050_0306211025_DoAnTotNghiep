@@ -34,7 +34,7 @@ const handleRegister = async (req, res) => {
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
-      DT: "",
+      DT: data.dataValues,
     });
   } catch (e) {
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
@@ -48,17 +48,43 @@ const handleLogin = async (req, res) => {
     console.log(a);
     let data = await loginRegisterService.handleLoginUser(a);
 
-    //Set cookies
-    res.cookie("jwt", data.DT.access_token, {
-      maxAge: 900000,
-      httpOnly: true,
-    });
+    if (data.EC == "1") {
+      return res.status(200).json({
+        EM: "Account is not define",
+      });
+    }
+    const token = userService.random(200);
+    console.log(data.DT.user.dataValues);
+    await db.User.update(
+      {
+        token: token,
+      },
+      {
+        where: {
+          email: data.DT.user.dataValues.email,
+        },
+      }
+    );
+
     // HttpOnly: user không thể lấy ra bằng script hoặc trình duyệt, chỉ sever lấy ra được
-    return res.status(200).json({
-      EM: data.EM,
-      EC: data.EC,
-      DT: data.DT,
-    });
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 30000000,
+        domain: ".localhost",
+      })
+      .status(200)
+      .json({
+        // EM: data.EM,
+        // EC: data.EC,
+        // DT: data.DT.user.dataValues,
+        data: {
+          user: data.DT.user.dataValues,
+          message: "Login success",
+          EC: 0,
+        },
+      });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
@@ -161,23 +187,44 @@ const handleLoginGG = async (req, res) => {
   const infor_email = JSON.parse(atob(str[1]));
 
   // Sẽ lưu token trong db của user vào trình duyệt user.
-  const user = await userService.createUser(
-    infor_email.email,
-    "",
-    "login gg",
-    "GOOGLE"
-  ); // (email, password, username, type)
-
-  try {
-    res.cookie("token", user.token, {
-      httpOnly: true,
-    });
-  } catch (error) {
-    console.log("xay ra loi set cookie");
+  // Sẽ lưu token trong db của user vào trình duyệt user.
+  console.log(infor_email.name);
+  const email = infor_email.email;
+  const checkUser = await db.User.findOne({
+    where: {
+      email: email,
+    },
+  });
+  if (!checkUser) {
+    const user = await userService.createUser(
+      infor_email.email,
+      "",
+      infor_email.name,
+      "GOOGLE"
+    ); // (email, password, username, type)
   }
 
+  const tk = await userService.random(200);
+  console.log(tk);
+  await db.User.update(
+    {
+      token: tk,
+    },
+    {
+      where: {
+        email: email,
+      },
+    }
+  );
+
+  res.cookie("token", tk, {
+    httpOnly: true,
+    secure: false,
+    maxAge: 3600 * 60 * 24,
+  });
+
   return res.status(200).json({
-    data: infor_email,
+    data: (checkUser ? checkUser : user).dataValues,
     status: 200,
     message: "Login gg success",
   });
@@ -195,47 +242,60 @@ const handleVerify = (req, res) => {
 
   // Kiem tra otp cua user đó có đúng kh, còn hạn khong6
 };
-const handleGetCart = (req, res) => {
-  console.log("xem cart" + req.body);
-};
-const handleAddCart = async (req, res) => {
-  const { sub_productId, userId } = req.body;
-  console.log(req.body);
 
-  // Sửa đổi từ req.params sang req.body
-  const id = req.body.id; // Giả sử req.user.id chứa ID của người dùng hiện tại
+// const handleAddCart = async (req, res) => {
+//   const { sub_productId, userId } = req.body;
+//   console.log(req.body);
 
-  try {
-    // Tìm kiếm user dựa trên ID
-    const user = await db.User.findByPk(userId);
-    console.log(user);
+//   // Sửa đổi từ req.params sang req.body
+//   const id = req.body.id; // Giả sử req.user.id chứa ID của người dùng hiện tại
 
-    if (!user) {
-      return res.status(404).json({
-        message: "Không tìm thấy người dùng",
-      });
-    }
+//   try {
+//     // Tìm kiếm user dựa trên ID
+//     const user = await db.User.findByPk(userId);
+//     console.log(user);
 
-    // Gọi hàm addProductInCart với user
-    let cart = await postCart.addProductInCart(user, sub_productId); // Giả sử hàm này nhận user và sub_productId
-    if (cart) {
-      return res.status(200).json({
-        message: "Thêm thành công",
-      });
-    } else {
-      return res.status(400).json({
-        message: "Thêm thất bại",
-      });
-    }
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({
-      message: "Lỗi hệ thống",
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "Không tìm thấy người dùng",
+//       });
+//     }
+
+//     // Gọi hàm addProductInCart với user
+//     let cart = await postCart.addProductInCart(user, sub_productId); // Giả sử hàm này nhận user và sub_productId
+//     if (cart) {
+//       return res.status(200).json({
+//         message: "Thêm thành công",
+//       });
+//     } else {
+//       return res.status(400).json({
+//         message: "Thêm thất bại",
+//       });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     return res.status(500).json({
+//       message: "Lỗi hệ thống",
+//     });
+//   }
+// };
+const handleTestCookies = (req, res) => {
+  return res
+    .cookie("token", "fuck", {
+      httpOnly: true,
+      secure: false,
+      maxAge: 300000000000,
+    })
+    .status(200)
+    .json({
+      EM: "ajah",
+      EC: "ajah",
+      DT: "a",
     });
-  }
 };
 
 module.exports = {
+  handleTestCookies,
   testApi,
   handleRegister,
   handleLogin,
@@ -244,6 +304,4 @@ module.exports = {
   handleResetPassword,
   handleOTP,
   handleVerify,
-  handleGetCart,
-  handleAddCart,
 };

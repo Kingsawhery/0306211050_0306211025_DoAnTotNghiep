@@ -1,8 +1,9 @@
 import express from "express";
 import passport from "passport";
+import cartController from "../controllers/cartController";
 import apiController from "../controllers/apiController";
 import { verify } from "../function/verify";
-import { CheckUserRole } from "../middleware/jwtActions";
+import { checkToken } from "../middleware/checkToken";
 const cookieParser = require("cookie-parser");
 
 //Danh mục - Category 1
@@ -107,6 +108,7 @@ let apiWebRoutes = (app) => {
   router.get("/test-api", apiController.testApi);
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
+
   router.post("/forgot-password", apiController.handleSendEmail);
   router.post("/reset-password", apiController.handleResetPassword);
   router.get("/otp", apiController.handleOTP);
@@ -128,9 +130,9 @@ let apiWebRoutes = (app) => {
     }
   );
   //Cart - 7
-  router.post("/cart-add", apiController.handleAddCart);
-  // router.get("/cart", apiController.handleGetCart);
-  //
+  // router.post("/cart-add", cartController.handleAddCart);
+  router.get("/cart", checkToken, cartController.handleGetCart);
+  router.post("/cart-add", checkToken, cartController.handleAddCart);
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

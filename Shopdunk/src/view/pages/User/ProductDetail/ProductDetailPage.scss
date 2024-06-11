@@ -9,6 +9,13 @@ span {
   cursor: auto;
   color: #515154;
 }
+.btn-add {
+  border: none;
+}
+.div-btn-add {
+  display: flex;
+  margin-top: 12px;
+}
 .breadcrumb-item,
 a {
   font-weight: 450;
@@ -44,17 +51,17 @@ a:hover {
 span {
   // color: #0066cc;
 }
-span ms{
+span ms {
   color: #333;
 }
 .price {
   align-items: center;
   display: flex;
   margin-top: 15px;
-  div{
-      .promotion-percent{
-          margin-left: 12px;
-      }
+  div {
+    .promotion-percent {
+      margin-left: 12px;
+    }
   }
 }
 
@@ -99,35 +106,33 @@ span ms{
   text-decoration: line-through;
 }
 
-.div-dl{
+.div-dl {
   display: flex;
-  .card-dl{
+  .card-dl {
     width: 70px;
     max-width: 120px;
     display: flex;
     justify-content: center;
     margin-right: 12px;
   }
-  .card-dl-selected{
-    border: 2px solid #b4a8a8!important;
+  .card-dl-selected {
+    border: 2px solid #b4a8a8 !important;
   }
 }
-.picture{
+.picture {
   min-height: 600px;
   max-height: 600px;
-  object-fit:fill;
+  object-fit: fill;
   object-position: center;
   display: flex;
   justify-content: center;
   align-self: center;
-
 }
-.slick{
+.slick {
   cursor: pointer;
-
 }
-.color{
-  .circle-color{
+.color {
+  .circle-color {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -136,10 +141,10 @@ span ms{
     margin-right: 8px;
     cursor: pointer;
   }
-  .circle-color-selected{
-    border: 3px solid #b4a8a8!important;;
+  .circle-color-selected {
+    border: 3px solid #b4a8a8 !important;
   }
-  .circle-color-plus{
+  .circle-color-plus {
     background: rgb(61, 61, 61);
     justify-content: center;
     align-items: center;

@@ -1,20 +1,32 @@
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./ProductDetailPage.scss";
-import { getProductDetailById, getSubProduct, getProductById,getClassifyByProduct,getProductDetailImage } from "../../../../services/product";
+import {
+  getProductDetailById,
+  getSubProduct,
+  getProductById,
+  getClassifyByProduct,
+  getProductDetailImage,
+} from "../../../../services/product";
 import { toast } from "react-toastify";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import axios from "axios";
 const ProductDetailPage = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const [productDetail, setProductDetail] = useState([]);
   const [subProduct, setSubProduct] = useState([]);
   const [product, setProduct] = useState([]);
   const [listTypeClassifyDetail, setListTypeClassifyDetail] = useState({});
   const [propertySelected, setPropertySelected] = useState({});
   const [previousPropertySelected, setPreviousPropertySelected] = useState({});
-  const [imageList,setImageList] = useState([]);
-  const [imageSelected,setImageSelected] = useState("");
+  const [imageList, setImageList] = useState([]);
+  const [imageSelected, setImageSelected] = useState("");
+
+  const handleAddCart = () => {
+    if (subProduct) console.log("idsubpro: " + subProduct);
+  };
 
   useEffect(() => {
     getProduct();
@@ -22,10 +34,9 @@ const ProductDetailPage = () => {
     setSubProduct();
     setPropertySelected({});
     getImages();
-  setListTypeClassifyDetail({});
-  window.scrollTo({top:"0",behavior:"instant"})
+    setListTypeClassifyDetail({});
+    window.scrollTo({ top: "0", behavior: "instant" });
   }, []);
-
 
   useEffect(() => {
     if (
@@ -37,13 +48,13 @@ const ProductDetailPage = () => {
       getSubProductFunction(listTypeClassifyDetail);
     }
   }, [listTypeClassifyDetail]);
-  const getImages = async () =>{
-      const results = await getProductDetailImage(id);
-      if(results && results.length > 0){
-        setImageList(results)
-        setImageSelected(results[0].image)
-      }
-  }
+  const getImages = async () => {
+    const results = await getProductDetailImage(id);
+    if (results && results.length > 0) {
+      setImageList(results);
+      setImageSelected(results[0].image);
+    }
+  };
   const getProductDetail = async () => {
     try {
       const result = await getProductDetailById(id);
@@ -69,12 +80,11 @@ const ProductDetailPage = () => {
     const result = await getSubProduct(list, productDetail.id);
     if (result) {
       setSubProduct(result);
-      
-    }else{
+    } else {
       setSubProduct(product);
     }
   };
-  const handleListProerty = async (e, property,index) => {
+  const handleListProerty = async (e, property, index) => {
     const name = e.target.getAttribute("name");
     setListTypeClassifyDetail({
       ...listTypeClassifyDetail,
@@ -84,7 +94,7 @@ const ProductDetailPage = () => {
     setPropertySelected({ ...propertySelected, [name]: index });
   };
   return (
-    product  && (
+    product && (
       <div className="row">
         <div className="col-12 col-md-6">
           <div style={{ position: "sticky", top: 0 }}>
@@ -97,42 +107,51 @@ const ProductDetailPage = () => {
                   textAlign: "center",
                   paddingBottom: 10,
                 }}
-                src={imageSelected === "" ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`: `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${imageSelected}`}
+                src={
+                  imageSelected === ""
+                    ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                    : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${imageSelected}`
+                }
                 className="img-thumbnail"
                 alt="..."
               />
             </div>
             <div className="slick pt-2 pb-5">
-            {imageList.map((item,index)=>{
-              return(
-              <div className="card-slick " onClick={()=>{
-                setImageSelected(item.image)
-              }}>
-                <div className="bg">
-                  <img
-                    style={{
-                      position: "absolute",
-                      width: 95,
-                      height: 95,
-                      right: 6,
-                      backgroundColor: "#F5F5F7",
+              {imageList.map((item, index) => {
+                return (
+                  <div
+                    className="card-slick "
+                    onClick={() => {
+                      setImageSelected(item.image);
                     }}
-                    src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${item.image}`}
-                    alt="mota-ip"
-                  />
-                </div>
-              </div>
-        
-              )
-            })}
+                  >
+                    <div className="bg">
+                      <img
+                        style={{
+                          position: "absolute",
+                          width: 95,
+                          height: 95,
+                          right: 6,
+                          backgroundColor: "#F5F5F7",
+                        }}
+                        src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${item.image}`}
+                        alt="mota-ip"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
           </div>
         </div>
         <div className="col-12 col-md-6">
           <div className="assess">
-            <div className="title"> {subProduct && subProduct.length !== 0
-                  ? subProduct.name : product.name}</div>
+            <div className="title">
+              {" "}
+              {subProduct && subProduct.length !== 0
+                ? subProduct.name
+                : product.name}
+            </div>
             <div>
               <i id="fas-1" className="fas fa-star" />
               <i id="fas-1" className="fas fa-star" />
@@ -163,7 +182,9 @@ const ProductDetailPage = () => {
             </div>
             <div>
               <span className="promotion">
-                {product.price ? `${product.price.toLocaleString("VN-vi")}VNĐ`:0}
+                {product.price
+                  ? `${product.price.toLocaleString("VN-vi")}VNĐ`
+                  : 0}
               </span>
             </div>
             <div>
@@ -194,9 +215,10 @@ const ProductDetailPage = () => {
                                     .toLowerCase()
                                     .split(" ")
                                     .join("")}`
-                                ] === index ? "circle-color circle-color-selected" : "circle-color"
+                                ] === index
+                                  ? "circle-color circle-color-selected"
+                                  : "circle-color"
                               }
-                              
                               name={`${item.name
                                 .normalize("NFD")
                                 .replace(/[\u0300-\u036f]/g, "")
@@ -208,14 +230,13 @@ const ProductDetailPage = () => {
                                 backgroundColor: `${property.color_code}`,
                               }}
                               onClick={(e) => {
-                                handleListProerty(e, property.id,index);
+                                handleListProerty(e, property.id, index);
                               }}
                             >
                               .
                             </div>
                           );
                         })}
-                      
                     </div>
                   </div>
                 ) : (
@@ -236,7 +257,9 @@ const ProductDetailPage = () => {
                                     .toLowerCase()
                                     .split(" ")
                                     .join("")}`
-                                ] === index ? "card-dl 1 border px-3 pt-2 pb-2 card-dl-selected" : "card-dl 1 border px-3 pt-2 pb-2 "
+                                ] === index
+                                  ? "card-dl 1 border px-3 pt-2 pb-2 card-dl-selected"
+                                  : "card-dl 1 border px-3 pt-2 pb-2 "
                               }
                               style={{ cursor: "pointer" }}
                               name={`${item.name
@@ -246,7 +269,7 @@ const ProductDetailPage = () => {
                                 .split(" ")
                                 .join("")}`}
                               onClick={(e) => {
-                                handleListProerty(e, property.id,index);
+                                handleListProerty(e, property.id, index);
                               }}
                             >
                               {/* {item} */}
@@ -258,6 +281,48 @@ const ProductDetailPage = () => {
                   </div>
                 );
               })}
+            <div className=" mt-2">
+              <form
+                method="post"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log(subProduct);
+                  axios
+                    .post(
+                      "http://localhost:8000/api/cart-add",
+                      {
+                        subProductID: subProduct.id,
+                      },
+                      {
+                        withCredentials: true, // Đặt option này thành true để tự động gửi cookies
+                      }
+                    )
+                    .then((res) => {
+                      if (res.data.status === "403" || res.data.EC === 500) {
+                        toast.error(res.data.EM);
+                      } else {
+                        toast.success(res.data.EM);
+                      }
+                    });
+                }}
+              >
+                <input
+                  type="hidden"
+                  name="subProductID"
+                  value={subProduct?.id}
+                />
+                <Button
+                  className={
+                    subProduct
+                      ? "bg-primary btn-add"
+                      : "bg-secondary border-none btn-add"
+                  }
+                  type="submit"
+                >
+                  Add
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

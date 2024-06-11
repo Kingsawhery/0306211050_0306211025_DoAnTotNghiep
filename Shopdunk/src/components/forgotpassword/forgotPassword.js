@@ -50,25 +50,30 @@ function ForgotPassword() {
   }, 1000);
 
   return (
-    <div>
-      <h2>Forgot Password</h2>
-      {/* <TimeExpired
-        start={true}
-        time={!time ? 0 : time}
-        onChange={(value) => {
-          setEndTime(value);
-          return 1;
-        }}
-      ></TimeExpired> */}
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        required
-      />
-      <button onClick={handleForgot}>Submit</button>
-
+    <div className="d-flex">
+      <form className="m-auto pt-4">
+        <h2>Forgot Password</h2>
+        <span className="mb-2">
+          Điền email và nhấn Gửi, hệ thống sẽ liên kết dùng cập nhật password
+          mới về email của bạn.
+        </span>
+        <br />
+        <input
+          type="email"
+          name="email"
+          className="px-2 py-1 rounded"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+        />
+        <button
+          // onClick={handleForgot}
+          type={"submit"}
+          className="py-1 px-2 ms-2 bg-primary text-light"
+        >
+          Lấy mã
+        </button>
+      </form>
       {isShowPopupOTP && (
         <>
           <InputOtp

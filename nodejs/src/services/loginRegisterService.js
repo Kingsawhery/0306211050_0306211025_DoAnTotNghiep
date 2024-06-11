@@ -1,7 +1,6 @@
 import db from "../models";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-import { createToken } from "../middleware/jwtActions";
 const saltRounds = bcrypt.genSaltSync(10);
 
 const hashUserPassword = (userPassword) => {
@@ -94,12 +93,11 @@ const handleLoginUser = async (rawUser) => {
           role: user.role,
           expiresIn: process.env.JWT_EXPIRES_IN,
         };
-        let token = await createToken(payload);
         return {
           EM: "Ok!",
           EC: 0,
           DT: {
-            access_token: token,
+            user: user,
           },
         };
       }

@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 
 const Login = (props) => {
   let navigate = useNavigate();
+  const dataUser = localStorage.getItem("user");
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -19,6 +20,11 @@ const Login = (props) => {
     isValue: true,
     isPassword: true,
   };
+  // useEffect(() => {
+  //   if (dataUser) {
+  //     navigate("/");
+  //   }
+  // }, []);
 
   const [value, setValue] = useState("");
   const [password, setPassword] = useState("");
@@ -38,11 +44,16 @@ const Login = (props) => {
       toast.error("Enter email/phone or Password");
     }
     const response = await loginServices(value, password);
-    console.log(response);
-    if (response && +response.EC === 0) {
-      toast.success("Login success!");
-      Cookies.set("token", response.DT.access_token, { expires: 7 });
-      localStorage.setItem("token", response.DT.access_token);
+    if (response.EC == 0) {
+      toast.success(response.message);
+      const dataSaveLocal = {
+        id: response.user.id,
+        name: response.user.username,
+        phone: response.user.phone,
+        email: response.user.email,
+      };
+      localStorage.setItem("user", JSON.stringify(dataSaveLocal));
+      navigate("/");
     } else {
       toast.error("Login fail!");
     }
@@ -104,7 +115,13 @@ const Login = (props) => {
               </GoogleOAuthProvider>
             </div>
             <div></div>
-            <button onClick={handleLogin} name="btn" className="mt-2">
+            <button
+              onClick={() => {
+                handleLogin();
+              }}
+              name="btn"
+              className="mt-2"
+            >
               Login
             </button>
             <div className="register-link">

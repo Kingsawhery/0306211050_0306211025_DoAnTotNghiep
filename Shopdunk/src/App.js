@@ -19,6 +19,8 @@ import ForgotPassword from "./components/forgotpassword/forgotPassword";
 import InputOtp from "./components/forgotpassword/inputOtp";
 import Cart from "./components/Cart/Cart";
 import User from "./view/pages/Admin/Management/User/User";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
@@ -42,7 +44,7 @@ const App = () => {
           </Route>
         </Routes>
         <Routes>
-          <Route path="/login" element={<Login />}></Route>
+          {<Route path="/login" element={<Login />}></Route>}
 
           <Route path="/register" element={<Register />}></Route>
           <Route path="/forgot-password" element={<ForgotPassword />}></Route>
@@ -51,6 +53,19 @@ const App = () => {
           {/* <Route path="/noPage" element={noPage}></Route> */}
         </Routes>
       </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <ToastContainer />
     </>
   );
 };
