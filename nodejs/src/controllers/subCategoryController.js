@@ -4,7 +4,8 @@ import {getSubCategories,
     postSubCategory,
     putSubCategory,
     destroySubCategory,
-    findSubCategories} from "../services/subCategoryService"
+    findSubCategories,
+    getSubCategoryByCateogryId} from "../services/subCategoryService"
 // Xem tất cả danh mục
 let getAllSubCategories = async (req,res)=>{
     let sub_categories = await getSubCategories();
@@ -104,7 +105,13 @@ let deleteSubCategory = async(req,res) =>{
     console.log(e);
    }
 }
-
+let getSubCategoryNameById = async(req,res)=>{
+    let id = await req.query.id;
+    const subCategory = await getSubCategoryByCateogryId(id);
+    return res.status(200).json({
+        data:subCategory
+      });
+}
 // let getProducts  = async(req,res)=>{
 //     let products = await db.product.findAll({
 //         attributes:['name'],
@@ -146,5 +153,5 @@ module.exports = {
     editSubCategory,
     deleteSubCategory,
     searchSubCategories,
-    
+    getSubCategoryNameById
 }

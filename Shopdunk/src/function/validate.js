@@ -58,3 +58,9 @@ export const validateUserName = (username) => {
   }
   return true;
 };
+//
+export const validateNumber = (number) =>{
+  var regex = /^[0-9]+$/gm;
+
+  return regex.test(number);
+}

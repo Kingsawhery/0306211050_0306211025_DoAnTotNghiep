@@ -226,14 +226,14 @@ const getProductDetailImage = (id) => {
     }
   });
 };
-const getProductDetailImages = (data) => {
+const getProductDetailImages = (productDetailId,typeClassifyDetailId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const listProductDetailImage = db.product_detail_image.findAll({
         where: {
           [Op.and]: [
-            { productDetailId: data.productDetailId },
-            { typeClassifyDetailId: data.typeClassifyDetailId },
+            { productDetailId: productDetailId },
+            { typeClassifyDetailId: typeClassifyDetailId },
           ],
         },
       });
@@ -278,6 +278,31 @@ let getProductByCategory = async (page, id) => {
     }
   });
 };
+const createProduct = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    console.log(data);
+    
+    try {
+      const newUser = await db.product.create({
+        name: data.name ? data.name : "New device",
+        subCategoryId: data.subCategory,
+        price: data.price,
+        status: 1,
+        promotion: data.promotion,
+        image: data.image,
+        categoryId: data.category,
+      });
+      await db.product_detail.create({
+        productId: newUser.id,
+        stock:data.stock,
+        rate:5
+      })
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getProductBySubCategory,
   getDataProductById,
@@ -287,4 +312,7 @@ module.exports = {
   getProductByCategory,
   getProductsRandom,
   getSubProductByProduct,
+  getProductDetailImages,
+  createProduct,
+  
 };

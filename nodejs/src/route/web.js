@@ -5,7 +5,8 @@ import apiController from "../controllers/apiController";
 import { verify } from "../function/verify";
 import { checkToken } from "../middleware/checkToken";
 const cookieParser = require("cookie-parser");
-
+import multer from "multer";
+import fs from "fs";
 //Danh mục - Category 1
 import {
   getAllCategories,
@@ -14,6 +15,9 @@ import {
   editCategory,
   deleteCategory,
   searchCategories,
+  getAllCategoriesInList,
+  getListNameCategory,
+  getProductByCategoryId
 } from "../controllers/categoryController";
 
 //Danh mục con - Sub Category 2
@@ -24,6 +28,8 @@ import {
   editSubCategory,
   deleteSubCategory,
   searchSubCategories,
+  getSubCategoryNameById
+
 } from "../controllers/subCategoryController";
 
 // Banner - 3
@@ -39,6 +45,8 @@ import {
   getProductsImage,
   getProducts,
   getTypeClassifySubProduct,
+  getSubProductImage,
+  createNewProduct
 } from "../controllers/productController";
 
 import {
@@ -52,9 +60,33 @@ import {
 
 // Post - 5
 import { getAllPosts, getPostPage } from "../controllers/postController";
+
 let router = express.Router();
+let storage = multer.diskStorage({
+  
+  destination:async function  (req, file, cb) {
+    if(req.body.fileImage){
+      
+    }
+    // Set the destination folder for uploaded files
+  const dir = `public/productImage/${req.body.subCategoryName}`;
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true });
+  }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    // Set the filename to be used for uploaded files
+    cb(null, file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
+  router.get("/categories", getAllCategoriesInList);//
+  router.get("/categories-name",   getListNameCategory);//
+router.get("/sub-product-category",getProductByCategoryId)//
   router.get("/categories-homepage", getAllCategories);
   router.get("/categories/page=:page", getCategories);
   router.get("/categories/search", searchCategories);
@@ -69,6 +101,7 @@ let apiWebRoutes = (app) => {
   router.post("/sub-categories", postNewSubCategory);
   router.put("/sub-categories", editSubCategory);
   router.delete("/sub-categories/:id", deleteSubCategory);
+  router.get("/sub-categories-name", getSubCategoryNameById);
 
   // Banner - 3
   router.get("/banners", getAllBanners);
@@ -82,7 +115,8 @@ let apiWebRoutes = (app) => {
   router.get("/product-detail", getProductDetail);
   router.get("/product-detail-image", getProductsImage);
   router.get("/type-classify-sub-product", getTypeClassifySubProduct);
-
+  router.get("/sub-product-image",   getSubProductImage);
+  router.post("/create-product",upload.single("fileImage"),createNewProduct)
   // Post - 5
   router.get("/posts", getAllPosts);
   router.get("/post/:id", getPostPage);

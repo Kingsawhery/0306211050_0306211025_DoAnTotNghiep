@@ -5,3 +5,9 @@ export const getAllCategoriesHomepage = () =>{
 export const getCategories = (page) =>{
     return instance.get(process.env.REACT_APP_API_SERVER + `/categories/page=${page}`);
 }
+export const getAllCategories = (page) =>{
+    return instance.get(process.env.REACT_APP_API_SERVER + `/categories`);
+}
+export const getAllCategoryNames = () =>{
+    return instance.get(process.env.REACT_APP_API_SERVER + `/categories-name`);
+}

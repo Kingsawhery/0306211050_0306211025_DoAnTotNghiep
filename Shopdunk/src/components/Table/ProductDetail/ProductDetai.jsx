@@ -11,6 +11,8 @@ const ProductDetail = (props) => {
   const localDetail = JSON.parse(localStorage.getItem("detail"));
   const [listTypeClassifyDetail, setListTypeClassifyDetail] = useState({});
   const [propertySelected, setPropertySelected] = useState({});
+  const [imageList, setImageList] = useState([]);
+
   useEffect(() => {
     getProductDetail();
     setSubProduct();

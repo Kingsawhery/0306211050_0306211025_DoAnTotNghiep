@@ -104,11 +104,32 @@ const destroySubCategory = async (id) => {
     }
   });
 };
+let getSubCategoryByCateogryId = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let sub_category = await db.sub_category.findAll(
+        {
+          where:{
+            categoryId:id,
+          },
+        }
+      );
+      if (sub_category) {
+        resolve(sub_category);
+      } else {
+        resolve();
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getSubCategories,
   getSubCategoryByCateogry,
   postSubCategory,
   putSubCategory,
   destroySubCategory,
-  findSubCategories
+  findSubCategories,
+  getSubCategoryByCateogryId
 };

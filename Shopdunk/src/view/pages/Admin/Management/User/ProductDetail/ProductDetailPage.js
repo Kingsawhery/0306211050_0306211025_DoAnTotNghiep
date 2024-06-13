@@ -1,12 +1,9 @@
-
 import { useEffect, useState,useRef } from "react";
 import "./ProductDetailPage.scss";
 import { getProductDetailById, getSubProduct, getProductById,getClassifyByProduct,getProductDetailImage,getSubProductImage } from "../../../../services/product";
 import { toast } from "react-toastify";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import { Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 const ProductDetailPage = () => {
   const {id} = useParams();
@@ -269,48 +266,6 @@ const ProductDetailPage = () => {
                   </div>
                 );
               })}
-              <div className=" mt-2">
-              <form
-                method="post"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  console.log(subProduct);
-                  axios
-                    .post(
-                      "http://localhost:8000/api/cart-add",
-                      {
-                        subProductID: subProduct.id,
-                      },
-                      {
-                        withCredentials: true, // Đặt option này thành true để tự động gửi cookies
-                      }
-                    )
-                    .then((res) => {
-                      if (res.data.status === "403" || res.data.EC === 500) {
-                        toast.error(res.data.EM);
-                      } else {
-                        toast.success(res.data.EM);
-                      }
-                    });
-                }}
-              >
-                <input
-                  type="hidden"
-                  name="subProductID"
-                  value={subProduct?.id}
-                />
-                <Button
-                  className={
-                    subProduct
-                      ? "bg-primary btn-add"
-                      : "bg-secondary border-none btn-add"
-                  }
-                  type="submit"
-                >
-                  Add
-                </Button>
-              </form>
-            </div>
           </div>
         </div>
       </div>

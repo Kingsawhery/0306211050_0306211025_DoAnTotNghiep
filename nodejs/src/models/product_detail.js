@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       productId: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
+      rate:DataTypes.INTEGER
     },
     {
       sequelize,

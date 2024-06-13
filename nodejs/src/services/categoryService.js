@@ -113,6 +113,22 @@ const destroyCategory = async (id) => {
     }
   });
 };
+let getAllNameCategory= async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let categories = await db.category.findAll({
+        attributes:["id","name"],
+      });
+      if (categories) {
+        resolve(categories);
+      } else {
+        resolve();
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   readCategoriesHomepage,
   readCategories,
@@ -120,4 +136,6 @@ module.exports = {
   putCategory,
   destroyCategory,
   findCategories,
+  getAllNameCategory
 };
+

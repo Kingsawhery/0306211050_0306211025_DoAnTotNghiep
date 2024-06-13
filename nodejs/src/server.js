@@ -5,7 +5,6 @@ import apiWebRoutes from "./route/web";
 // import apiWebRoutes from "./route/api";
 import cors from "cors";
 import dotenv from "dotenv";
-
 const cookieParser = require("cookie-parser");
 dotenv.config();
 let app = express();

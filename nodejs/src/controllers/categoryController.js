@@ -6,7 +6,7 @@ import {
   putCategory,
   destroyCategory,
   findCategories,
-  
+  getAllNameCategory
 } from "../services/categoryService";
 // Xem tất cả danh mục
 let getAllCategories = async (req, res) => {
@@ -15,7 +15,26 @@ let getAllCategories = async (req, res) => {
     data: categories,
   });
 };
-
+let getProductByCategoryId = async(req,res) =>{
+  let id = await req.query.id;
+  console.log(id);
+  let data = await getAllProductByCategory(id);
+  return res.status(200).json({
+    data,
+  });
+}
+let getAllCategoriesInList = async (req, res) => {
+  let categories = await getListCategories();
+  return res.status(200).json({
+    data: categories,
+  });
+};
+let getListNameCategory = async (req, res)=>{
+  let categories = await getAllNameCategory();
+  return res.status(200).json({
+    data:categories
+  })
+}
 let getCategories = async (req, res) => {
   let page = req.params.page;
   let { count, rows } = await readCategories(page);
@@ -145,4 +164,7 @@ module.exports = {
   editCategory,
   deleteCategory,
   searchCategories,
+  getAllCategoriesInList,
+  getListNameCategory,
+  getProductByCategoryId
 };

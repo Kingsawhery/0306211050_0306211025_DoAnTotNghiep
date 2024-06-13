@@ -1,6 +1,5 @@
 import {getPosts,getPost} from "../services/postService"
 const getAllPosts = async(req,res) =>{
-
     try{
         const results = await getPosts();
         if(results){
