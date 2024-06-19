@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     },
     {
       sequelize,
-      modelName: "password_reset_token",
+      modelName: "password_reset_tokens",
       timestamps: false,
     }
   );
