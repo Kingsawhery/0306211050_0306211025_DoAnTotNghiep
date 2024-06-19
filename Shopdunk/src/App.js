@@ -36,6 +36,10 @@ const App = () => {
             <Route path="post/:slug/:id" element={<PostPage />} />
             <Route path="cart" element={<Cart />} />
             <Route path="/category/:name" element={<CategoryPage />} />
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+            <Route path="/otp" element={<InputOtp />}></Route>
           </Route>
           {/* Admin route */}
           <Route path="/admin" element={<LayoutAdmin />}>
@@ -46,15 +50,6 @@ const App = () => {
             <Route path="create-product" element={<CreateNewProduct />} />
             <Route path="user" element={<User />}></Route>
           </Route>
-        </Routes>
-        <Routes>
-          {<Route path="/login" element={<Login />}></Route>}
-
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-          <Route path="/otp" element={<InputOtp />}></Route>
-
-          {/* <Route path="/noPage" element={noPage}></Route> */}
         </Routes>
       </Router>
       <ToastContainer

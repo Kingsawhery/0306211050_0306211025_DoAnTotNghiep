@@ -1,5 +1,14 @@
+import { useEffect } from "react";
 import "../Cart/Cart.css";
+import axios from "axios";
 export default function Cart() {
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/cart", { withCredentials: true })
+      .then((res) => {
+        console.log(res);
+      });
+  }, []);
   return (
     <>
       <div className="main">
@@ -358,80 +367,6 @@ export default function Cart() {
                 </div>
               </div>
               {/* <!--abate online--> */}
-              <div className="abate-online">
-                <div>
-                  <div className="information-abate-online-titile fw-bold">
-                    Thông tin thanh toán
-                  </div>
-                  <p>
-                    Quý khách vui lòng lựa chọn các hình thức thanh toán dưới
-                    đây:
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-4 mt-3">
-              <div className="price-promotion">
-                <div className="input-group input-group-lg">
-                  <input
-                    type="text"
-                    className="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-lg"
-                    placeholder="Mã giảm giá"
-                  />
-                  <span className="input-group-text" id="inputGroup-sizing-lg">
-                    <strong className="ad">Áp dụng</strong>
-                  </span>
-                </div>
-                <div className="total">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td className="td-tongphu">
-                          <p className="tongphu">Tổng phụ:</p>
-                        </td>
-                        <td>
-                          <p className="phuthu">19.000.100đ</p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="td-tongcong">
-                          <p className="tongcong">Tổng cộng:</p>
-                        </td>
-                        <td>
-                          <p className="giatongcong text-primary fw-bold">
-                            19.000.100đ
-                          </p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="crossbar"></div>
-                <div className="clause d-flex">
-                  <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked="checked"
-                  />
-                  <span className="checkmark"></span>
-                  <label />
-                  <p className="text-clause">
-                    Tôi đã đọc và đồng ý với{" "}
-                    <a className="text-clause-a" href="">
-                      điều khoản và điều kiện
-                    </a>{" "}
-                    của website
-                  </p>
-                </div>
-                <div className="func-order m-3">
-                  <button className="func-order-btn">Tiến hành đặt hàng</button>
-                </div>
-                <p className="pt m-3 pb-4">
-                  (*) Phí phụ thu sẽ được tính khi bạn tiến hành thanh toán.
-                </p>
-              </div>
             </div>
           </div>
         </div>

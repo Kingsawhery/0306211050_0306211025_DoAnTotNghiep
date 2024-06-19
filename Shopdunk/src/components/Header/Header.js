@@ -1,24 +1,21 @@
 import React, { Component } from "react";
 import "./Header.scss";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
   render() {
     return (
       <div id="header">
-        <div
-          className="container p-0">
+        <div className="container p-0">
           <div className="container d-flex header" style={{ height: 75 }}>
-            <div className="mt-3 header-logo">
+            <Link className="mt-3 header-logo" to="/">
               <img
-  
                 src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
                 alt="logo"
               />
-            </div>
+            </Link>
             <div className="categories" style={{ position: "relative" }}>
-              <ul
-                className="pl-0 d-flex mb-1"
-              >
+              <ul className="pl-0 d-flex mb-1">
                 <li className="nav">
                   <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
                     iPhone
@@ -67,55 +64,55 @@ class Header extends Component {
               </ul>
             </div>
             <div className="action">
-            <div
-              className="tool"
-              style={{
-                width: 14,
-                position: "relative",
-                top: 20,
-                paddingLeft: 30,
-                cursor: "pointer",
-              }}
-            >
-              <div className="search">
+              <div
+                className="tool"
+                style={{
+                  width: 14,
+                  position: "relative",
+                  top: 20,
+                  paddingLeft: 30,
+                  cursor: "pointer",
+                }}
+              >
+                <div className="search">
+                  <i
+                    style={{ color: "#d2d2d7", fontSize: 23 }}
+                    className="fas fa-search"
+                  />
+                </div>
+              </div>
+              <Link
+                to="/cart"
+                className="bag"
+                style={{
+                  width: 14,
+                  position: "relative",
+                  top: 20,
+                  left: 40,
+                  cursor: "pointer",
+                }}
+              >
                 <i
                   style={{ color: "#d2d2d7", fontSize: 23 }}
-                  className="fas fa-search"
+                  className="fas fa-shopping-bag"
+                />
+              </Link>
+              <div
+                className="bag"
+                style={{
+                  width: 14,
+                  position: "relative",
+                  top: 20,
+                  left: 65,
+                  cursor: "pointer",
+                }}
+              >
+                <i
+                  style={{ color: "#d2d2d7", fontSize: 23 }}
+                  className="fas fa-user"
                 />
               </div>
             </div>
-            <div
-              className="bag"
-              style={{
-                width: 14,
-                position: "relative",
-                top: 20,
-                left: 40,
-                cursor: "pointer",
-              }}
-            >
-              <i
-                style={{ color: "#d2d2d7", fontSize: 23 }}
-                className="fas fa-shopping-bag"
-              />
-            </div>
-            <div
-              className="bag"
-              style={{
-                width: 14,
-                position: "relative",
-                top: 20,
-                left: 65,
-                cursor: "pointer",
-              }}
-            >
-              <i
-                style={{ color: "#d2d2d7", fontSize: 23 }}
-                className="fas fa-user"
-              />
-            </div>
-            </div>
-          
           </div>
         </div>
       </div>

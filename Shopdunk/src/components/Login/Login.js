@@ -42,6 +42,7 @@ const Login = (props) => {
     } else if (!password) {
       setObjInput({ ...defaultObjInput, isPassword: false });
       toast.error("Enter email/phone or Password");
+      return;
     }
     const response = await loginServices(value, password);
     if (response.EC == 0) {

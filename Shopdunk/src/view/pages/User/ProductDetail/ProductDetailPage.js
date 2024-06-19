@@ -292,7 +292,8 @@ const ProductDetailPage = () => {
                 method="post"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log(subProduct);
+                  if (!subProduct || !subProduct.id)
+                    return toast.error("Thiếu lựu chọn sản phẩm.");
                   axios
                     .post(
                       "http://localhost:8000/api/cart-add",

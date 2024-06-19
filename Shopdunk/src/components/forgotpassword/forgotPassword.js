@@ -5,8 +5,8 @@ function ForgotPassword() {
   const [email, setEmail] = useState();
   const [isSent, setIsSent] = useState(false);
   return (
-    <div className="container">
-      <div className="d-flex justify-content-center align-items-center mt-4">
+    <div className="py-4">
+      <div className="container d-flex justify-content-center align-items-center mt-4">
         <div className="">
           <h2>Forgot Password</h2>
           {isSent ? (
@@ -14,8 +14,8 @@ function ForgotPassword() {
           ) : (
             <>
               <span>
-                Nhập mật khẩu của bạn vào ô bên dưới, chúng tôi sẽ gửi liên kết
-                đề cập nhật mật khẩu mới cho bạn.
+                Nhập email của bạn vào ô bên dưới, chúng tôi sẽ gửi liên kết để
+                cập nhật mật khẩu mới cho bạn.
               </span>
               <form
                 method="POST"

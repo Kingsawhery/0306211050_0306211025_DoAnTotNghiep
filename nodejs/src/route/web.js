@@ -165,7 +165,6 @@ let apiWebRoutes = (app) => {
     }
   );
   //Cart - 7
-  // router.post("/cart-add", cartController.handleAddCart);
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
   return app.use("/api", router);
