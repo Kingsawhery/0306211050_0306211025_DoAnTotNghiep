@@ -113,7 +113,7 @@ const destroyCategory = async (id) => {
     }
   });
 };
-let getAllNameCategory= async () => {
+let getAllNameCategory = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       let categories = await db.category.findAll({

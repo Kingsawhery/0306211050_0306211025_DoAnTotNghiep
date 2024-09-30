@@ -7,6 +7,7 @@ li.nav {
 #header{
   background-color: #515154;
   height: 70px;
+  justify-content: space-around;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -37,5 +38,8 @@ li.nav:hover {
 }
 }
 .action{
+  display: flex;
+}
+.ul-category{
   display: flex;
 }

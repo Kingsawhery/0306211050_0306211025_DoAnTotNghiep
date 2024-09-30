@@ -44,6 +44,7 @@ const Login = (props) => {
       toast.error("Enter email/phone or Password");
     }
     const response = await loginServices(value, password);
+    console.log(response);
     if (response.EC == 0) {
       toast.success(response.message);
       const dataSaveLocal = {

@@ -13,7 +13,7 @@ const configLoginWithGG = () => {
       },
       async function (accessToken, refreshToken, profile, cb) {
         const typeAcc = "GOOGLE";
-        let dataRaw = {
+        let dataRaw = { 
           username: profile.displayName,
           email:
             profile.emails && profile.emails.length > 0

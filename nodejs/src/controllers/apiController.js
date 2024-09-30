@@ -32,9 +32,11 @@ const handleRegister = async (req, res) => {
     }
     let data = await loginRegisterService.createRegisterUser(req.body);
     return res.status(200).json({
-      EM: data.EM,
-      EC: data.EC,
-      DT: data.dataValues,
+      data: {
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.dataValues,
+      },
     });
   } catch (e) {
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
@@ -51,10 +53,10 @@ const handleLogin = async (req, res) => {
     if (data.EC == "1") {
       return res.status(200).json({
         EM: "Account is not define",
+        EC: "400",
       });
     }
     const token = userService.random(200);
-    console.log(data.DT.user.dataValues);
     await db.User.update(
       {
         token: token,
@@ -65,7 +67,7 @@ const handleLogin = async (req, res) => {
         },
       }
     );
-
+    let dataUser = data.DT.user.dataValues;
     // HttpOnly: user không thể lấy ra bằng script hoặc trình duyệt, chỉ sever lấy ra được
     return res
       .cookie("token", token, {
@@ -80,7 +82,14 @@ const handleLogin = async (req, res) => {
         // EC: data.EC,
         // DT: data.DT.user.dataValues,
         data: {
-          user: data.DT.user.dataValues,
+          user: {
+            email: dataUser.email,
+            type: dataUser.type,
+            username: dataUser.username,
+            phone: dataUser.phone,
+            token: dataUser.token,
+            role: dataUser.role,
+          },
           message: "Login success",
           EC: 0,
         },

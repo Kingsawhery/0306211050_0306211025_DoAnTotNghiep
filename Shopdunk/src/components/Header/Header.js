@@ -1,70 +1,52 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import "./Header.scss";
+import { Link } from "react-router-dom";
+import {getAllCategories} from "../../services/categoryService";
+const Header = () => {
+  const [categories, setCategories] = useState([]);
+  useEffect(()=>{
+    getListCategories();
+  },[])
+  const getListCategories = async ()=>{
+      const results = await getAllCategories()
+      if(results){
+        setCategories(results)
+      }
+  }
 
-class Header extends Component {
-  render() {
     return (
       <div id="header">
         <div
           className="container p-0">
           <div className="container d-flex header" style={{ height: 75 }}>
-            <div className="mt-3 header-logo">
+          <Link to="/">
+          <div className="mt-3 header-logo">
               <img
   
                 src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
                 alt="logo"
               />
             </div>
+          </Link>
+            
             <div className="categories" style={{ position: "relative" }}>
-              <ul
-                className="pl-0 d-flex mb-1"
-              >
-                <li className="nav">
+            {categories && categories.length > 0 && 
+            (<ul className="ul-category">
+              {categories.map((item,index)=>{
+                return(
+                  <Link to={`/category/${item.name}`}>
+                  <li className="nav">
                   <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    iPhone
+                    {item.name}
                   </a>
                 </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    iPad
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Mac
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Watch
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Âm thanh
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Phụ kiện
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Máy cũ
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Dịch vụ
-                  </a>
-                </li>
-                <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    Khuyến mãi
-                  </a>
-                </li>
-              </ul>
+                  </Link>
+                 
+                )
+              })}
+            </ul>)
+            }
+
             </div>
             <div className="action">
             <div
@@ -121,6 +103,5 @@ class Header extends Component {
       </div>
     );
   }
-}
 
 export default Header;

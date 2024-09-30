@@ -23,15 +23,7 @@ const checkEmailAndPhone = async (userEmail, userPhone) => {
   }
   return false;
 };
-const checkEmail = async (userEmail) => {
-  let user = await db.User.findOne({
-    where: { email: userEmail },
-  });
-  if (user) {
-    return true;
-  }
-  return false;
-};
+
 
 const createRegisterUser = async (rawUser) => {
   try {
@@ -47,13 +39,14 @@ const createRegisterUser = async (rawUser) => {
         EC: 1,
       };
     } else {
-      let isPassword = hashUserPassword(rawUser.password);
+      let isPassword = await hashUserPassword(rawUser.password);
       //create user
       await db.User.create({
         email: rawUser.email,
         phone: rawUser.phone,
         username: rawUser.username,
         password: isPassword,
+        role:rawUser.role
       });
       return {
         EM: "create User Successfuly!",
@@ -75,13 +68,13 @@ const checkPassword = (inputPassword, hashUserPassword) => {
 };
 
 const handleLoginUser = async (rawUser) => {
+  console.log(rawUser);
   try {
     const user = await db.User.findOne({
       where: {
         [Op.or]: [{ email: rawUser.value }, { phone: rawUser.value }],
       },
     });
-
     if (user) {
       let passwordSuccess = await checkPassword(
         rawUser.password,
@@ -173,5 +166,4 @@ module.exports = {
   updateUserOTP,
   resetUserPassword,
   // upsertUserGG,
-  checkEmail,
 };

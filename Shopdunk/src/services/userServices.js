@@ -1,13 +1,21 @@
 import axios from "./customAxios";
 import axiosFormal from "axios";
 
-const userServices = (email, username, phone, password) => {
-  axios.post("/api/register", {
-    email,
-    username,
-    phone,
-    password,
-  });
+const userServices = async(email, username, phone, password,role) => {
+  try{
+    const rs = await axios.post("/api/register", {
+      email,
+      username,
+      phone,
+      password,
+      role
+    });
+    console.log(rs);
+    return rs;
+  }catch(e){
+    console.log(e);
+  }
+  
 };
 const getUsers = (page) => {
   return axios.get(`/api/users?page=${page}`);
@@ -51,7 +59,7 @@ const clientId =
 
 const loginServices = async (value, password) => {
   try {
-    const res = await axios.post(
+    const res = await axiosFormal.post(
       "http://localhost:8000/api/login",
       {
         value,
@@ -62,6 +70,7 @@ const loginServices = async (value, password) => {
         withCredentials: true,
       }
     );
+    console.log(res);
     return res;
   } catch (e) {
     console.log(e); // Xử lý lỗi

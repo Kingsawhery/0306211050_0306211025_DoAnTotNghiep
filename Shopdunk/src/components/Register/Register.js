@@ -14,6 +14,10 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 const Register = (props) => {
   const [email, setEmail] = useState("");
+  const [hideEyes, setHideEyes] = useState({
+    password:"password",
+    rePassword:"password"
+  })
   const [phone, setPhone] = useState("");
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -26,18 +30,20 @@ const Register = (props) => {
   //   isValidConFirmPassword: true,
   // };
   // const [checkValidInput, setCheckValidInput] = useState(defaultValidInput);
-  const handleDataUser = () => {
+  const handleDataUser = async () => {
     const check = [
       validateEmail(email),
       validateUserName(username),
       validatePhone(phone),
-
       validatePassword(password, comfirmPassword),
     ];
-    userServices(email, username, phone, password);
-    console.log(userServices);
-
-    navigate("/Login");
+    const rsRegister = await userServices(email, username, phone, password,"user");
+    if(rsRegister.EC !== 0){
+      toast(rsRegister.EM)
+    }else{
+      toast(rsRegister.EM)
+      navigate("/login")
+    }
   };
   let navigate = useNavigate();
 
@@ -111,7 +117,7 @@ const Register = (props) => {
                 //     ? "form-control"
                 //     : "form-control is-invalid"
                 // }
-                type="text"
+                type={hideEyes.password}
                 placeholder="password"
                 required
                 value={password}

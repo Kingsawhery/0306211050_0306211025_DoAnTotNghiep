@@ -84,7 +84,7 @@ const upload = multer({ storage: storage });
 
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
-  router.get("/categories", getAllCategoriesInList);//
+  router.get("/categories",getListNameCategory);//
   router.get("/categories-name",   getListNameCategory);//
 router.get("/sub-product-category",getProductByCategoryId)//
   router.get("/categories-homepage", getAllCategories);
