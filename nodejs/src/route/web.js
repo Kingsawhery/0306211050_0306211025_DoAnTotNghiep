@@ -17,7 +17,7 @@ import {
   searchCategories,
   getAllCategoriesInList,
   getListNameCategory,
-  getProductByCategoryId
+  getProductByCategoryId,
 } from "../controllers/categoryController";
 
 //Danh mục con - Sub Category 2
@@ -28,8 +28,7 @@ import {
   editSubCategory,
   deleteSubCategory,
   searchSubCategories,
-  getSubCategoryNameById
-
+  getSubCategoryNameById,
 } from "../controllers/subCategoryController";
 
 // Banner - 3
@@ -46,7 +45,7 @@ import {
   getProducts,
   getTypeClassifySubProduct,
   getSubProductImage,
-  createNewProduct
+  createNewProduct,
 } from "../controllers/productController";
 
 import {
@@ -63,30 +62,28 @@ import { getAllPosts, getPostPage } from "../controllers/postController";
 
 let router = express.Router();
 let storage = multer.diskStorage({
-  
-  destination:async function  (req, file, cb) {
-    if(req.body.fileImage){
-      
+  destination: async function (req, file, cb) {
+    if (req.body.fileImage) {
     }
     // Set the destination folder for uploaded files
-  const dir = `public/productImage/${req.body.subCategoryName}`;
-  if (!fs.existsSync(dir)){
+    const dir = `public/productImage/${req.body.subCategoryName}`;
+    if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
-  }
+    }
     cb(null, dir);
   },
   filename: function (req, file, cb) {
     // Set the filename to be used for uploaded files
     cb(null, file.originalname);
-  }
+  },
 });
 const upload = multer({ storage: storage });
 
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
-  router.get("/categories",getListNameCategory);//
-  router.get("/categories-name",   getListNameCategory);//
-router.get("/sub-product-category",getProductByCategoryId)//
+  router.get("/categories", getListNameCategory); //
+  router.get("/categories-name", getListNameCategory); //
+  router.get("/sub-product-category", getProductByCategoryId); //
   router.get("/categories-homepage", getAllCategories);
   router.get("/categories/page=:page", getCategories);
   router.get("/categories/search", searchCategories);
@@ -115,8 +112,8 @@ router.get("/sub-product-category",getProductByCategoryId)//
   router.get("/product-detail", getProductDetail);
   router.get("/product-detail-image", getProductsImage);
   router.get("/type-classify-sub-product", getTypeClassifySubProduct);
-  router.get("/sub-product-image",   getSubProductImage);
-  router.post("/create-product",upload.single("fileImage"),createNewProduct)
+  router.get("/sub-product-image", getSubProductImage);
+  router.post("/create-product", upload.single("fileImage"), createNewProduct);
   // Post - 5
   router.get("/posts", getAllPosts);
   router.get("/post/:id", getPostPage);

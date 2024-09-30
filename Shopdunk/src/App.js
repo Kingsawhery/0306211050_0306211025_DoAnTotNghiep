@@ -18,7 +18,7 @@ import Register from "./components/Register/Register";
 import ForgotPassword from "./components/forgotpassword/forgotPassword";
 import InputOtp from "./components/forgotpassword/inputOtp";
 import Cart from "./components/Cart/Cart";
-import CreateNewProduct from "./view/pages/Admin/Management/Product/CreateNewProduct"
+import CreateNewProduct from "./view/pages/Admin/Management/Product/CreateNewProduct";
 import User from "./view/pages/Admin/Management/User/User";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,8 +35,7 @@ const App = () => {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="post/:slug/:id" element={<PostPage />} />
             <Route path="cart" element={<Cart />} />
-            <Route path="/category/:name" element={<CategoryPage />}/>
-
+            <Route path="/category/:name" element={<CategoryPage />} />
           </Route>
           {/* Admin route */}
           <Route path="/admin" element={<LayoutAdmin />}>
@@ -44,7 +43,7 @@ const App = () => {
             <Route path="thong-ke" element={<AdminPage />} />
             <Route path="danh-muc" element={<Category />} />
             <Route path="tin-tuc" element={<Post />} />
-            <Route path="create-product" element={<CreateNewProduct/>}/>
+            <Route path="create-product" element={<CreateNewProduct />} />
             <Route path="user" element={<User />}></Route>
           </Route>
         </Routes>

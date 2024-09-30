@@ -68,7 +68,6 @@ const handleDeleteUser = async (req, res) => {
 const getUser = async (req, res) => {
   let id = await req.query.id;
   if (id) {
-    console.log(id);
     let user = await userServices.getUserById(id);
     // console.log(userData);
     return res.status(200).json({

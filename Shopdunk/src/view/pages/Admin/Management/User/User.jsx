@@ -7,13 +7,16 @@ import {
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../../components/Spinner/Spinner";
+
 export default function User() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     getListUsers();
   }, [page]);
+
   const getListUsers = async () => {
     try {
       const results = await getUsers(page);

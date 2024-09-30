@@ -15,9 +15,9 @@ import { toast } from "react-toastify";
 const Register = (props) => {
   const [email, setEmail] = useState("");
   const [hideEyes, setHideEyes] = useState({
-    password:"password",
-    rePassword:"password"
-  })
+    password: "password",
+    rePassword: "password",
+  });
   const [phone, setPhone] = useState("");
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -31,18 +31,28 @@ const Register = (props) => {
   // };
   // const [checkValidInput, setCheckValidInput] = useState(defaultValidInput);
   const handleDataUser = async () => {
-    const check = [
-      validateEmail(email),
-      validateUserName(username),
-      validatePhone(phone),
-      validatePassword(password, comfirmPassword),
-    ];
-    const rsRegister = await userServices(email, username, phone, password,"user");
-    if(rsRegister.EC !== 0){
-      toast(rsRegister.EM)
-    }else{
-      toast(rsRegister.EM)
-      navigate("/login")
+    if (
+      !validateEmail(email) ||
+      !validatePhone(phone) ||
+      !validateUserName(username) ||
+      !validatePassword(password, comfirmPassword)
+    ) {
+      return;
+    }
+
+    const rsRegister = await userServices(
+      email,
+      username,
+      phone,
+      password,
+      "user"
+    );
+
+    if (rsRegister.EC !== 0) {
+      toast(rsRegister.EM);
+    } else {
+      toast(rsRegister.EM);
+      navigate("/login");
     }
   };
   let navigate = useNavigate();
@@ -50,6 +60,7 @@ const Register = (props) => {
   const handlePreLogin = () => {
     navigate("/Login");
   };
+
   useEffect(() => {
     // axios.get("http://localhost:8001/api/v1/test-api").then((data) => {
     //   console.log(">>>check data", data);
@@ -112,11 +123,6 @@ const Register = (props) => {
             </div>
             <div class="input-box">
               <input
-                // className={
-                //   checkValidInput.isValidPassword
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
                 type={hideEyes.password}
                 placeholder="password"
                 required
@@ -128,12 +134,7 @@ const Register = (props) => {
             </div>
             <div class="input-box">
               <input
-                // className={
-                //   checkValidInput.isValidConFirmPassword
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type="text"
+                type={hideEyes.password}
                 placeholder="Re-enter password"
                 required
                 value={comfirmPassword}

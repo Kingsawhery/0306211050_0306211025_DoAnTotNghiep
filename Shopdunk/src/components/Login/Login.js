@@ -45,15 +45,15 @@ const Login = (props) => {
     }
     const response = await loginServices(value, password);
     console.log(response);
-    if (response.EC == 0) {
-      toast.success(response.message);
-      const dataSaveLocal = {
-        id: response.user.id,
-        name: response.user.username,
-        phone: response.user.phone,
-        email: response.user.email,
-      };
-      localStorage.setItem("user", JSON.stringify(dataSaveLocal));
+    if (response.data.data.EC == 0) {
+      toast.success(response.data.data.message);
+      // const dataSaveLocal = {
+      //   id: response.user.id,
+      //   name: response.user.username,
+      //   phone: response.user.phone,
+      //   email: response.user.email,
+      // };
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
       navigate("/");
     } else {
       toast.error("Login fail!");
@@ -109,8 +109,8 @@ const Login = (props) => {
               <GoogleOAuthProvider clientId="893391151246-qbd3i6uctc7guvur5etsa4s7l963jakc.apps.googleusercontent.com">
                 <LoginGG
                   onGet={(response) => {
-                    console.log(response);
-                    navigate("/users");
+                    localStorage.setItem("user", JSON.stringify(response));
+                    navigate("/../");
                   }} //Luu data vo localstorage
                 />
               </GoogleOAuthProvider>
@@ -121,7 +121,7 @@ const Login = (props) => {
                 handleLogin();
               }}
               name="btn"
-              className="mt-2"
+              className="mt-2 text-black font-bold"
             >
               Login
             </button>

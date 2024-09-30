@@ -214,8 +214,8 @@ const handleLoginGG = async (req, res) => {
   }
 
   const tk = await userService.random(200);
-  console.log(tk);
-  await db.User.update(
+
+  const user = await db.User.update(
     {
       token: tk,
     },
@@ -238,6 +238,7 @@ const handleLoginGG = async (req, res) => {
     message: "Login gg success",
   });
 };
+
 const handleOTP = (req, res) => {
   return res.status(200).json({
     message: "Send otp success!",
