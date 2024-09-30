@@ -80,6 +80,24 @@ const getUser = async (req, res) => {
   }
 };
 
+const handleGetInfoUser = async (req, res) => {
+  const id = req.user.id;
+  let user = await userServices.getUserById(id);
+  try {
+    return res.status(200).json({
+      data: {
+        data: user,
+        status: 200,
+        message: "lấy thông tin user thành công",
+      },
+    });
+  } catch (error) {
+    return res.status(200).json({
+      status: 200,
+      message: "Đã xảy ra lỗi",
+    });
+  }
+};
 const handleUpdateUser = async (req, res) => {
   try {
     let { email, username, id } = await req.body;
@@ -109,4 +127,5 @@ module.exports = {
   handleDeleteUser,
   getUser,
   handleUpdateUser,
+  handleGetInfoUser,
 };

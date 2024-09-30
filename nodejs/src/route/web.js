@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import cartController from "../controllers/cartController";
 import apiController from "../controllers/apiController";
+import homeController from "../controllers/homeController";
 import { verify } from "../function/verify";
 import { checkToken } from "../middleware/checkToken";
 const cookieParser = require("cookie-parser");
@@ -54,6 +55,7 @@ import {
   handleUserPage,
   handleDeleteUser,
   getUser,
+  handleGetInfoUser,
   handleUpdateUser,
 } from "../controllers/homeController";
 
@@ -164,6 +166,10 @@ let apiWebRoutes = (app) => {
   // router.post("/cart-add", cartController.handleAddCart);
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
+
+  // ROUTE dùng lấy thông tin user
+  router.post("/get-info-user", checkToken, homeController.handleGetInfoUser);
+
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

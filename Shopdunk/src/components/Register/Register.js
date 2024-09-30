@@ -61,11 +61,6 @@ const Register = (props) => {
     navigate("/Login");
   };
 
-  useEffect(() => {
-    // axios.get("http://localhost:8001/api/v1/test-api").then((data) => {
-    //   console.log(">>>check data", data);
-    // }, []);
-  });
   return (
     <div>
       <div class="body">

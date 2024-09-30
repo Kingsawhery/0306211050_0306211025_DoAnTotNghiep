@@ -8,8 +8,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGG from "../LoginGG";
 import Cookies from "js-cookie";
+import { useUser } from "../../Context/UserContext";
 
 const Login = (props) => {
+  const { user, setUser } = useUser();
   let navigate = useNavigate();
   const dataUser = localStorage.getItem("user");
   const [data, setData] = useState({
@@ -25,7 +27,6 @@ const Login = (props) => {
   //     navigate("/");
   //   }
   // }, []);
-
   const [value, setValue] = useState("");
   const [password, setPassword] = useState("");
   const [objInput, setObjInput] = useState(defaultObjInput);
@@ -47,12 +48,10 @@ const Login = (props) => {
     console.log(response);
     if (response.data.data.EC == 0) {
       toast.success(response.data.data.message);
-      // const dataSaveLocal = {
-      //   id: response.user.id,
-      //   name: response.user.username,
-      //   phone: response.user.phone,
-      //   email: response.user.email,
-      // };
+      setUser({
+        ...response.data.data.user,
+        isLoggedIn: true,
+      });
       localStorage.setItem("user", JSON.stringify(response.data.data.user));
       navigate("/");
     } else {

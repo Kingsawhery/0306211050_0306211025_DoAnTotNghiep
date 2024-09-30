@@ -1,11 +1,15 @@
 import "../Cart/Cart.css";
+import { useUser } from "../../Context/UserContext";
+
 export default function Cart() {
+  const { user } = useUser();
+
   return (
     <>
       <div className="main">
         <div className="container">
           <div className="row d-flex">
-            <div className="col-8 mt-3 ">
+            <div className="col-8 mt-3">
               <div className="invoide">
                 <div className="invoide-card">
                   <table className="table table-borderless">
@@ -137,9 +141,9 @@ export default function Cart() {
                               </div>
                             </div>
                             <div className="content-card-btn">
-                              <button className="content-card-btn-buy">
+                              {/* {user.isLoggedIn ? <button className="content-card-btn-buy">
                                 Mua ngay
-                              </button>
+                              </button>: } */}
                             </div>
                           </div>
                         </div>

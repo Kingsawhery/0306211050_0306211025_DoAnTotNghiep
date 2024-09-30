@@ -23,40 +23,40 @@ import User from "./view/pages/Admin/Management/User/User";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryPage from "./view/pages/User/CategoryPage/CategoryPage";
-
+import { UserProvider } from "../src/Context/UserContext";
+import AuthM from "./middlewares/Auth";
 const App = () => {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/product-detail" element={<ProductDetail />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="post/:slug/:id" element={<PostPage />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="/category/:name" element={<CategoryPage />} />
-          </Route>
-          {/* Admin route */}
-          <Route path="/admin" element={<LayoutAdmin />}>
-            <Route index element={<AdminPage />} />
-            <Route path="thong-ke" element={<AdminPage />} />
-            <Route path="danh-muc" element={<Category />} />
-            <Route path="tin-tuc" element={<Post />} />
-            <Route path="create-product" element={<CreateNewProduct />} />
-            <Route path="user" element={<User />}></Route>
-          </Route>
-        </Routes>
-        <Routes>
-          {<Route path="/login" element={<Login />}></Route>}
-
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-          <Route path="/otp" element={<InputOtp />}></Route>
-
-          {/* <Route path="/noPage" element={noPage}></Route> */}
-        </Routes>
-      </Router>
+      <UserProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/product-detail" element={<ProductDetail />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="post/:slug/:id" element={<PostPage />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="/category/:name" element={<CategoryPage />} />
+            </Route>
+            {/* Admin route */}
+            <Route path="/admin" element={<LayoutAdmin />}>
+              <Route index element={<AdminPage />} />
+              <Route path="thong-ke" element={<AdminPage />} />
+              <Route path="danh-muc" element={<Category />} />
+              <Route path="tin-tuc" element={<Post />} />
+              <Route path="create-product" element={<CreateNewProduct />} />
+              <Route path="user" element={<User />}></Route>
+            </Route>
+          </Routes>
+          <Routes element={<AuthM.notLoggedIn />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/otp" element={<InputOtp />} />
+          </Routes>
+        </Router>
+      </UserProvider>
       <ToastContainer
         position="top-right"
         autoClose={5000}
