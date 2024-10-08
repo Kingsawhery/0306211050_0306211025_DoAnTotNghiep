@@ -1,54 +1,59 @@
 import React, { Component, useEffect, useState } from "react";
 import "./Header.scss";
-import { Link } from "react-router-dom";
-import {getAllCategories} from "../../services/categoryService";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllCategories } from "../../services/categoryService";
+import { Logout, Login } from "@mui/icons-material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const Header = () => {
+  const user = localStorage.getItem("user");
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  useEffect(()=>{
+  useEffect(() => {
     getListCategories();
-  },[])
-  const getListCategories = async ()=>{
-      const results = await getAllCategories()
-      if(results){
-        setCategories(results)
-      }
-  }
-
-    return (
-      <div id="header">
-        <div
-          className="container p-0">
-          <div className="container d-flex header" style={{ height: 75 }}>
+  }, []);
+  const getListCategories = async () => {
+    const results = await getAllCategories();
+    if (results) {
+      setCategories(results);
+    }
+  };
+  const handleLogout = () => {
+    if (user) {
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
+  };
+  return (
+    <div id="header">
+      <div className="container p-0">
+        <div className="container d-flex header" style={{ height: 75 }}>
           <Link to="/">
-          <div className="mt-3 header-logo">
+            <div className="mt-3 header-logo">
               <img
-  
                 src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
                 alt="logo"
               />
             </div>
           </Link>
-            
-            <div className="categories" style={{ position: "relative" }}>
-            {categories && categories.length > 0 && 
-            (<ul className="ul-category">
-              {categories.map((item,index)=>{
-                return(
-                  <Link to={`/category/${item.name}`}>
-                  <li className="nav">
-                  <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
-                    {item.name}
-                  </a>
-                </li>
-                  </Link>
-                 
-                )
-              })}
-            </ul>)
-            }
 
-            </div>
-            <div className="action">
+          <div className="categories" style={{ position: "relative" }}>
+            {categories && categories.length > 0 && (
+              <ul className="ul-category">
+                {categories.map((item, index) => {
+                  return (
+                    <Link to={`/category/${item.name}`}>
+                      <li className="nav">
+                        <a style={{ color: "#F4F4F4", fontSize: 15 }} href>
+                          {item.name}
+                        </a>
+                      </li>
+                    </Link>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+          <div className="action">
             <div
               className="tool"
               style={{
@@ -66,7 +71,8 @@ const Header = () => {
                 />
               </div>
             </div>
-            <div
+            <Link
+              to="/cart"
               className="bag"
               style={{
                 width: 14,
@@ -80,7 +86,7 @@ const Header = () => {
                 style={{ color: "#d2d2d7", fontSize: 23 }}
                 className="fas fa-shopping-bag"
               />
-            </div>
+            </Link>
             <div
               className="bag"
               style={{
@@ -91,17 +97,29 @@ const Header = () => {
                 cursor: "pointer",
               }}
             >
-              <i
-                style={{ color: "#d2d2d7", fontSize: 23 }}
-                className="fas fa-user"
-              />
+             {user ? <AccountCircleIcon/> :  <Login className="logo-login" onClick={()=>{
+                navigate("/login")
+              }}/>} 
             </div>
-            </div>
-          
           </div>
+          {user && JSON.parse(localStorage.getItem("user")).name && (
+            <div className="div-name">
+              <h3>Xin chào {JSON.parse(localStorage.getItem("user")).name}!</h3>
+              <div className="logout">
+                {user && (
+                  <Logout
+                    className="logo"
+                    fontSize="medium"
+                    onClick={handleLogout}
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+};
 
 export default Header;

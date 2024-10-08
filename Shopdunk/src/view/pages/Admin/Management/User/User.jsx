@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   getUsers,
-  PostUser,
+  postUser,
   userServices,
 } from "../../../../../services/userServices";
 import { toast } from "react-toastify";
@@ -11,6 +11,12 @@ export default function User() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [dataUser, setDataUser] = useState({
+    email:"",
+    phone:"",
+    password:"",
+
+  })
   useEffect(() => {
     getListUsers();
   }, [page]);
@@ -32,7 +38,7 @@ export default function User() {
     }
   };
   const handleAdd = async () => {
-    await PostUser();
+    await postUser();
   };
   return (
     <>
@@ -64,7 +70,7 @@ export default function User() {
                         <td>{user.email}</td>
                         <td>{user.phone}</td>
                         <td>{user.username}</td>
-                        <td onClick={handleAdd()}>Thêm</td>
+                        <td>{user.role}</td>
                       </tr>
                     );
                   })

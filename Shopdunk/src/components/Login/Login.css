@@ -11,9 +11,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #fff;
   min-height: 100vh;
-  background: url(/public/assets/th.jpg), no-repeat;
   background-size: cover;
+  .title{
+    color:#333;
+  }
 }
 
 .section {
@@ -57,7 +60,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 14.5px;
-  margin: -15px 0 15px;
+  margin: 20px 0;
 }
 .remember-forgot label input {
   color: #fff;

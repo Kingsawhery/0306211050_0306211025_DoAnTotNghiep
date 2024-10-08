@@ -99,6 +99,22 @@ const handleLogin = async (req, res) => {
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
   }
 };
+const transporter = nodemailer.createTransport({
+  // host: "smtp.gmail.com",
+  service: "gmail",
+  port: 587,
+  secure: false,
+  secureConnection: false,
+  // debug: true,
+  // logger: truexpiresAt, data);
+  auth: {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: true,
+  },
+});
 
 const handleSendEmail = async (req, res) => {
   const checkemail = await loginRegisterService.checkEmail(req.body.email);

@@ -1,9 +1,15 @@
 import "./ProductRow.scss";
 import ProductCard from "../ProductCard/ProductCard";
 import Slider from "react-slick";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 import { useEffect, useState } from "react";
 import { getProductByCategory } from "../../../services/product";
+
 const ProductRow = (props) => {
+  
   const { category } = props;
   const [dataChange, setDataChange] = useState({
     id: 1,

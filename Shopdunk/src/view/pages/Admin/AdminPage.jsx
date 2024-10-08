@@ -7,7 +7,6 @@ const AdminPage = () =>{
         <meta charSet="utf-8" />
         <title>Dashboard</title>
       </Helmet>
-        <h1>ccc</h1>
        </> 
     )
 }

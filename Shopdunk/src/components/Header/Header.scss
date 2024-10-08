@@ -39,7 +39,35 @@ li.nav:hover {
 }
 .action{
   display: flex;
+  margin-right: 12px;
 }
 .ul-category{
   display: flex;
+}
+.div-name{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h3{
+    font-size: 16px;
+    font-weight: bold;
+    color:#cbc8c8;
+  }
+}
+.logout{
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-self: center;
+  .logo{
+    position: absolute;
+    right: -40px;
+    top: -15px;
+    color:#ffffff;
+    cursor: pointer;
+  }
+}
+.logo-login{
+  color:#ffffff;
+  cursor: pointer;
 }

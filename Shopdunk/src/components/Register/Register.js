@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { userServices } from "../../services/userServices";
-
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 import "./Register.css";
 import {
   validateEmail,
@@ -13,15 +16,23 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 const Register = (props) => {
-  const [email, setEmail] = useState("");
-  const [hideEyes, setHideEyes] = useState({
-    password:"password",
-    rePassword:"password"
+  const user = localStorage.getItem("user");
+  useEffect(()=>{
+    if(user){
+      navigate("/");
+    }
   })
-  const [phone, setPhone] = useState("");
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [comfirmPassword, setComfirmPassword] = useState("");
+  const [hideEyes, setHideEyes] = useState({
+    password: false,
+    rePassword: false,
+  });
+  const [dataRegister, setDataRegister] = useState({
+    email: "",
+    username: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: "",
+  });
   // const defaultValidInput = {
   //   isValidEmail: true,
   //   isValidName: true,
@@ -31,18 +42,23 @@ const Register = (props) => {
   // };
   // const [checkValidInput, setCheckValidInput] = useState(defaultValidInput);
   const handleDataUser = async () => {
-    const check = [
-      validateEmail(email),
-      validateUserName(username),
-      validatePhone(phone),
-      validatePassword(password, comfirmPassword),
-    ];
-    const rsRegister = await userServices(email, username, phone, password,"user");
-    if(rsRegister.EC !== 0){
-      toast(rsRegister.EM)
+    if (dataRegister.password === dataRegister.confirmPassword) {
+      const check = [
+        validateEmail(dataRegister.email),
+        validateUserName(dataRegister.username),
+        validatePhone(dataRegister.phoneNumber),
+      ];
+      console.log(check);
+      const rsRegister = await userServices(dataRegister.email, dataRegister.username, dataRegister.phone, dataRegister.password,"user");
+      if(rsRegister.EC !== 0){
+        toast(rsRegister.EM)
+      }else{
+        toast(rsRegister.EM)
+        navigate("/login")
+      }
     }else{
-      toast(rsRegister.EM)
-      navigate("/login")
+      console.log(dataRegister.password, " ", dataRegister.confirmPassword);
+      toast.error("Mật khẩu không trùng khớp!")
     }
   };
   let navigate = useNavigate();
@@ -55,100 +71,84 @@ const Register = (props) => {
     //   console.log(">>>check data", data);
     // }, []);
   });
+  const hanldeSetValue = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setDataRegister({ ...dataRegister, [name]: value });
+    console.log(dataRegister);
+  };
   return (
     <div>
       <div class="body">
         <div class="section">
           <from action="#">
-            <h1>Regiter</h1>
-            <div class="input-box">
-              <input
-                // className={
-                //   checkValidInput.isValidEmail
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type="text"
-                placeholder="email"
-                required
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                }}
-              />
-            </div>
-
-            <div class="input-box">
-              <input
-                // className={
-                //   checkValidInput.isValidName
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type="text"
-                placeholder="username"
-                required
-                value={username}
-                onChange={(event) => {
-                  setUserName(event.target.value);
-                }}
-              />
-            </div>
-            <div class="input-box">
-              <input
-                // className={
-                //   checkValidInput.isValidPhone
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type="text"
-                placeholder="phone"
-                required
-                value={phone}
-                onChange={(event) => {
-                  setPhone(event.target.value);
-                }}
-              />
-            </div>
-            <div class="input-box">
-              <input
-                // className={
-                //   checkValidInput.isValidPassword
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type={hideEyes.password}
-                placeholder="password"
-                required
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                }}
-              />
-            </div>
-            <div class="input-box">
-              <input
-                // className={
-                //   checkValidInput.isValidConFirmPassword
-                //     ? "form-control"
-                //     : "form-control is-invalid"
-                // }
-                type="text"
-                placeholder="Re-enter password"
-                required
-                value={comfirmPassword}
-                onChange={(event) => {
-                  setComfirmPassword(event.target.value);
-                }}
-              />
-            </div>
-            <div class="remember-forgot">
-              <lable>
-                <input className="mx-1" type="checkbox" />I agree to the terms &
-                conditions
-              </lable>
-            </div>
-            <button type="button" name="btn" onClick={() => handleDataUser()}>
+            <h1 className="title">Regiter</h1>
+            <TextField              
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Email"
+              type="text"
+              name="email"
+              fullWidth
+              value={dataRegister.email}
+              onChange={hanldeSetValue}
+            />
+            <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Username"
+              type="text"
+              name="username"
+              fullWidth
+              value={dataRegister.username}
+              onChange={hanldeSetValue}
+            />
+          
+          <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Số điện thoại"
+              type="text"
+              name="phoneNumber"
+              fullWidth
+              value={dataRegister.phoneNumber}
+              onChange={hanldeSetValue}
+            />
+            
+            <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Password"
+              type="password"
+              name="password"
+              fullWidth
+              value={dataRegister.password}
+              onChange={hanldeSetValue}
+            />
+            
+            <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Re-Password"
+              type="password"
+              name="confirmPassword"
+              fullWidth
+              value={dataRegister.confirmPassword}
+              onChange={hanldeSetValue}
+            />
+            
+        
+            <button
+              type="button"
+              className="sub-title"
+              name="btn"
+              onClick={() => handleDataUser()}
+            >
               Register
             </button>
             <div class="register-link">

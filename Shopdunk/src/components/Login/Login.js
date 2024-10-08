@@ -8,9 +8,20 @@ import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGG from "../LoginGG";
 import Cookies from "js-cookie";
+import { Box } from "@mui/material";
+import {TextField} from "@mui/material";
 
 const Login = (props) => {
   let navigate = useNavigate();
+  useEffect(()=>{
+    const user = localStorage.getItem("user");
+    if(user){
+      console.log(
+      user
+      );
+      navigate("/");
+    }
+  },[])
   const dataUser = localStorage.getItem("user");
   const [data, setData] = useState({
     email: "",
@@ -26,32 +37,33 @@ const Login = (props) => {
   //   }
   // }, []);
 
-  const [value, setValue] = useState("");
   const [password, setPassword] = useState("");
-  const [objInput, setObjInput] = useState(defaultObjInput);
   const handleCreatNewAccount = () => {
     navigate("/Register");
   };
-
+const hanldeSetValue = (e) =>{
+  const name = e.target.name;
+  const value = e.target.value;
+  setData({...data,[name]: value});
+}
   const handleLogin = async () => {
-    setObjInput(defaultObjInput);
-    if (!value) {
-      setObjInput({ ...defaultObjInput, isValue: false });
+    if (!data.email) {
       toast.error("Enter email/phone or Password");
       return;
-    } else if (!password) {
-      setObjInput({ ...defaultObjInput, isPassword: false });
+    } else if (!data.password) {
       toast.error("Enter email/phone or Password");
+      return;
     }
-    const response = await loginServices(value, password);
-    console.log(response);
-    if (response.EC == 0) {
-      toast.success(response.message);
+    const response = await loginServices(data.email, data.password);
+    console.log(response.data.data.EC);
+    if (response.data.data.EC == 0 && response.data.data.message == "Login success") {
+      toast.success(response.data.message);
       const dataSaveLocal = {
-        id: response.user.id,
-        name: response.user.username,
-        phone: response.user.phone,
-        email: response.user.email,
+        id: response.data.data.user.id,
+        name: response.data.data.user.username,
+        phone: response.data.data.user.phone,
+        email: response.data.data.user.email,
+        token: response.data.data.user.token
       };
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
       navigate("/");
@@ -65,39 +77,29 @@ const Login = (props) => {
       <div className="body p-2">
         <div className="section">
           <div>
-            <h1>Login</h1>
-            <div className="input-box">
-              <input
-                className={
-                  objInput.isValue ? "form-control" : "is-invalid form-control"
-                }
-                name="email"
-                type="text"
-                placeholder="Email..."
-                required
-                value={value}
-                onChange={(event) => {
-                  setValue(event.target.value);
-                }}
-              />
-            </div>
-            <div className="input-box">
-              <input
-                className={
-                  objInput.isPassword
-                    ? "form-control"
-                    : "is-invalid form-control"
-                }
-                name="password"
-                type="password"
-                placeholder="Password..."
-                required
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                }}
-              />
-            </div>
+            <h1 className="title">Login</h1>
+            <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Email"
+              type="text"
+              name="email"
+              fullWidth
+              value={data.email}
+              onChange={hanldeSetValue}
+            />
+           <TextField
+              className="text-field"
+              required
+              id="outlined-required"
+              label="Password"
+              type="password"
+              name="password"
+              fullWidth
+              value={data.password}
+              onChange={hanldeSetValue}
+            />
             <div className="remember-forgot">
               <label>
                 <input className="mx-1" type="checkbox" />

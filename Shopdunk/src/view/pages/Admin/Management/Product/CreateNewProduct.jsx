@@ -69,18 +69,20 @@ const CreateNewProduct = () => {
   }
   const handleImageDemo = (e) =>{
     try{
-      const file = e.target.files[0];
-      console.log(e.target.files[0].name)
-      if (e.target.files[0]) {
-        setData({
-          ...data,
-          image: e.target.files[0].name,
-          fileImage:file
-        });
+      const exe = e.target.files[0].name.split(".")[e.target.files[0].name.split(".").length - 1]
+
+      if(exe === "png" || exe === "jpeg" || exe === "jpg" ){
+        if (e.target.files[0]) {
+          setData({
+            ...data,
+            image: e.target.files[0].name,
+            fileImage:e.target.files[0]
+          });
+        }
+        let preview = URL.createObjectURL(e.target.files[0]);
+        setImageDemo(preview);
       }
-      console.log(file);
-      let preview = URL.createObjectURL(file);
-      setImageDemo(preview);
+      
      
     }catch(e){
       console.log(e);

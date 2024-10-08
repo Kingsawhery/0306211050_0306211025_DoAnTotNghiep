@@ -20,7 +20,7 @@ const userServices = async(email, username, phone, password,role) => {
 const getUsers = (page) => {
   return axios.get(`/api/users?page=${page}`);
 };
-const PostUser = () => {
+const postUser = () => {
   return axios.post(`/api/users/create-user`);
 };
 const SendEmailTakeOTP = async (email) => {
@@ -70,7 +70,6 @@ const loginServices = async (value, password) => {
         withCredentials: true,
       }
     );
-    console.log(res);
     return res;
   } catch (e) {
     console.log(e); // Xử lý lỗi
@@ -106,5 +105,5 @@ export {
   OTP,
   verifyOtp,
   getUsers,
-  PostUser,
+  postUser,
 };

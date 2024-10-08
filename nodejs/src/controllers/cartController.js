@@ -10,7 +10,7 @@ const handleGetCart = async (req, res) => {
       },
     ],
   });
-  console.log(carts.carts);
+  carts.carts.map((i) => console.log(i.dataValues.sub_productId));
 };
 
 const handleAddCart = async (req, res) => {

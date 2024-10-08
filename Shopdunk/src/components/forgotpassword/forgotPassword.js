@@ -1,89 +1,64 @@
 import { useState } from "react";
-import {
-  SendEmailTakeOTP,
-  ResetPassword,
-  OTP,
-} from "../../services/userServices";
-import { useNavigate } from "react-router-dom";
-import _ from "lodash";
-import TimeExpired from "./timeExpired";
-import InputOtp from "./inputOtp";
-import { toast } from "react-toastify";
+import axios from "axios";
 
 function ForgotPassword() {
-  let navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [code, setCode] = useState("");
-  const [showTime, setShowTime] = useState(false);
-  const [isShowPopupOTP, setIsShowPopupOTP] = useState(false);
-  const [resetOTP, setResetOTP] = useState();
-  const [endTime, setEndTime] = useState(false);
-  const [time, setTime] = useState();
-  let date = new Date();
-  let timeCurrent = date.getTime();
-
-  const handleForgot = _.debounce(async () => {
-    if (email === "") {
-      return toast.error("Plesea your enter email!");
-    } else {
-      const takeEmail = await SendEmailTakeOTP(email); // gửi mã otp
-
-      if (takeEmail.data.EC === 0) {
-        // setShowTime(true);
-
-        setIsShowPopupOTP(true);
-        if (takeEmail.data.DT.timeExpired) {
-          console.log(timeCurrent + "/" + takeEmail.data.DT.timeExpired);
-
-          if (timeCurrent < takeEmail.data.DT.timeExpired) {
-            // setTime(takeEmail.data.DT.timeExpired - timeCurrent);
-          }
-        }
-        return toast.success("Đã gửi mã OTP");
-      } else {
-        return toast.error("email is not define");
-      }
-    }
-  }, 1000);
-
+  const [email, setEmail] = useState();
+  const [isSent, setIsSent] = useState(false);
   return (
-    <div className="d-flex">
-      <form className="m-auto pt-4">
-        <h2>Forgot Password</h2>
-        <span className="mb-2">
-          Điền email và nhấn Gửi, hệ thống sẽ liên kết dùng cập nhật password
-          mới về email của bạn.
-        </span>
-        <br />
-        <input
-          type="email"
-          name="email"
-          className="px-2 py-1 rounded"
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          required
-        />
-        <button
-          // onClick={handleForgot}
-          type={"submit"}
-          className="py-1 px-2 ms-2 bg-primary text-light"
-        >
-          Lấy mã
-        </button>
-      </form>
-      {isShowPopupOTP && (
-        <>
-          <InputOtp
-            email={email}
-            setShowTime={setShowTime}
-            setResetOTP={setResetOTP}
-            setIsShowPopupOTP={setIsShowPopupOTP}
-          />
-        </>
-      )}
+    <div className="py-4">
+      <div className="container d-flex justify-content-center align-items-center mt-4">
+        <div className="">
+          <h2>Forgot Password</h2>
+          {isSent ? (
+            <p>Check mail đi</p>
+          ) : (
+            <>
+              <span>
+                Nhập email của bạn vào ô bên dưới, chúng tôi sẽ gửi liên kết để
+                cập nhật mật khẩu mới cho bạn.
+              </span>
+              <form
+                method="POST"
+                onSubmit={(e) => {
+                  e.preventDefault();
+
+                  axios
+                    .post("http://localhost:8000/api/forgot-password", {
+                      email: email,
+                    })
+                    .then((res) => {
+                      if (res.status === "success"); // In ra dữ liệu phản hồi
+                      {
+                        setIsSent(true);
+                        return;
+                      }
+
+                      // Sử dụng dữ liệu phản hồi theo nhu cầu
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+              >
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="px-2 py-2 rounded"
+                />
+                <button
+                  type="submit"
+                  className="ms-2 px-2 py-2 rounded btn btn-primary"
+                >
+                  Submit
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

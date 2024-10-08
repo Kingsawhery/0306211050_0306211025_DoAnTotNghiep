@@ -1,38 +1,20 @@
 import db from "../models";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-const saltRounds = bcrypt.genSaltSync(10);
+const saltRounds = 12;
 
 const hashUserPassword = (userPassword) => {
   const hashPassword = bcrypt.hashSync(userPassword, saltRounds); // Băm nhỏ password để mã hóa
   return hashPassword;
 };
 
-const checkEmailAndPhone = async (userEmail, userPhone) => {
-  let user = await db.User.findOne({
-    where: {
-      [Op.or]: {
-        email: { [Op.eq]: userEmail },
-        phone: { [Op.eq]: userPhone },
-      },
-    },
-  });
-  console.log(user);
-  if (user) {
-    return true;
-  }
-  return false;
-};
-
 
 const createRegisterUser = async (rawUser) => {
   try {
     //check email and phone
-    console.log(rawUser);
-    let isEmailAndPhone = await checkEmailAndPhone(
-      rawUser.email,
-      rawUser.phone
-    );
+   const accountExist =  await db.User.findOne({
+      email:rawUser.email
+    })
     if (isEmailAndPhone === true) {
       return {
         EM: "Email and phone is already exist",
@@ -68,11 +50,10 @@ const checkPassword = (inputPassword, hashUserPassword) => {
 };
 
 const handleLoginUser = async (rawUser) => {
-  console.log(rawUser);
   try {
     const user = await db.User.findOne({
       where: {
-        [Op.or]: [{ email: rawUser.value }, { phone: rawUser.value }],
+       email: rawUser.value,
       },
     });
     if (user) {
@@ -80,7 +61,9 @@ const handleLoginUser = async (rawUser) => {
         rawUser.password,
         user.password
       );
+      console.log(passwordSuccess);
       if (passwordSuccess === true) {
+        
         const payload = {
           email: user.email,
           role: user.role,
