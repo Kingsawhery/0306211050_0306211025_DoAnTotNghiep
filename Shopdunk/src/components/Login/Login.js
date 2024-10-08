@@ -55,15 +55,14 @@ const hanldeSetValue = (e) =>{
       return;
     }
     const response = await loginServices(data.email, data.password);
-    console.log(response);
+    console.log(response.data);
     if (response.data.EC == 0 && response.data.EM == "Login success") {
-      toast.success(response.data.EM);
       const dataSaveLocal = {
-        id: response.data.data.user.id,
-        name: response.data.data.user.username,
-        phone: response.data.data.user.phone,
-        email: response.data.data.user.email,
-        token: response.data.data.user.token
+        id: response.data.user.id,
+        name: response.data.user.username,
+        phone: response.data.user.phone,
+        email: response.data.user.email,
+        token: response.data.user.token
       };
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
       navigate("/");

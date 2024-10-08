@@ -82,7 +82,6 @@ const handleLogin = async (req, res) => {
         // EM: data.EM,
         // EC: data.EC,
         // DT: data.DT.user.dataValues,
-        data: {
           user: {
             email: dataUser.email,
             type: dataUser.type,
@@ -91,10 +90,10 @@ const handleLogin = async (req, res) => {
             token: dataUser.token,
             role: dataUser.role,
           },
-          message: "Login success",
+          EM: "Login success",
           EC: 0,
         },
-      });
+      );
   } catch (err) {
     console.log(err);
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
