@@ -226,7 +226,9 @@ const ProductDetailPage = () => {
             </div>
             <div>
               <span className="promotion">
-                {product.price
+                {subProduct && subProduct.price
+                  ? `${subProduct.price.toLocaleString("VN-vi")}VNĐ`
+                  : product.price
                   ? `${product.price.toLocaleString("VN-vi")}VNĐ`
                   : 0}
               </span>

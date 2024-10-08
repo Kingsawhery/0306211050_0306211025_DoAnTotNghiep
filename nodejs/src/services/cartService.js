@@ -37,14 +37,22 @@ let postCart = async (idSubProduct, idUser) => {
           sub_productId: idSubProduct,
         },
       });
+      const subProduct = await db.sub_product.findOne({
+        where: {
+          id: idSubProduct,
+        },
+      });
       if (!check) {
         await db.Cart.create({
           userId: idUser,
           sub_productId: idSubProduct,
+          price: subProduct.price,
           quantity: 1,
         });
       } else {
         check.quantity += 1;
+        check.price = subProduct.price * check.quantity;
+        console.log(subProduct.price, " ", check.quantity);
         await check.save();
       }
       resolve({
