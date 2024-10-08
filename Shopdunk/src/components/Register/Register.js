@@ -29,33 +29,22 @@ const Register = (props) => {
   const [dataRegister, setDataRegister] = useState({
     email: "",
     username: "",
-    phoneNumber: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
-  // const defaultValidInput = {
-  //   isValidEmail: true,
-  //   isValidName: true,
-  //   isValidPhone: true,
-  //   isValidPassword: true,
-  //   isValidConFirmPassword: true,
-  // };
-  // const [checkValidInput, setCheckValidInput] = useState(defaultValidInput);
   const handleDataUser = async () => {
     if (dataRegister.password === dataRegister.confirmPassword) {
-      const check = [
-        validateEmail(dataRegister.email),
-        validateUserName(dataRegister.username),
-        validatePhone(dataRegister.phoneNumber),
-      ];
-      console.log(check);
-      const rsRegister = await userServices(dataRegister.email, dataRegister.username, dataRegister.phone, dataRegister.password,"user");
-      if(rsRegister.EC !== 0){
-        toast(rsRegister.EM)
-      }else{
-        toast(rsRegister.EM)
-        navigate("/login")
+      if(validateEmail(dataRegister.email) && validateUserName(dataRegister.username) && validatePhone(dataRegister.phoneNumber)){
+        const rsRegister = await userServices(dataRegister.email, dataRegister.username, dataRegister.phone, dataRegister.password,"user");
+        if(rsRegister.EC !== 0){
+          toast(rsRegister.EM)
+        }else{
+          toast(rsRegister.EM)
+          navigate("/login")
+        }
       }
+      
     }else{
       console.log(dataRegister.password, " ", dataRegister.confirmPassword);
       toast.error("Mật khẩu không trùng khớp!")
@@ -112,9 +101,9 @@ const Register = (props) => {
               id="outlined-required"
               label="Số điện thoại"
               type="text"
-              name="phoneNumber"
+              name="phone"
               fullWidth
-              value={dataRegister.phoneNumber}
+              value={dataRegister.phone}
               onChange={hanldeSetValue}
             />
             

@@ -24,16 +24,12 @@ export const validateEmail = (email) => {
   return true;
 };
 export const validatePhone = (phone) => {
-  let validPhone =
-    /^(?:(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3}))?$/;
-  if (!phone) {
-    toast.error("Phone enter required!");
-    return false;
-  } else if (!validPhone.test(phone)) {
-    toast.error("Please provide valid phone number");
-    return false;
-  }
-  return true;
+  let validPhone = /^(84|0)(3|5|7|8|9)([0-9]{8})$/;
+  console.log(validPhone.test(phone));
+  if (validPhone.test(phone) && phone) {
+    console.log(validPhone.test(phone));
+    return true;
+  }return false;
 };
 export const validatePassword = (password, comfirmPassword) => {
   if (!password) {

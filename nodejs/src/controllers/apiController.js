@@ -17,6 +17,7 @@ const testApi = (req, res) => {
 
 const handleRegister = async (req, res) => {
   try {
+    console.log(req.body);
     if (!req.body.email || !req.body.phone || !req.body.password) {
       return res.status(200).json({
         EM: "Missing required parameter",

@@ -13,11 +13,13 @@ const createRegisterUser = async (rawUser) => {
   try {
     //check email and phone
    const accountExist =  await db.User.findOne({
+    where:{
       email:rawUser.email
+    }
     })
-    if (isEmailAndPhone === true) {
+    if (accountExist) {
       return {
-        EM: "Email and phone is already exist",
+        EM: "Email is already exist",
         EC: 1,
       };
     } else {
