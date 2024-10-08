@@ -1,14 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../Cart/Cart.css";
 import axios from "axios";
-export default function Cart() {
+import { apiShowCart } from "../../services/cartService";
+import { useNavigate } from "react-router-dom";
+const Cart = () => {
+  const [listProductInCart, setProductInCart] = useState([]);
+  const user = localStorage.getItem("user");
+  const navigate = useNavigate();
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/cart", { withCredentials: true })
-      .then((res) => {
-        console.log(res);
-      });
+    if (!localStorage.getItem("user")) {
+      navigate("/login");
+    }
+  });
+  useEffect(() => {
+    handleGetData();
   }, []);
+  const handleGetData = async () => {
+    if (JSON.parse(user).id && JSON.parse(user).token) {
+      const data = {
+        userId: JSON.parse(user).id,
+        token: JSON.parse(user).token,
+      };
+      const dataRs = await apiShowCart(data);
+      console.log(dataRs);
+      if (dataRs) {
+        setProductInCart(dataRs.data);
+      }
+    }
+  };
   return (
     <>
       <div className="main">
@@ -27,39 +46,61 @@ export default function Cart() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>
-                          <img
-                            src="https://shopdunk.com/images/thumbs/0024431_iphone-15-128gb_80.png"
-                            alt="iPhone 15"
-                          />
-                        </td>
-                        <td>
-                          <div className="name">
-                            <strong>iPhone 15 128GB</strong>
-                            <p className="invoide-color m-0">Màu sắc: Đen</p>
-                            <a className="text-primary" href="">
-                              Sửa
-                            </a>
-                          </div>
-                        </td>
-                        <td>
-                          <span>19.890.000₫</span>
-                        </td>
-                        <td>
-                          <div className="quantity">
-                            <i className="fas fa-minus"></i>
-                            <input
-                              className="input_quantity"
-                              name="number-quantity"
-                              type="text"
-                              value="4"
-                            />
-                            <i className="fas fa-plus"></i>
-                            <i className="fas fa-trash"></i>
-                          </div>
-                        </td>
-                      </tr>
+                      {listProductInCart &&
+                        listProductInCart.length > 0 &&
+                        listProductInCart.map((item, index) => {
+                          return (
+                            <tr>
+                              <td>
+                                <img
+                                  // `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                                  src={
+                                    item.sub_product.product_detail
+                                      .product_detail_images[0].image
+                                      ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
+                                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                                  }
+                                  alt="iPhone 15"
+                                />
+                              </td>
+                              <td>
+                                <div className="name">
+                                  <strong>{item.sub_product.name}</strong>
+                                  <p className="invoide-color m-0">
+                                    Phân loại:{" "}
+                                    {item.sub_product.type_classify_details.map(
+                                      (item, index) => " " + item.name
+                                    )}
+                                  </p>
+                                  <a className="text-primary" href="">
+                                    Sửa
+                                  </a>
+                                </div>
+                              </td>
+                              <td>
+                                <span>
+                                  {item.price
+                                    ? item.price.toLocaleString("VN-vi")
+                                    : 0}
+                                  VNĐ
+                                </span>
+                              </td>
+                              <td>
+                                <div className="quantity">
+                                  <i className="fas fa-minus"></i>
+                                  <input
+                                    className="input_quantity"
+                                    name="number-quantity"
+                                    type="text"
+                                    value="4"
+                                  />
+                                  <i className="fas fa-plus"></i>
+                                  <i className="fas fa-trash"></i>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
@@ -373,4 +414,5 @@ export default function Cart() {
       </div>
     </>
   );
-}
+};
+export default Cart;

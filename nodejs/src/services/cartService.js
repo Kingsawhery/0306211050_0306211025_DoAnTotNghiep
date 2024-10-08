@@ -1,5 +1,48 @@
+import { raw } from "mysql2";
 import db from "../models/index";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
+import sub_product from "../models/sub_product";
+let getCart = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const listProductCart = await db.Cart.findAll({
+        where: [
+          {
+            userId: id,
+          },
+        ],
+        include: [
+          {
+            model: db.sub_product,
+            include: [
+              {
+                model: db.product_detail,
+                include: [
+                  {
+                    model: db.product_detail_image,
+                    limit: 1,
+                  },
+                  {
+                    model: db.product,
+                    include: [
+                      {
+                        model: db.sub_category,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                model: db.type_classify_detail,
+              },
+            ],
+          },
+        ],
+      });
+      resolve(listProductCart);
+    } catch (e) {}
+  });
+};
 let postCart = async (idSubProduct, idUser) => {
   return new Promise(async (resolve, reject) => {
     // try {
@@ -66,4 +109,5 @@ let postCart = async (idSubProduct, idUser) => {
 };
 module.exports = {
   postCart,
+  getCart,
 };

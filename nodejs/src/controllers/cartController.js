@@ -1,17 +1,11 @@
 import db from "../models";
-import { postCart } from "../services/cartService";
+import { postCart, getCart } from "../services/cartService";
 const handleGetCart = async (req, res) => {
-  const id = req.user.id;
-
-  const carts = await db.User.findByPk(id, {
-    include: [
-      {
-        model: db.Cart,
-        as: "carts", // Tên alias cho mối quan hệ, nếu có
-      },
-    ],
-  });
-  carts.carts.map((i) => console.log(i.dataValues.sub_productId));
+  const id = req.query.userId;
+  const data = await getCart(req.query.userId);
+  if (data) {
+    res.status(200).json(data);
+  }
 };
 
 const handleAddCart = async (req, res) => {

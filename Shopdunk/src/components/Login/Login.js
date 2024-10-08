@@ -9,19 +9,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGG from "../LoginGG";
 import Cookies from "js-cookie";
 import { Box } from "@mui/material";
-import {TextField} from "@mui/material";
+import { TextField } from "@mui/material";
 
 const Login = (props) => {
   let navigate = useNavigate();
-  useEffect(()=>{
-    const user = localStorage.getItem("user");
-    if(user){
-      console.log(
-      user
-      );
-      navigate("/");
-    }
-  },[])
+
   const dataUser = localStorage.getItem("user");
   const [data, setData] = useState({
     email: "",
@@ -41,11 +33,11 @@ const Login = (props) => {
   const handleCreatNewAccount = () => {
     navigate("/Register");
   };
-const hanldeSetValue = (e) =>{
-  const name = e.target.name;
-  const value = e.target.value;
-  setData({...data,[name]: value});
-}
+  const hanldeSetValue = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setData({ ...data, [name]: value });
+  };
   const handleLogin = async () => {
     if (!data.email) {
       toast.error("Enter email/phone or Password");
@@ -62,11 +54,12 @@ const hanldeSetValue = (e) =>{
         name: response.data.user.username,
         phone: response.data.user.phone,
         email: response.data.user.email,
-        token: response.data.user.token
+        token: response.data.user.token,
       };
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
+      window.location.reload();
       navigate("/");
-    } else{
+    } else {
       toast.error("Account is not define");
     }
   };
@@ -88,7 +81,7 @@ const hanldeSetValue = (e) =>{
               value={data.email}
               onChange={hanldeSetValue}
             />
-           <TextField
+            <TextField
               className="text-field"
               required
               id="outlined-required"

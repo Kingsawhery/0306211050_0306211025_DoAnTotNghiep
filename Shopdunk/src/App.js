@@ -24,8 +24,8 @@ import NotFoundPage from "./components/NoPage/NotFoundPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryPage from "./view/pages/User/CategoryPage/CategoryPage";
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const App = () => {
   const user = localStorage.getItem("user");
 
@@ -38,15 +38,23 @@ const App = () => {
             <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="post/:slug/:id" element={<PostPage />} />
-            <Route path="cart" element={<Cart />} />
             <Route path="/category/:name" element={<CategoryPage />} />
-            {!user && <>
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/register" element={<Register />}></Route>
-            <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-            <Route path="/otp" element={<InputOtp />}></Route>
-            </>}
-            
+            {user && (
+              <>
+                <Route path="/cart" element={<Cart />} />
+              </>
+            )}
+            {!user && (
+              <>
+                <Route path="/login" element={<Login />}></Route>
+                <Route path="/register" element={<Register />}></Route>
+                <Route
+                  path="/forgot-password"
+                  element={<ForgotPassword />}
+                ></Route>
+                <Route path="/otp" element={<InputOtp />}></Route>
+              </>
+            )}
           </Route>
           {/* Admin route */}
           <Route path="/admin" element={<LayoutAdmin />}>
@@ -57,7 +65,7 @@ const App = () => {
             <Route path="create-product" element={<CreateNewProduct />} />
             <Route path="user" element={<User />}></Route>
           </Route>
-          <Route path="*" element={<NotFoundPage/>}/>
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
       <ToastContainer

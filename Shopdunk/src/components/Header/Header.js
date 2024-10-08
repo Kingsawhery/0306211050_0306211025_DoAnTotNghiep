@@ -3,7 +3,7 @@ import "./Header.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { getAllCategories } from "../../services/categoryService";
 import { Logout, Login } from "@mui/icons-material";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 const Header = () => {
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Header = () => {
   const handleLogout = () => {
     if (user) {
       localStorage.removeItem("user");
-      navigate("/login");
+      window.location.reload();
     }
   };
   return (
@@ -97,9 +97,13 @@ const Header = () => {
                 cursor: "pointer",
               }}
             >
-             {user ? <AccountCircleIcon/> :  <Login className="logo-login" onClick={()=>{
-                navigate("/login")
-              }}/>} 
+              {user ? (
+                <AccountCircleIcon />
+              ) : (
+                <Link to="/login">
+                  <Login className="logo-login" />
+                </Link>
+              )}
             </div>
           </div>
           {user && JSON.parse(localStorage.getItem("user")).name && (
