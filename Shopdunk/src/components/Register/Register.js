@@ -17,11 +17,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 const Register = (props) => {
   const user = localStorage.getItem("user");
-  useEffect(()=>{
-    if(user){
+  useEffect(() => {
+    if (user) {
       navigate("/");
     }
-  })
+  });
   const [hideEyes, setHideEyes] = useState({
     password: false,
     rePassword: false,
@@ -35,19 +35,27 @@ const Register = (props) => {
   });
   const handleDataUser = async () => {
     if (dataRegister.password === dataRegister.confirmPassword) {
-      if(validateEmail(dataRegister.email) && validateUserName(dataRegister.username) && validatePhone(dataRegister.phoneNumber)){
-        const rsRegister = await userServices(dataRegister.email, dataRegister.username, dataRegister.phone, dataRegister.password,"user");
-        if(rsRegister.EC !== 0){
-          toast(rsRegister.EM)
-        }else{
-          toast(rsRegister.EM)
-          navigate("/login")
+      if (
+        validateEmail(dataRegister.email) &&
+        validateUserName(dataRegister.username)
+      ) {
+        const rsRegister = await userServices(
+          dataRegister.email,
+          dataRegister.username,
+          dataRegister.phone,
+          dataRegister.password,
+          "user"
+        );
+        if (rsRegister.EC !== 0) {
+          toast(rsRegister.EM);
+        } else {
+          toast(rsRegister.EM);
+          navigate("/login");
         }
       }
-      
-    }else{
+    } else {
       console.log(dataRegister.password, " ", dataRegister.confirmPassword);
-      toast.error("Mật khẩu không trùng khớp!")
+      toast.error("Mật khẩu không trùng khớp!");
     }
   };
   let navigate = useNavigate();
@@ -72,7 +80,7 @@ const Register = (props) => {
         <div class="section">
           <from action="#">
             <h1 className="title">Regiter</h1>
-            <TextField              
+            <TextField
               className="text-field"
               required
               id="outlined-required"
@@ -94,8 +102,8 @@ const Register = (props) => {
               value={dataRegister.username}
               onChange={hanldeSetValue}
             />
-          
-          <TextField
+
+            <TextField
               className="text-field"
               required
               id="outlined-required"
@@ -106,7 +114,7 @@ const Register = (props) => {
               value={dataRegister.phone}
               onChange={hanldeSetValue}
             />
-            
+
             <TextField
               className="text-field"
               required
@@ -118,7 +126,7 @@ const Register = (props) => {
               value={dataRegister.password}
               onChange={hanldeSetValue}
             />
-            
+
             <TextField
               className="text-field"
               required
@@ -130,8 +138,7 @@ const Register = (props) => {
               value={dataRegister.confirmPassword}
               onChange={hanldeSetValue}
             />
-            
-        
+
             <button
               type="button"
               className="sub-title"

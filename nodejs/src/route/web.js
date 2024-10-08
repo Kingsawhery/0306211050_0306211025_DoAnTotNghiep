@@ -82,9 +82,9 @@ const upload = multer({ storage: storage });
 
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
-  router.get("/categories",getListNameCategory);//
-  router.get("/categories-name",   getListNameCategory);//
-router.get("/sub-product-category",getProductByCategoryId)//
+  router.get("/categories", getListNameCategory); //
+  router.get("/categories-name", getListNameCategory); //
+  router.get("/sub-product-category", getProductByCategoryId); //
   router.get("/categories", getAllCategoriesInList); //
   router.get("/categories-name", getListNameCategory); //
   router.get("/sub-product-category", getProductByCategoryId); //
@@ -131,12 +131,12 @@ router.get("/sub-product-category",getProductByCategoryId)//
     async (req, res, next) => {
       let { email, username, password, token } = await req.body;
       let result = await verify(token);
-      if(token && result){
+      if (token && result) {
         next();
-      }else{
+      } else {
         res.status(401).json({
-          EM:"Unauthorized!"
-        })
+          EM: "Unauthorized!",
+        });
       }
     },
     handlePostUser
@@ -145,7 +145,6 @@ router.get("/sub-product-category",getProductByCategoryId)//
   router.get("/user-update", getUser);
   router.put("/user/user-update", handleUpdateUser);
 
-  router.get("/test-api", apiController.testApi);
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
 

@@ -8,12 +8,16 @@ import {
   getProductDetailImage,
   getSubProductImage,
 } from "../../../../services/product";
+import { Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import Stack from "@mui/material/Stack";
 import { toast } from "react-toastify";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { Button as buttonBootstrap } from "react-bootstrap";
+import { apiAddCart } from "../../../../services/cartService";
+import { useNavigate, useParams } from "react-router-dom";
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [productDetail, setProductDetail] = useState([]);
@@ -24,7 +28,21 @@ const ProductDetailPage = () => {
   const [previousPropertySelected, setPreviousPropertySelected] = useState({});
   const [imageList, setImageList] = useState([]);
   const [imageSelected, setImageSelected] = useState("");
-
+  const [outOfStock, setOutOfStock] = useState(false);
+  const [dataAddCart, setDataAddCart] = useState({
+    userId:
+      localStorage.getItem("user") &&
+      JSON.parse(localStorage.getItem("user")).id
+        ? JSON.parse(localStorage.getItem("user")).id
+        : null,
+    token:
+      localStorage.getItem("user") &&
+      JSON.parse(localStorage.getItem("user")).token
+        ? JSON.parse(localStorage.getItem("user")).token
+        : null,
+    currentSubProduct: 1,
+  });
+  const navigate = useNavigate();
   useEffect(() => {
     getProduct();
     getProductDetail();
@@ -43,6 +61,7 @@ const ProductDetailPage = () => {
         1
     ) {
       getSubProductFunction(listTypeClassifyDetail);
+
       getProductByPropety();
     }
   }, [listTypeClassifyDetail]);
@@ -85,8 +104,21 @@ const ProductDetailPage = () => {
     const result = await getSubProduct(list, productDetail.id);
     if (result) {
       setSubProduct(result);
+      setDataAddCart({ ...dataAddCart, currentSubProduct: result.id });
+      setOutOfStock(false);
     } else {
+      setOutOfStock(true);
       setSubProduct(product);
+    }
+  };
+  const handleAddCart = async () => {
+    if (!localStorage.getItem("user")) {
+      navigate("/login");
+    } else {
+      if (dataAddCart.currentSubProduct && dataAddCart.currentSubProduct > 0) {
+        const cart = await apiAddCart(dataAddCart);
+        console.log(cart);
+      }
     }
   };
   const handleListProerty = async (e, property, index) => {
@@ -104,6 +136,12 @@ const ProductDetailPage = () => {
         <div className="col-12 col-md-6">
           <div style={{ position: "sticky", top: 0 }}>
             <div className="picture">
+              <div
+                className="out-of-stock"
+                style={outOfStock ? { display: "block" } : { display: "none" }}
+              >
+                <p>Hết hàng</p>
+              </div>
               <img
                 style={{
                   width: "80%",
@@ -287,50 +325,21 @@ const ProductDetailPage = () => {
                   </div>
                 );
               })}
-            <div className=" mt-2">
-              <form
-                method="post"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!subProduct || !subProduct.id)
-                    return toast.error("Thiếu lựu chọn sản phẩm.");
-                  axios
-                    .post(
-                      "http://localhost:8000/api/cart-add",
-                      {
-                        subProductID: subProduct.id,
-                      },
-                      {
-                        withCredentials: true, // Đặt option này thành true để tự động gửi cookies
-                      }
-                    )
-                    .then((res) => {
-                      if (res.data.status === "403" || res.data.EC === 500) {
-                        toast.error(res.data.EM);
-                      } else {
-                        toast.success(res.data.EM);
-                      }
-                    });
-                }}
-              >
-                <input
-                  type="hidden"
-                  name="subProductID"
-                  value={subProduct?.id}
-                />
-                <Button
-                  className={
-                    subProduct
-                      ? "bg-primary btn-add"
-                      : "bg-secondary border-none btn-add"
-                  }
-                  type="submit"
-                >
-                  Add
-                </Button>
-              </form>
-            </div>
           </div>
+          <Stack marginTop={4} direction="row" spacing={1}>
+            <Button
+              onClick={handleAddCart}
+              variant="contained"
+              endIcon={<AddIcon color="success" />}
+              disabled={
+                !outOfStock && Object.keys(listTypeClassifyDetail).length > 2
+                  ? false
+                  : true
+              }
+            >
+              Add
+            </Button>
+          </Stack>
         </div>
       </div>
     )

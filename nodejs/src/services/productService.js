@@ -188,6 +188,7 @@ let getSubProductByProduct = async (id) => {
 const handleData = async (subProducts, list) => {
   let countTrue = 0;
   let subProduct;
+  console.log(subProducts, "iii");
 
   for (let i = 0; i < subProducts.length; i++) {
     let arr = [];
@@ -226,7 +227,7 @@ const getProductDetailImage = (id) => {
     }
   });
 };
-const getProductDetailImages = (productDetailId,typeClassifyDetailId) => {
+const getProductDetailImages = (productDetailId, typeClassifyDetailId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const listProductDetailImage = db.product_detail_image.findAll({
@@ -281,7 +282,7 @@ let getProductByCategory = async (page, id) => {
 const createProduct = async (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data);
-    
+
     try {
       const newUser = await db.product.create({
         name: data.name ? data.name : "New device",
@@ -294,9 +295,9 @@ const createProduct = async (data) => {
       });
       await db.product_detail.create({
         productId: newUser.id,
-        stock:data.stock,
-        rate:5
-      })
+        stock: data.stock,
+        rate: 5,
+      });
       resolve();
     } catch (e) {
       reject(e);
@@ -314,5 +315,4 @@ module.exports = {
   getSubProductByProduct,
   getProductDetailImages,
   createProduct,
-  
 };

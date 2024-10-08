@@ -1,4 +1,5 @@
 import db from "../models";
+import { postCart } from "../services/cartService";
 const handleGetCart = async (req, res) => {
   const id = req.user.id;
 
@@ -14,37 +15,21 @@ const handleGetCart = async (req, res) => {
 };
 
 const handleAddCart = async (req, res) => {
-  const id = req.body.subProductID;
-  const user = req.user;
-
-  try {
-    const check = await db.Cart.findOne({
-      where: {
-        userId: user.id,
-        sub_productId: id,
-      },
+  const idSubProduct = req.body.currentSubProduct;
+  const idUser = req.body.userId;
+  if (!idSubProduct && !idUser) {
+    res.status(200).json({
+      EC: 1,
+      EM: "Missing data!",
     });
-    if (!check) {
-      await db.Cart.create({
-        userId: user.id,
-        sub_productId: id,
-        quantity: 1,
+  } else {
+    const rs = await postCart(idSubProduct, idUser);
+    if (rs) {
+      res.status(200).json({
+        EC: 0,
+        EM: "Add product to cart successfully!",
       });
-    } else {
-      check.quantity += 1;
-      await check.save();
     }
-
-    return res.status(200).json({
-      EC: 0,
-      EM: "Đã thêm sản phẩm vào giỏ hàng",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(200).json({
-      EC: 500,
-      EM: "Đã xảy ra lỗi khi thêm vào giỏ hàng",
-    });
   }
 };
 

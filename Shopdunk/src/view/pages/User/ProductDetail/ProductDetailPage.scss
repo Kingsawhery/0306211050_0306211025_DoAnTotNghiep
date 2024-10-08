@@ -9,6 +9,24 @@ span {
   cursor: auto;
   color: #515154;
 }
+.picture {
+  position: relative;
+  .out-of-stock {
+    position: absolute;
+    background-color: #515154;
+    display: flex;
+    text-align: center;
+    right: 12px;
+    top: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    p {
+      margin-bottom: 0;
+      color: #ddd;
+    }
+  }
+}
+
 .btn-add {
   border: none;
 }

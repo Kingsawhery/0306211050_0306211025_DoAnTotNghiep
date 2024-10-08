@@ -1,12 +1,12 @@
 const db = require("../models");
 const cookieParser = require("cookie-parser");
 async function checkToken(req, res, next) {
-  const cookies = req.cookies;
+  const token = req.body.token;
   //   console.log(cookies.token, cookies);
   try {
     const user = await db.User.findOne({
       where: {
-        token: cookies.token,
+        token: token,
       },
     });
     if (!user) {

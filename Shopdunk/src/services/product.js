@@ -9,7 +9,7 @@ export const getProductDetailById = (id) => {
     `${process.env.REACT_APP_API_SERVER}/product-detail?id=${id}`
   );
 };
-export const getSubProduct = (list, id) => {
+export const getSubProduct = (list) => {
   return instance.get(`${process.env.REACT_APP_API_SERVER}/sub-product`, {
     params: list,
   });
@@ -36,22 +36,21 @@ export const getProductsRandom = () => {
   return instance.get(`${process.env.REACT_APP_API_SERVER}/products-random`);
 };
 export const getClassifies = () => {
-  return instance.get(
-    `${process.env.REACT_APP_API_SERVER}/classifies`
-  );
+  return instance.get(`${process.env.REACT_APP_API_SERVER}/classifies`);
 };
 export const postProduct = (data) => {
   const formData = new FormData();
-    for(const key in data){
-      if(data.hasOwnProperty(key)){
-        formData.append(`${key}`,data[key])
-      }
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      formData.append(`${key}`, data[key]);
     }
+  }
   return instance.post(
-    `${process.env.REACT_APP_API_SERVER}/create-product`
-  ,formData);
+    `${process.env.REACT_APP_API_SERVER}/create-product`,
+    formData
+  );
 };
-export const getSubProductImage = (productDetailId,typeClassifyDetailId) => {
+export const getSubProductImage = (productDetailId, typeClassifyDetailId) => {
   return instance.get(
     `${process.env.REACT_APP_API_SERVER}/sub-product-image?productDetailId=${productDetailId}&typeClassifyDetailId=${typeClassifyDetailId}`
   );

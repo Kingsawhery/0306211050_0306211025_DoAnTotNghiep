@@ -7,13 +7,6 @@ import JWT from "jsonwebtoken";
 import { log } from "console";
 require("dotenv").config();
 const path = require("path");
-const testApi = (req, res) => {
-  return res.status(200).json({
-    name: "Nguyễn nhật hào",
-    age: 20,
-    addrees: "HCM",
-  });
-};
 
 const handleRegister = async (req, res) => {
   try {
@@ -50,7 +43,6 @@ const handleLogin = async (req, res) => {
     let a = await req.body;
     console.log(a);
     let data = await loginRegisterService.handleLoginUser(a);
-
     if (data.EC == "1") {
       return res.status(200).json({
         EM: "Account is not define",
@@ -82,18 +74,18 @@ const handleLogin = async (req, res) => {
         // EM: data.EM,
         // EC: data.EC,
         // DT: data.DT.user.dataValues,
-          user: {
-            email: dataUser.email,
-            type: dataUser.type,
-            username: dataUser.username,
-            phone: dataUser.phone,
-            token: dataUser.token,
-            role: dataUser.role,
-          },
-          EM: "Login success",
-          EC: 0,
+        user: {
+          id: dataUser.id,
+          email: dataUser.email,
+          type: dataUser.type,
+          username: dataUser.username,
+          phone: dataUser.phone,
+          token: token,
+          role: dataUser.role,
         },
-      );
+        EM: "Login success",
+        EC: 0,
+      });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
@@ -321,7 +313,6 @@ const handleTestCookies = (req, res) => {
 
 module.exports = {
   handleTestCookies,
-  testApi,
   handleRegister,
   handleLogin,
   handleSendEmail,
