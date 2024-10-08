@@ -4,34 +4,68 @@ main {
 .invoide-color {
   color: #86868a;
 }
-
-.invoide {
-  border-collapse: separate;
-  border-spacing: 0;
+.card-cart {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 12px 0;
+  background-color: white;
   border-radius: 10px;
-  overflow: hidden;
-  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 8px 40px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  min-height: 300px;
 }
-.thead {
-  position: relative;
-  top: 40px;
-  border-bottom: 1px solid #f4f4f4;
-  width: 100%;
+
+.div-cart .div-image {
+  background-color: none;
+  width: 60%;
+}
+.div-cart img {
+  width: 30%;
+}
+.information {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-cart:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 16px 60px rgba(0, 0, 0, 0.2);
+}
+.quantity strong {
+  font-size: 20px;
 }
 .fa-minus {
   padding-right: 10px;
-  color: #0066cc;
-  font-size: 10px;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
 }
 .fa-plus {
-  color: #0066cc;
-  font-size: 10px;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
   padding-left: 10px;
+  cursor: pointer;
 }
 .fa-trash {
-  position: relative;
-  left: 50px;
   color: #86868a;
+  margin-right: 20px;
+}
+.quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fa-trash {
+  margin: 0 24px;
+  transition: 0.5s;
+  cursor: pointer;
+}
+.fa-trash:hover {
+  transform: scale(1.5);
+  color: #000;
 }
 .invoid-btn {
   border: 1px solid;

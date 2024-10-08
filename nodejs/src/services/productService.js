@@ -279,7 +279,7 @@ let getProductByCategory = async (page, id) => {
     }
   });
 };
-const createProduct = async (data) => {
+const createProduct = async (data, files) => {
   return new Promise(async (resolve, reject) => {
     console.log(data);
 
@@ -293,16 +293,26 @@ const createProduct = async (data) => {
         image: data.image,
         categoryId: data.category,
       });
-      await db.product_detail.create({
+      const newProductDetail = await db.product_detail.create({
         productId: newUser.id,
         stock: data.stock,
         rate: 5,
       });
+      await saveImage(files, newProductDetail.id);
       resolve();
     } catch (e) {
       reject(e);
     }
   });
+};
+const saveImage = async (files, productDetailId) => {
+  for (let i = 0; i < files.length; i++) {
+    await db.product_detail_image.create({
+      image: files[i].originalname,
+      productDetailId: productDetailId,
+      typeClassifyDetailId: 1,
+    });
+  }
 };
 module.exports = {
   getProductBySubCategory,

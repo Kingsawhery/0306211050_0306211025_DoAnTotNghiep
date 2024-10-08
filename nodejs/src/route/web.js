@@ -65,10 +65,13 @@ let router = express.Router();
 let storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     if (req.body.fileImage) {
+      console.log("cc");
     }
     // Set the destination folder for uploaded files
     const dir = `public/productImage/${req.body.subCategoryName}`;
     if (!fs.existsSync(dir)) {
+      console.log("cc");
+
       fs.mkdirSync(dir, { recursive: true });
     }
     cb(null, dir);
@@ -117,7 +120,11 @@ let apiWebRoutes = (app) => {
   router.get("/product-detail-image", getProductsImage);
   router.get("/type-classify-sub-product", getTypeClassifySubProduct);
   router.get("/sub-product-image", getSubProductImage);
-  router.post("/create-product", upload.single("fileImage"), createNewProduct);
+  router.post(
+    "/create-product",
+    upload.array("fileImage", 10),
+    createNewProduct
+  );
   // Post - 5
   router.get("/posts", getAllPosts);
   router.get("/post/:id", getPostPage);

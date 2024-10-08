@@ -41,10 +41,13 @@ export const getClassifies = () => {
 export const postProduct = (data) => {
   const formData = new FormData();
   for (const key in data) {
-    if (data.hasOwnProperty(key)) {
+    if (data.hasOwnProperty(key) && key !== "fileImage") {
       formData.append(`${key}`, data[key]);
     }
   }
+  data.fileImage.forEach((file) => {
+    formData.append("fileImage", file); // Gửi từng tệp
+  });
   return instance.post(
     `${process.env.REACT_APP_API_SERVER}/create-product`,
     formData

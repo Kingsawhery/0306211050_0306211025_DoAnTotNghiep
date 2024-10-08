@@ -16,20 +16,21 @@ import { postProduct } from "../../../../../services/product";
 const CreateNewProduct = () => {
   const [listCategories, setListCategories] = useState([]);
   const [listSubCategories, setListSubCategories] = useState([]);
-  const [imageDemo,setImageDemo] = useState("");
-  const [imageFile,setImageFile] = useState({});
+  const [imageDemo, setImageDemo] = useState([]);
+  const [imageFile, setImageFile] = useState({});
   const fileRef = useRef(null);
   const [data, setData] = useState({
-    price:0,
-    promotion:0,
-    category:"",
-    subCategoryName:"",
-    subCategory:"",
-    name:"",
-    stock:0,
-    image:""
+    price: 0,
+    promotion: 0,
+    category: "",
+    subCategoryName: "",
+    subCategory: "",
+    name: "",
+    stock: 0,
+    image: "",
+    fileImage: [],
   });
-  const [validateData,setValidation] = useState(false);
+  const [validateData, setValidation] = useState(false);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [categorySelected, setCategorySelected] = useState(0);
   useEffect(() => {
@@ -57,55 +58,77 @@ const CreateNewProduct = () => {
     console.log(validateNumber(data.price));
     setData({ ...data, [name]: value });
   };
-  const handleSubmit = async() =>{
-    try{
-      const result  = await postProduct(data);
+  const handleSubmit = async () => {
+    try {
+      console.log(data.fileImage);
+      console.log(imageDemo);
 
-    }catch(e){
-      toast("Data is invalid!")
+      const result = await postProduct(data);
+    } catch (e) {
+      toast("Data is invalid!");
     }
-    
+  };
+  const handleImageDemo = (e) => {
+    try {
+      console.log(e.target.files.length);
+      let preview;
+      for (let i = 0; i < e.target.files.length; i++) {
+        const exe =
+          e.target.files[i].name.split(".")[
+            e.target.files[i].name.split(".").length - 1
+          ];
 
-  }
-  const handleImageDemo = (e) =>{
-    try{
-      const exe = e.target.files[0].name.split(".")[e.target.files[0].name.split(".").length - 1]
-
-      if(exe === "png" || exe === "jpeg" || exe === "jpg" ){
-        if (e.target.files[0]) {
-          setData({
-            ...data,
-            image: e.target.files[0].name,
-            fileImage:e.target.files[0]
-          });
+        if (exe !== "png" && exe !== "jpeg" && exe !== "jpg") {
+          return;
+        } else {
+          setData((prevData) => ({
+            ...prevData,
+            image: e.target.files[0],
+            fileImage: [...(prevData.fileImage || []), e.target.files[i]],
+          }));
+          setImageDemo((prevImages) => [
+            ...prevImages,
+            URL.createObjectURL(e.target.files[i]),
+          ]);
         }
-        let preview = URL.createObjectURL(e.target.files[0]);
-        setImageDemo(preview);
       }
-      
-     
-    }catch(e){
+    } catch (e) {
       console.log(e);
-    } 
-  
-  }
+    }
+  };
 
   return (
     <>
       <Container className="div-cover">
-        
         <Form className="form-add-product">
-        <input className="d-none" ref={fileRef} type="file" onChange={handleImageDemo}/>
-        {imageDemo !== "" ? <img className="image-demo" src={imageDemo}/>:<div className="add-new-image" onClick={()=>{
-        fileRef.current.click();
-        }}>
-        <FontAwesomeIcon icon={faPlus} style={{color: "#707070",}} />
-      </div>}
+          <input
+            className="d-none"
+            ref={fileRef}
+            type="file"
+            onChange={handleImageDemo}
+            multiple
+          />
+          {imageDemo.length > 0 ? (
+            <>
+              {imageDemo.map((item, index) => {
+                return <img className="image-demo" src={item} />;
+              })}
+            </>
+          ) : (
+            <div
+              className="add-new-image"
+              onClick={() => {
+                fileRef.current.click();
+              }}
+            >
+              <FontAwesomeIcon icon={faPlus} style={{ color: "#707070" }} />
+            </div>
+          )}
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formGridProductName">
               <Form.Label>Tên sản phẩm</Form.Label>
               <Form.Control
-              onChange={handleData}
+                onChange={handleData}
                 name="name"
                 type="ProductName"
                 placeholder="Enter Product Name"
@@ -114,7 +137,11 @@ const CreateNewProduct = () => {
           </Row>
 
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridProductName" className="col-6">
+            <Form.Group
+              as={Col}
+              controlId="formGridProductName"
+              className="col-6"
+            >
               <Form.Select
                 name="category"
                 aria-label="Default select example"
@@ -131,13 +158,17 @@ const CreateNewProduct = () => {
                   })}
               </Form.Select>
             </Form.Group>
-            <Form.Group as={Col} controlId="formGridProductName" className="col-6">
+            <Form.Group
+              as={Col}
+              controlId="formGridProductName"
+              className="col-6"
+            >
               <Form.Select
                 name="subCategory"
-                onChange={(e)=>{
+                onChange={(e) => {
                   const id = e.target.value;
-                  const name = e.target.selectedOptions[0].getAttribute("name");    
-                  setData({...data,subCategory:id,subCategoryName:name})
+                  const name = e.target.selectedOptions[0].getAttribute("name");
+                  setData({ ...data, subCategory: id, subCategoryName: name });
                 }}
                 value={data.subCategory}
                 disabled={categorySelected != 0 ? false : true}
@@ -147,47 +178,67 @@ const CreateNewProduct = () => {
                 {listSubCategories &&
                   listSubCategories.length > 0 &&
                   listSubCategories.map((item, index) => {
-                    return <option  name={item.name} value={item.id}>{item.name}</option>;
+                    return (
+                      <option name={item.name} value={item.id}>
+                        {item.name}
+                      </option>
+                    );
                   })}
               </Form.Select>
             </Form.Group>
           </Row>
           <Row className="mb-2">
-            <Form.Group className="mb-2 col-6" controlId="formGridPrice1" >
-              <Form.Label >Price</Form.Label>
+            <Form.Group className="mb-4 col-6" controlId="formGridPrice1">
+              <Form.Label>Price</Form.Label>
               <Form.Control
-              onChange={handleData}
+                onChange={handleData}
+                value={data.price}
                 name="price"
                 placeholder="Enter price..."
                 type="number"
                 pattern="[0-9]*"
               />
-              {!data.price && !validateNumber(data.price) ? (<p className="text-danger error-message">Vui lòng chỉ nhập số!</p>):<></>}
+              {!data.price && !validateNumber(data.price) ? (
+                <p className="text-danger error-message">
+                  Vui lòng chỉ nhập số!
+                </p>
+              ) : (
+                <></>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-2 col-6" controlId="formGridPromotion1">
-              <Form.Label >Promotion</Form.Label>
+              <Form.Label>Promotion</Form.Label>
               <Form.Control
-              onChange={handleData}
+                onChange={handleData}
                 name="promotion"
                 placeholder="Enter promotion..."
                 type="number"
                 pattern="[0-9]*"
               />
-              {!data.promotion && !validateNumber(data.promotion) ? (<p className="text-danger error-message">Vui lòng chỉ nhập số!</p>):<></>}
+              {!data.promotion && !validateNumber(data.promotion) ? (
+                <p className="text-danger error-message">
+                  Vui lòng chỉ nhập số!
+                </p>
+              ) : (
+                <></>
+              )}
             </Form.Group>
           </Row>
           <Row>
             <Form.Group>
-              <Form.Control name="stock" type="number" onChange={handleData}/>
+              <Form.Control name="stock" type="number" onChange={handleData} />
             </Form.Group>
           </Row>
-            <div className="div-btn">
-            <Button onClick={handleSubmit} className="btn-submit" variant="primary" >
-            Tạo
-          </Button>
-            </div>
-          
+          <div className="div-btn">
+            <Button
+              onClick={handleSubmit}
+              className="btn-submit"
+              variant="primary"
+            >
+              Tạo
+            </Button>
+          </div>
         </Form>
       </Container>
     </>

@@ -34,76 +34,54 @@ const Cart = () => {
         <div className="container">
           <div className="row d-flex">
             <div className="col-8 mt-3 ">
-              <div className="invoide">
-                <div className="invoide-card">
-                  <table className="table table-borderless">
-                    <thead>
-                      <tr>
-                        <th>Hình ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Giá bán</th>
-                        <th>Số lượng</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {listProductInCart &&
-                        listProductInCart.length > 0 &&
-                        listProductInCart.map((item, index) => {
-                          return (
-                            <tr>
-                              <td>
-                                <img
-                                  // `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
-                                  src={
-                                    item.sub_product.product_detail
-                                      .product_detail_images[0].image
-                                      ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
-                                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
-                                  }
-                                  alt="iPhone 15"
-                                />
-                              </td>
-                              <td>
-                                <div className="name">
-                                  <strong>{item.sub_product.name}</strong>
-                                  <p className="invoide-color m-0">
-                                    Phân loại:{" "}
-                                    {item.sub_product.type_classify_details.map(
-                                      (item, index) => " " + item.name
-                                    )}
-                                  </p>
-                                  <a className="text-primary" href="">
-                                    Sửa
-                                  </a>
-                                </div>
-                              </td>
-                              <td>
-                                <span>
-                                  {item.price
-                                    ? item.price.toLocaleString("VN-vi")
-                                    : 0}
-                                  VNĐ
-                                </span>
-                              </td>
-                              <td>
-                                <div className="quantity">
-                                  <i className="fas fa-minus"></i>
-                                  <input
-                                    className="input_quantity"
-                                    name="number-quantity"
-                                    type="text"
-                                    value="4"
-                                  />
-                                  <i className="fas fa-plus"></i>
-                                  <i className="fas fa-trash"></i>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="div-cart">
+                {listProductInCart &&
+                  listProductInCart.length > 0 &&
+                  listProductInCart.map((item, index) => {
+                    return (
+                      <div className="card-cart">
+                        <img
+                          // `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                          src={
+                            item.sub_product.product_detail
+                              .product_detail_images[0].image
+                              ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
+                              : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                          }
+                          alt="iPhone 15"
+                        />
+                        <div className="information">
+                          <div>
+                            <div className="name">
+                              <h4>{item.sub_product.name}</h4>
+                              <p className="invoide-color m-0">
+                                Phân loại:{" "}
+                                {item.sub_product.type_classify_details.map(
+                                  (item, index) => " " + item.name
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          <div>
+                            <span>
+                              {item.price
+                                ? item.price.toLocaleString("VN-vi")
+                                : 0}
+                              VNĐ
+                            </span>
+                          </div>
+                          <div>
+                            <div className="quantity">
+                              <i className="fas fa-minus"></i>
+                              <strong>{item.quantity}</strong>
+                              <i className="fas fa-plus"></i>
+                              <i className="fas fa-trash"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 <div className="option d-flex">
                   <div className="invoid-btn">Cặp nhật giỏ hàng</div>
                   <div className="invoid-btn">Tiếp tục mua sắm</div>

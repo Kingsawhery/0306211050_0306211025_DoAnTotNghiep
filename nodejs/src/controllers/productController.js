@@ -9,7 +9,7 @@ import {
   getProductDetailImage,
   getProductByCategory,
   createProduct,
-  getProductDetailImages
+  getProductDetailImages,
 } from "../services/productService";
 const getProduct = async (req, res) => {
   try {
@@ -136,54 +136,62 @@ let getProducts = async (req, res) => {
     },
   });
 };
-const getSubProductImage = async(req, res)=>{
-  try{
+const getSubProductImage = async (req, res) => {
+  try {
     console.log(req.query);
-      let productDetailId = await req.query.productDetailId;
-      let typeClassifyDetailId = await req.query.typeClassifyDetailId;
-      let productDetailImage = await getProductDetailImages(productDetailId, typeClassifyDetailId);
-      if(productDetailImage){
-          return res.status(200).json({   
-              data: productDetailImage,
-            });
-      }else{
-          return res.status(200).json({   
-              message:"No results was found"
-            }); 
-      }
-  }catch(e){
-      console.log(e);
-      return res.status(400).json({
-          message:"Đã có lỗi xảy ra!"
-      })
-  }
-}
-const createNewProduct = async(req,res)=>{
-  try{
-      const data = await req.body;
-      if(!req.body.name || !req.body.category || !req.body.subCategory){
-
-          return res.status(400).json({
-              message:"Missing requirment field!"
-                  })
-      }else if(req.body.category == 0 || req.body.category == "" || req.body.subCategory == 0 || req.body.subCategory == "" ){
-          return res.status(400).json({
-              message:"Value is not valid!"
-              })
-      }
-      else{
-          await createProduct(data);
-          return res.status(200).json({
-              message:"Create new product successful!"
-          })
-      }
-  }catch(e){
-      console.log(e);
+    let productDetailId = await req.query.productDetailId;
+    let typeClassifyDetailId = await req.query.typeClassifyDetailId;
+    let productDetailImage = await getProductDetailImages(
+      productDetailId,
+      typeClassifyDetailId
+    );
+    if (productDetailImage) {
       return res.status(200).json({
-          message:"Đã có lỗi xảy ra!"
-              })
-  
-}}
+        data: productDetailImage,
+      });
+    } else {
+      return res.status(200).json({
+        message: "No results was found",
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      message: "Đã có lỗi xảy ra!",
+    });
+  }
+};
+const createNewProduct = async (req, res) => {
+  try {
+    const data = await req.body;
+    console.log(req.files);
+
+    if (!req.body.name || !req.body.category || !req.body.subCategory) {
+      return res.status(400).json({
+        message: "Missing requirment field!",
+      });
+    } else if (
+      req.body.category == 0 ||
+      req.body.category == "" ||
+      req.body.subCategory == 0 ||
+      req.body.subCategory == ""
+    ) {
+      return res.status(400).json({
+        message: "Value is not valid!",
+      });
+    } else {
+      await createProduct(data, req.files);
+      return res.status(200).json({
+        message: "Create new product successful!",
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      message: "Đã có lỗi xảy ra!",
+    });
+  }
+};
 module.exports = {
   getProduct,
   getProductDetail,
@@ -194,5 +202,5 @@ module.exports = {
   getProductById,
   getTypeClassifySubProduct,
   getSubProductImage,
-  createNewProduct
+  createNewProduct,
 };
