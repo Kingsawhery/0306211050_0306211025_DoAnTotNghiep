@@ -55,9 +55,9 @@ const hanldeSetValue = (e) =>{
       return;
     }
     const response = await loginServices(data.email, data.password);
-    console.log(response.data.data.EC);
-    if (response.data.data.EC == 0 && response.data.data.message == "Login success") {
-      toast.success(response.data.message);
+    console.log(response);
+    if (response.data.EC == 0 && response.data.EM == "Login success") {
+      toast.success(response.data.EM);
       const dataSaveLocal = {
         id: response.data.data.user.id,
         name: response.data.data.user.username,
@@ -67,8 +67,8 @@ const hanldeSetValue = (e) =>{
       };
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
       navigate("/");
-    } else {
-      toast.error("Login fail!");
+    } else{
+      toast.error("Account is not define");
     }
   };
 
