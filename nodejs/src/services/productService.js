@@ -64,6 +64,9 @@ let getProductDetailById = async (id) => {
         },
         include: [
           {
+            model:db.post
+          },
+          {
             model: db.type_classify,
             include: [
               {

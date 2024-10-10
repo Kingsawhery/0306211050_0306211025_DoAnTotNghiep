@@ -31,9 +31,6 @@ const PostRow = () =>{
                     <PostCard post={post}/>
                 )
             })}
-                <div>a</div>
-                <div>a</div>
-                <div>a</div>
             </div>
         </div>
     )

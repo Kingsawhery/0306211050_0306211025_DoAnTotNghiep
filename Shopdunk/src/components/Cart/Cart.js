@@ -99,9 +99,9 @@ const Cart = () => {
                     <img
                       src={
                         item.sub_product.product_detail.product_detail_images[0]
-                          .image
-                          ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
-                          : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                          .image ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.price}`
+                          : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
+                          // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                       }
                       alt={item.sub_product.name}
                     />

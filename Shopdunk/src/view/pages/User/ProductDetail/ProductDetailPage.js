@@ -18,6 +18,7 @@ import axios from "axios";
 import { Button as buttonBootstrap } from "react-bootstrap";
 import { apiAddCart } from "../../../../services/cartService";
 import { useNavigate, useParams } from "react-router-dom";
+import ProductRowRandom from "../../../../components/Product/ProductRowRandom/ProductRowRandom";
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [productDetail, setProductDetail] = useState([]);
@@ -25,9 +26,11 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState([]);
   const [listTypeClassifyDetail, setListTypeClassifyDetail] = useState({});
   const [propertySelected, setPropertySelected] = useState({});
+  const [posts, setPosts] = useState({});
   const [previousPropertySelected, setPreviousPropertySelected] = useState({});
   const [imageList, setImageList] = useState([]);
-  const [imageSelected, setImageSelected] = useState("");
+  const [imageSelected, setImageSelected] = useState("")
+  const postPageRef = useRef();
   const [outOfStock, setOutOfStock] = useState(false);
   const [dataAddCart, setDataAddCart] = useState({
     userId:
@@ -66,6 +69,11 @@ const ProductDetailPage = () => {
       getProductByPropety();
     }
   }, [listTypeClassifyDetail]);
+  useEffect(()=>{
+    if(posts){
+      postPageRef.current.innerHTML = posts.content;
+    }
+  })
   const getProductByPropety = async () => {
     const result = await getSubProductImage(id, listTypeClassifyDetail.mausac);
     console.log(result);
@@ -85,9 +93,13 @@ const ProductDetailPage = () => {
       const result = await getProductDetailById(id);
       if (result) {
         setProductDetail(result);
+        setPosts(result.post);
+        
       }
     } catch (e) {
       toast.error("Đã có lỗi xảy ra!");
+      console.log(e);
+      
     }
   };
 
@@ -137,6 +149,7 @@ const ProductDetailPage = () => {
   };
   return (
     product && (
+      <>
       <div className="row">
         <div className="col-12 col-md-6">
           <div style={{ position: "sticky", top: 0 }}>
@@ -349,6 +362,19 @@ const ProductDetailPage = () => {
           </Stack>
         </div>
       </div>
+      {
+        posts && 
+        <>
+        <div className="post-page container" >
+        <div className="content" ref={postPageRef}/>
+        </div>
+
+        </>
+      }
+       
+    <ProductRowRandom/>
+      </>
+      
     )
   );
 };

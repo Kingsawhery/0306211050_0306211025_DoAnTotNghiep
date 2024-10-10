@@ -16,12 +16,16 @@ module.exports = (sequelize, DataTypes) => {
       product_detail.belongsToMany(models.type_classify_detail,{through:"product_detail_type_classify_detail"})
       product_detail.hasMany(models.product_detail_image)
       product_detail.hasMany(models.sub_product)
+      product_detail.belongsTo(models.post,{
+        foreignKey: 'postId'
+      })
 
     }
   }
   product_detail.init(
     {
       productId: DataTypes.INTEGER,
+      postId:DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       rate:DataTypes.INTEGER
     },
