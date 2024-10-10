@@ -43,7 +43,29 @@ let getCart = async (id) => {
     } catch (e) {}
   });
 };
-let postCart = async (idSubProduct, idUser) => {
+let deleteCart = async (idSubProduct, idUser) => {
+  return new Promise(async (resolve, reject) => {
+    const check = await db.Cart.findOne({
+      where: {
+        userId: idUser,
+        sub_productId: idSubProduct,
+      },
+    });
+    if (check && check.quantity > 0) {
+      await check.destroy();
+      resolve({
+        EC: 0,
+        EM: "Đã xóa sản phẩm thành công!",
+      });
+    } else {
+      resolve({
+        EC: 1,
+        EM: "Giỏ hàng không tồn tại!",
+      });
+    }
+  });
+};
+let postCart = async (idSubProduct, idUser, quantity) => {
   return new Promise(async (resolve, reject) => {
     // try {
     //   const check = await db.Cart.findOne({
@@ -84,7 +106,9 @@ let postCart = async (idSubProduct, idUser) => {
         where: {
           id: idSubProduct,
         },
+        raw,
       });
+
       if (!check) {
         await db.Cart.create({
           userId: idUser,
@@ -92,12 +116,33 @@ let postCart = async (idSubProduct, idUser) => {
           price: subProduct.price,
           quantity: 1,
         });
-      } else {
-        check.quantity += 1;
-        check.price = subProduct.price * check.quantity;
-        console.log(subProduct.price, " ", check.quantity);
-        await check.save();
       }
+      // else if (check.quantity > 0) {
+      //   check.quantity += quantity;
+      //   check.price = subProduct.price * check.quantity;
+      //   await check.save();
+      // }
+      // else if (check == quantity < 0) {
+      //   await check.destroy();
+      // }
+      else {
+        if (quantity > 0) {
+          if (check.quantity > 0) {
+            check.quantity += quantity;
+            check.price = subProduct.price * check.quantity;
+            await check.save();
+          }
+        } else {
+          if (check.quantity < 2) {
+            await check.destroy();
+          } else {
+            check.quantity += quantity;
+            check.price = subProduct.price * check.quantity;
+            await check.save();
+          }
+        }
+      }
+
       resolve({
         EC: 0,
         EM: "Đã thêm sản phẩm vào giỏ hàng",
@@ -110,4 +155,5 @@ let postCart = async (idSubProduct, idUser) => {
 module.exports = {
   postCart,
   getCart,
+  deleteCart,
 };

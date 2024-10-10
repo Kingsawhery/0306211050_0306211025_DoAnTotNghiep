@@ -65,7 +65,6 @@ let router = express.Router();
 let storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     if (req.body.fileImage) {
-      console.log("cc");
     }
     // Set the destination folder for uploaded files
     const dir = `public/productImage/${req.body.subCategoryName}`;
@@ -181,6 +180,7 @@ let apiWebRoutes = (app) => {
   //Cart - 7
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
+  router.delete("/cart-delete", checkToken, cartController.handleDestroyCart);
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

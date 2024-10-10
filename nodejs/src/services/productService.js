@@ -284,7 +284,7 @@ const createProduct = async (data, files) => {
     console.log(data);
 
     try {
-      const newUser = await db.product.create({
+      const newProduct = await db.product.create({
         name: data.name ? data.name : "New device",
         subCategoryId: data.subCategory,
         price: data.price,
@@ -294,7 +294,7 @@ const createProduct = async (data, files) => {
         categoryId: data.category,
       });
       const newProductDetail = await db.product_detail.create({
-        productId: newUser.id,
+        productId: newProduct.id,
         stock: data.stock,
         rate: 5,
       });
