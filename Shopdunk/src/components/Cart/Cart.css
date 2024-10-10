@@ -15,7 +15,14 @@ main {
   transition: box-shadow 0.3s ease;
   min-height: 300px;
 }
-
+.no-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.no-cart img {
+  width: 400px !important;
+}
 .div-cart .div-image {
   background-color: none;
   width: 60%;
@@ -300,4 +307,60 @@ p {
 }
 .main {
   background-color: #f5f5f7;
+}
+.invoice {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.invoice-header h1 {
+  color: #333;
+}
+
+.invoice-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-body th,
+.invoice-body td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.invoice-body th {
+  background-color: #f8f8f8;
+  color: #555;
+}
+
+.invoice-body tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.invoice-body tr:hover {
+  background-color: #f1f1f1;
+}
+
+.invoice-footer {
+  text-align: right;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.total-price {
+  color: #ff5722; /* Highlighting the total price */
 }

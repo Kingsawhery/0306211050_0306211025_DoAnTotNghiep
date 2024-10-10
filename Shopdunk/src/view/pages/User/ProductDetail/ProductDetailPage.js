@@ -41,6 +41,7 @@ const ProductDetailPage = () => {
         ? JSON.parse(localStorage.getItem("user")).token
         : null,
     currentSubProduct: 1,
+    quantity: 1,
   });
   const navigate = useNavigate();
   useEffect(() => {
@@ -117,7 +118,11 @@ const ProductDetailPage = () => {
     } else {
       if (dataAddCart.currentSubProduct && dataAddCart.currentSubProduct > 0) {
         const cart = await apiAddCart(dataAddCart);
-        console.log(cart);
+        if (cart.data.EC === 0) {
+          toast("Đã thêm sản phẩm vào giỏ hàng!");
+        } else {
+          toast("Đã hết hàng!");
+        }
       }
     }
   };

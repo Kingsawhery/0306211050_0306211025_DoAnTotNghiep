@@ -1,56 +1,55 @@
 .sub-category-row-name {
-    font-size: 42px !important;
-    margin-bottom: 12px;
+  font-size: 42px !important;
+  margin-bottom: 12px;
 }
 
 .product-row {
-    position: relative;
+  position: relative;
+  .product-link {
+    width: 250px !important;
+  }
+  .product-row-list {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-top: 40px;
+    flex-wrap: wrap;
     width: 100%;
+    margin: 0 auto;
 
-    .product-row-list {
-        display: grid!important;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        margin-top: 40px;
-        flex-wrap: wrap;
-        width: 100%;
-        margin: 0 auto;
+    .product-card {
+      margin: 12px;
+      display: block !important;
+      padding: 18px 12px;
+      min-width: 24%;
+      // max-width: 80%;
+      max-width: 300px;
 
-        .product-card {
-            margin: 12px;
-            display: block!important;
-            padding: 18px 12px;
-            min-width: 24%;
-            // max-width: 80%;
-            max-width: 300px;
-
-            min-height: 368px
-        }
-
+      min-height: 368px;
     }
+  }
 
-    .product-row-title {
-        padding: 4px 12px;
-        display: flex;
-        justify-content: center;
-    }
-
+  .product-row-title {
+    padding: 4px 12px;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 h1 {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    font-weight: bold;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
 }
-.slick-slider{
-    .slick-list{
-        .slick-track{
-            .slick-slide{
-                div{
-                    display: flex;
-                    justify-content: center;
-                }
-            }
+.slick-slider {
+  .slick-list {
+    .slick-track {
+      .slick-slide {
+        div {
+          display: flex;
+          justify-content: center;
         }
+      }
     }
+  }
 }
