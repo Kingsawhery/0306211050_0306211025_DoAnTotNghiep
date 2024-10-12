@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import { getProductsRandom } from "../../../services/product";
 // import "./ProductRowRandom.scss";
-const ProductRowRandom = () => {
+const ProductRowRandom = (props) => {
+  
+  const {id} = props;
+  console.log(id);
+  
   const [listProductSuggestion, setListProductSuggestion] = useState([]);
   useEffect(() => {
-    showListProductSuggestion();
+    showListProductSuggestion(id);
   }, []);
-  const showListProductSuggestion = async () => {
-    const listProducts = await getProductsRandom();
+  const showListProductSuggestion = async (idCategory) => {
+    const listProducts = await getProductsRandom(idCategory);
     if (listProducts) {
       console.log(listProducts);
       setListProductSuggestion(listProducts);

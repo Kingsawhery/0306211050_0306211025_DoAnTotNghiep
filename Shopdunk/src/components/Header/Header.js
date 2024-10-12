@@ -27,7 +27,9 @@ const Header = () => {
     <div id="header">
       <div className="container p-0">
         <div className="container d-flex header" style={{ height: 75 }}>
-          <Link to="/">
+          <Link to="/" onClick={()=>{
+                window.scrollTo({ top: "0", behavior: "smooth" });
+          }}>
             <div className="mt-3 header-logo">
               <img
                 src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
@@ -72,6 +74,9 @@ const Header = () => {
               </div>
             </div>
             <Link
+            onClick={()=>{
+              window.scrollTo({ top: "0", behavior: "smooth" })
+            }}
               to="/cart"
               className="bag"
               style={{

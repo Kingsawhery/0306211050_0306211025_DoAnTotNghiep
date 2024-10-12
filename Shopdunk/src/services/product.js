@@ -32,8 +32,8 @@ export const getClassifyByProduct = (id) => {
 export const getProductById = (id) => {
   return instance.get(`${process.env.REACT_APP_API_SERVER}/product/${id}`);
 };
-export const getProductsRandom = () => {
-  return instance.get(`${process.env.REACT_APP_API_SERVER}/products-random`);
+export const getProductsRandom = (id) => {
+  return instance.get(`${process.env.REACT_APP_API_SERVER}/products-random?id=${id}`);
 };
 export const getClassifies = () => {
   return instance.get(`${process.env.REACT_APP_API_SERVER}/classifies`);

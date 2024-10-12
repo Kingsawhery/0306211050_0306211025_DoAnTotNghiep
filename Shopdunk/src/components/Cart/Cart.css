@@ -1,3 +1,6 @@
+*{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 main {
   background-color: #f5f5f7;
 }
@@ -234,6 +237,18 @@ input::placeholder {
   border-radius: 5px;
   background-color: #ffffff;
 }
+.information .price, .invoide-color {
+  max-width: 110px;
+  margin-top: 0;
+  align-items: center;
+  display: flex;
+}
+.information .name{
+  min-width: 190px;
+  max-width: 190px;
+  font-size: 22px;
+  
+}
 
 .register-name:focus {
   border-color: #0066cc;
@@ -367,6 +382,11 @@ p {
   margin-top: 20px;
   font-weight: bold;
   font-size: 1.2em;
+  max-height: 50px;
+
+}
+.invoice-footer h3{
+  font-size: 21px;
 }
 
 .total-price {

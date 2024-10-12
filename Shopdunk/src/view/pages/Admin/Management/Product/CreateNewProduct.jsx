@@ -13,6 +13,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import { postProduct } from "../../../../../services/product";
+import { ImageList, ImageListItem } from "@mui/material";
 const CreateNewProduct = () => {
   const [listCategories, setListCategories] = useState([]);
   const [listSubCategories, setListSubCategories] = useState([]);
@@ -60,9 +61,6 @@ const CreateNewProduct = () => {
   };
   const handleSubmit = async () => {
     try {
-      console.log(data.fileImage);
-      console.log(imageDemo);
-
       const result = await postProduct(data);
     } catch (e) {
       toast("Data is invalid!");
@@ -71,15 +69,14 @@ const CreateNewProduct = () => {
   const handleImageDemo = (e) => {
     try {
       console.log(e.target.files.length);
-      let preview;
       for (let i = 0; i < e.target.files.length; i++) {
-        const exe =
+        let exe =
           e.target.files[i].name.split(".")[
             e.target.files[i].name.split(".").length - 1
           ];
 
         if (exe !== "png" && exe !== "jpeg" && exe !== "jpg") {
-          return;
+          continue;
         } else {
           setData((prevData) => ({
             ...prevData,
@@ -88,7 +85,11 @@ const CreateNewProduct = () => {
           }));
           setImageDemo((prevImages) => [
             ...prevImages,
-            URL.createObjectURL(e.target.files[i]),
+            {
+              fileName: e.target.files[i].name,
+              img: URL.createObjectURL(e.target.files[i]),
+            }
+            
           ]);
         }
       }
@@ -109,12 +110,28 @@ const CreateNewProduct = () => {
             multiple
           />
           {imageDemo.length > 0 ? (
-            <>
-              {imageDemo.map((item, index) => {
-                return <img className="image-demo" src={item} />;
-              })}
-            </>
-          ) : (
+            <ImageList
+          sx={{ width: 500, height: 300 }}
+          variant="quilted"
+          cols={3}
+          rowHeight={121}
+>
+  {imageDemo.map((item,index) => (
+    <ImageListItem key={index} cols={1} rows={1}>
+
+      <img
+        alt={item.name}
+        className="image-item"
+        src={item.img}
+        loading="lazy"
+        onClick={(()=>{
+          setData({...data,image:item.fileName})
+    })}
+      />
+    </ImageListItem>
+  ))}
+</ImageList>
+          ): (
             <div
               className="add-new-image"
               onClick={() => {
@@ -124,6 +141,7 @@ const CreateNewProduct = () => {
               <FontAwesomeIcon icon={faPlus} style={{ color: "#707070" }} />
             </div>
           )}
+          
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formGridProductName">
               <Form.Label>Tên sản phẩm</Form.Label>

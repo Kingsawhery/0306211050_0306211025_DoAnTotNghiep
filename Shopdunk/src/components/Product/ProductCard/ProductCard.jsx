@@ -1,5 +1,5 @@
 import "./ProductCard.scss";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useNavigate } from "react-router-dom";
 const ProductCard = (props) => {
   const { product } = props;
   const randomNumber = Math.floor(Math.random() * 7);
@@ -12,9 +12,16 @@ const ProductCard = (props) => {
     "flip-up",
     "zoom-in",
   ];
+  const navigate = useNavigate();
   return (
     //data-aos={objectFade[randomNumber]}
-    <Link className="product-link" to={`/product/${product.id}`}>
+    // onClick={() => push(`/product/${product.id}`)}
+    // onClick={() => push(`/product/${product.id}`)}
+    <Link
+      className="product-link"
+      to={`/product/${product.id}`}
+      onClick={() => navigate(`/product/${product.id}`)}
+    >
       <div className="product-card">
         <div className="div-img">
           <img

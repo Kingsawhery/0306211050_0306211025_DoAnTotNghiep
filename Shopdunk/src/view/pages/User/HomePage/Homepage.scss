@@ -1,8 +1,10 @@
 .homepage-carousel{
+    margin-bottom: 24px;
     .slick-slider{
         .slick-list{
             .slick-track{
                 .slick-slide{
+                    
                     .div-img{
                         width: 100%;
                         background-color: red;
@@ -18,8 +20,29 @@
             }
         }
     }
+    .slick-dots{
+        display: none!important;
+    }
   
   
    
   
+}
+.sub-category-row{
+    margin-top: 24px;
+.sub-category-row-name{
+    text-transform: uppercase;
+}}
+.sub-category-row{
+    .sub-category-row-name{
+        padding-top: 24px;
+            }
+    .product-card{
+        background:#ffffff;
+    }
+}
+.sub-category-row:nth-child(odd){
+    // background-color:#ebebeb;;
+    background: linear-gradient(to right, #d6d6d6, #bababa); 
+
 }

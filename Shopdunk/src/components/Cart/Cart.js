@@ -35,6 +35,7 @@ const Cart = () => {
       const dataRs = await apiShowCart(data);
       if (dataRs) {
         setProductInCart(dataRs.data);
+        
       }
     }
   };
@@ -83,7 +84,7 @@ const Cart = () => {
   };
 
   const totalAmount = listProductInCart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + item.price,
     0
   );
 
@@ -98,22 +99,22 @@ const Cart = () => {
                   <div className="card-cart" key={item.sub_productId}>
                     <img
                       src={
-                        item.sub_product.product_detail.product_detail_images[0]
-                          .image ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.price}`
-                          : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0].image}`
+                        item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.name}/${item.sub_product.image}`
+                          : item.sub_product.product_detail.product_detail_images.image &&  item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
+                          : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                           // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                       }
                       alt={item.sub_product.name}
                     />
                     <div className="information">
-                      <h4>{item.sub_product.name}</h4>
+                      <h4 className="name">{item.sub_product.name}</h4>
                       <p className="invoide-color m-0">
                         Phân loại:{" "}
                         {item.sub_product.type_classify_details.map(
                           (type) => ` ${type.name}`
                         )}
                       </p>
-                      <span>{item.price.toLocaleString("VN-vi")} VNĐ</span>
+                      <span className="price">{item.sub_product.price.toLocaleString("VN-vi")} VNĐ</span>
                       <div className="quantity">
                         <i
                           className="fas fa-minus"
@@ -151,7 +152,7 @@ const Cart = () => {
               <button className="btn-login-abate">Đăng nhập ngay</button>
             </div>
           </div>
-          <div className="col-4">
+          {listProductInCart.length > 0 && <div className="col-4">
             <div className="invoice">
               <h2>HÓA ĐƠN</h2>
               <p>Mã hóa đơn: #12345</p>
@@ -171,9 +172,9 @@ const Cart = () => {
                       <tr key={item.sub_productId}>
                         <td>{item.sub_product.name}</td>
                         <td>{item.quantity}</td>
-                        <td>{item.price.toLocaleString("VN-vi")} VNĐ</td>
+                        <td>{item.sub_product.price.toLocaleString("VN-vi")} VNĐ</td>
                         <td>
-                          {(item.price * item.quantity).toLocaleString("VN-vi")}{" "}
+                          {(item.sub_product.price * item.quantity).toLocaleString("VN-vi")}{" "}
                           VNĐ
                         </td>
                       </tr>
@@ -185,7 +186,8 @@ const Cart = () => {
                 <h3>Tổng cộng: {totalAmount.toLocaleString("VN-vi")} VNĐ</h3>
               </div>
             </div>
-          </div>
+          </div>}
+          
         </div>
       </div>
     </div>
