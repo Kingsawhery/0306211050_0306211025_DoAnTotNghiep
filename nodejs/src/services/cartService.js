@@ -14,6 +14,7 @@ let getCart = async (id) => {
         include: [
           {
             model: db.sub_product,
+            attributes:["id","name","price","image"],
             include: [
               {
                 model: db.product_detail,

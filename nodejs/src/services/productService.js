@@ -2,12 +2,16 @@ import db, { Sequelize, sequelize } from "../models";
 import category from "../models/category";
 import product from "../models/product";
 import product_detail from "../models/product_detail";
-import { Op } from "sequelize";
-let getProductsRandom = async () => {
+import { Op, where } from "sequelize";
+let getProductsRandom = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let products = await db.product.findAll({
         order: Sequelize.literal("rand()"),
+        where:[
+        {
+        subCategoryId:id
+        }],
         attributes: [
           "id",
           "name",
@@ -102,7 +106,7 @@ let getDataProductById = async (id) => {
         where: {
           id: id,
         },
-        attributes: ["id", "name", "price", "status", "promotion"],
+        attributes: ["id", "name", "price", "status", "promotion","subCategoryId"],
         include: [
           {
             model: db.product_detail,

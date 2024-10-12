@@ -22,10 +22,16 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     price: DataTypes.FLOAT,
     productDetailId:DataTypes.INTEGER,
-    sold: DataTypes.INTEGER
+    sold: DataTypes.INTEGER,
+    stock: DataTypes.INTEGER,
+    image:DataTypes.STRING,
+    
   }, {
     sequelize,
     modelName: 'sub_product',
+    sequelize,
+    deletedAt:"softDelete",
+    paranoid:true,
   });
   return sub_product;
 };
