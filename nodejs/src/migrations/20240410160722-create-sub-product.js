@@ -23,12 +23,6 @@ module.exports = {
       },
       sold: {
         type: Sequelize.INTEGER,
-<<<<<<< HEAD
-=======
-      },
-      stock: {
-        type: Sequelize.INTEGER,
->>>>>>> 299f8b221d8a62e1f1009a42b339bfdb9e6cf064
       },
       image: {
         type: Sequelize.STRING,

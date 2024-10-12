@@ -14,7 +14,6 @@ module.exports = {
           model: "products",
           key: "id",
         },
-<<<<<<< HEAD
       },
       postId: {
         type: Sequelize.INTEGER,
@@ -22,8 +21,6 @@ module.exports = {
           model: "posts",
           key: "id",
         },
-=======
->>>>>>> 299f8b221d8a62e1f1009a42b339bfdb9e6cf064
       },
       stock: {
         type: Sequelize.INTEGER,
