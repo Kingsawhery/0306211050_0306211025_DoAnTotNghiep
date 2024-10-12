@@ -17,7 +17,6 @@ const HomePage = () => {
       const categories = await getAllCategoriesHomepage();
       if (categories) {
         await setCategories(categories);
-        console.log(categories);
       }
     } catch (e) {
       console.log(e);

@@ -101,7 +101,7 @@ const getProductsImage = async (req, res) => {
 };
 let getListProductRandom = async (req, res) => {
   const id = await req.query.id;
-  let results = await getProductsRandom(id);
+  let results = await getProductsRandom(id ? id : 1);
   if (results) {
     return res.status(200).json({
       message: "Show suggestion products list successfully!",
