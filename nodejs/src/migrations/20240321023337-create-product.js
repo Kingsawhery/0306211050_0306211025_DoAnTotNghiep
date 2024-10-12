@@ -18,7 +18,20 @@ module.exports = {
           key: "id",
         },
       },
+      categoryId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "categories",
+          key: "id",
+        },
+      },
+      image: {
+        type: Sequelize.STRING,
+      },
       price: {
+        type: Sequelize.FLOAT,
+      },
+      promotion: {
         type: Sequelize.FLOAT,
       },
       status: {
