@@ -386,7 +386,10 @@ const ProductDetailPage = () => {
             </div>
           </>
         )}
-        {subCategoryId &&         <ProductRowRandom id={subCategoryId}/>
+        {subCategoryId && <ProductRowRandom onClick={()=>{
+          console.log("1")
+        }} id={subCategoryId}/>
+      
       }
       </>
     )
