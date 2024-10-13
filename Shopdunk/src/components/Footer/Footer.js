@@ -256,12 +256,13 @@ class Footer extends Component {
           </div>
           <div className="lower" style={{ paddingTop: 20, paddingBottom: 32 }}>
             <div className="container">
-              <p style={{ fontSize: 13, lineHeight: 20, color: "#515154" }}>
-                © 2016 Công ty Cổ Phần HESMAN Việt Nam GPDKKD: 0107465657 do Sở
-                KH &amp; ĐT TP. Hà Nội cấp ngày 08/06/2016. <br />
-                Địa chỉ: Số 76 Thái Hà, phường Trung Liệt, quận Đống Đa, thành
-                phố Hà Nội, Việt Nam Đại diện pháp luật: <br />
-                PHẠM MẠNH HÒA | ĐT: 0247.305.9999 | Email: lienhe@shopdunk.com
+              <p style={{ fontSize: 13, lineHeight: 12, color: "#515154" }}>
+                © 2016 Công ty Cổ Phần HL Việt Nam GPDKKD: 0107465657 do Sở
+                KH &amp; ĐT TP. HỒ CHÍ MINH cấp ngày 08/06/2024.</p>
+                <p>
+                Địa chỉ: 65 Đ. Huỳnh Thúc Kháng, Bến Nghé, Quận 1, Hồ Chí Minh 700000</p>
+                <p>
+                NGUYỄN HOÀNG LÂM | ĐT: 0923.986.418 | Email: 0306211050@caothan.edu.vn
               </p>
             </div>
           </div>

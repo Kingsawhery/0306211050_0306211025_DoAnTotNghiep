@@ -160,12 +160,12 @@ const ProductDetailPage = () => {
                   ? `${(
                       subProduct.price -
                       subProduct.price * (product.promotion / 100)
-                    ).toLocaleString("VN-vi")}
+                    ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`
                   : `${(
                       product.price -
                       product.price * (product.promotion / 100)
-                    ).toLocaleString("VN-vi")}
+                    ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`}
               </span>
             </div>

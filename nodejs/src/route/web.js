@@ -60,7 +60,8 @@ import {
 
 // Post - 5
 import { getAllPosts, getPostPage } from "../controllers/postController";
-
+// Type Classify - 6
+import {getAllTypeClassify,getAllTypeClassifyDetailById} from "../controllers/classifyController"
 let router = express.Router();
 let storage = multer.diskStorage({
   destination: async function (req, file, cb) {
@@ -69,7 +70,23 @@ let storage = multer.diskStorage({
     // Set the destination folder for uploaded files
     const dir = `public/productImage/${req.body.subCategoryName}`;
     if (!fs.existsSync(dir)) {
-      console.log("cc");
+
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    // Set the filename to be used for uploaded files
+    cb(null, file.originalname);
+  },
+});
+let storageUser = multer.diskStorage({
+  destination: async function (req, file, cb) {
+    if (req.body.fileImage) {
+    }
+    // Set the destination folder for uploaded files
+    const dir = `public/userImage/${req.body.username}`;
+    if (!fs.existsSync(dir)) {
 
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -81,6 +98,8 @@ let storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+const uploadUserImage = multer({ storage: storageUser });
+
 
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
@@ -151,7 +170,7 @@ let apiWebRoutes = (app) => {
   router.get("/user-update", getUser);
   router.put("/user/user-update", handleUpdateUser);
 
-  router.post("/register", apiController.handleRegister);
+  router.post("/register", uploadUserImage.single("fileImage"),apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
 
   router.get("/otp", apiController.handleOTP);
@@ -181,6 +200,11 @@ let apiWebRoutes = (app) => {
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
   router.delete("/cart-delete", checkToken, cartController.handleDestroyCart);
+
+
+  // Type Classify - 8 
+  router.get("/type-classifies",getAllTypeClassify);
+  router.get("/type-classifies-detail",getAllTypeClassifyDetailById);
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

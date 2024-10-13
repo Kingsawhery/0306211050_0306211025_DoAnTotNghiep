@@ -22,7 +22,6 @@ function random(length) {
 const createUser = async (email, password, username, type_ = "LOCAL") => {
   let hashPass = hashUserPassword(password);
   const token = await random(200);
-  console.log("random: ", token);
 
   try {
     let user = null;

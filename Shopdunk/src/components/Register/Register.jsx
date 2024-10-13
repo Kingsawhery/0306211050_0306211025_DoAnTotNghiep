@@ -3,8 +3,10 @@ import axios from "axios";
 import { userServices } from "../../services/userServices";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRef } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import "./Register.css";
 import {
   validateEmail,
@@ -17,11 +19,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 const Register = (props) => {
   const user = localStorage.getItem("user");
+  const fileRef = useRef(null);
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   });
+  const [imageDemo, setImageDemo ] = useState("");
   const [hideEyes, setHideEyes] = useState({
     password: false,
     rePassword: false,
@@ -32,6 +36,8 @@ const Register = (props) => {
     phone: "",
     password: "",
     confirmPassword: "",
+    image:"",
+    fileImage:{}
   });
   const handleDataUser = async () => {
     if (dataRegister.password === dataRegister.confirmPassword) {
@@ -39,26 +45,41 @@ const Register = (props) => {
         validateEmail(dataRegister.email) &&
         validateUserName(dataRegister.username)
       ) {
-        const rsRegister = await userServices(
-          dataRegister.email,
-          dataRegister.username,
-          dataRegister.phone,
-          dataRegister.password,
-          "user"
-        );
+        const rsRegister = await userServices(dataRegister);
         if (rsRegister.EC !== 0) {
           toast(rsRegister.EM);
         } else {
           toast(rsRegister.EM);
-          navigate("/login");
+          // navigate("/login");
         }
       }
     } else {
-      console.log(dataRegister.password, " ", dataRegister.confirmPassword);
       toast.error("Mật khẩu không trùng khớp!");
     }
   };
   let navigate = useNavigate();
+  const handleImageDemo = (e) => {
+    try {      
+        let exe =
+          e.target.files[0].name.split(".")[
+            e.target.files[0].name.split(".").length - 1
+          ];
+
+        if (exe !== "png" && exe !== "jpeg" && exe !== "jpg") {
+          return;
+        } else {
+          setDataRegister((prevData) => ({
+            ...prevData,
+            image: e.target.files[0].name,
+            fileImage: e.target.files[0],
+          }));
+          setImageDemo(URL.createObjectURL(e.target.files[0]));
+        
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handlePreLogin = () => {
     navigate("/Login");
@@ -80,6 +101,24 @@ const Register = (props) => {
         <div class="section">
           <from action="#">
             <h1 className="title">Regiter</h1>
+            <div className="avatar">
+            <input
+            className="d-none"
+            ref={fileRef}
+            type="file"
+            onChange={handleImageDemo}
+          />
+          {imageDemo !== "" ? (<img className="add-avatar" onClick={() => {
+                fileRef.current.click();
+              }} src={`${imageDemo}`}></img>): (<AccountCircleIcon onClick={() => {
+                fileRef.current.click();
+              }} className="add-avatar" style={{color:"gray"}}/>) }
+            
+            </div>
+            <div className="avatar">
+            <p>Thêm ảnh đại diện</p>
+            </div>
+            
             <TextField
               className="text-field"
               required

@@ -1,21 +1,24 @@
 import axios from "./customAxios";
 import axiosFormal from "axios";
 
-const userServices = async(email, username, phone, password,role) => {
+const userServices = async(data) => {
+  console.log(data);
+  
   try{
-    const rs = await axios.post("/api/register", {
-      email,
-      username,
-      phone,
-      password,
-      role
-    });
-    console.log(rs);
-    return rs;
-  }catch(e){
+    const formData = new FormData();
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      formData.append(`${key}`, data[key]);
+    }
+    
+  }
+  const rs = await axios.post("/api/register", formData);
+  return rs;
+}
+  catch(e){
     console.log(e);
   }
-  
+
 };
 const getUsers = (page) => {
   return axios.get(`/api/users?page=${page}`);

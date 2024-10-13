@@ -43,6 +43,8 @@
 }
 .sub-category-row:nth-child(odd){
     // background-color:#ebebeb;;
-    background: linear-gradient(to right, #d6d6d6, #bababa); 
+    background: linear-gradient(to right, #e6e6e6, #d7d7d7); 
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 
 }

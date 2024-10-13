@@ -55,6 +55,7 @@ const Login = (props) => {
         phone: response.data.user.phone,
         email: response.data.user.email,
         token: response.data.user.token,
+        image: response.data.user.image
       };
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
       window.location.reload();

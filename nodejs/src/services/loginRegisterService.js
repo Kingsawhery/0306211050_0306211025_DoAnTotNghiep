@@ -30,7 +30,8 @@ const createRegisterUser = async (rawUser) => {
         phone: rawUser.phone,
         username: rawUser.username,
         password: isPassword,
-        role:rawUser.role
+        role:rawUser.role,
+        image:rawUser.image
       });
       return {
         EM: "create User Successfuly!",
@@ -58,24 +59,28 @@ const handleLoginUser = async (rawUser) => {
        email: rawUser.value,
       },
     });
+
+    
     if (user) {
       let passwordSuccess = await checkPassword(
         rawUser.password,
         user.password
       );
-      console.log(passwordSuccess);
       if (passwordSuccess === true) {
-        
         const payload = {
+          id: user.id,
           email: user.email,
+          username: user.username,
+          token: user.token,
           role: user.role,
-          expiresIn: process.env.JWT_EXPIRES_IN,
+          image: user.image
         };
+        
         return {
           EM: "Ok!",
           EC: 0,
           DT: {
-            user: user,
+            user: payload,
           },
         };
       }

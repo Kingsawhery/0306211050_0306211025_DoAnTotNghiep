@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "LOCAL",
       },
       username: DataTypes.STRING,
+      image: DataTypes.STRING,
       phone: DataTypes.STRING,
       gender: DataTypes.INTEGER,
       groupId: DataTypes.INTEGER,

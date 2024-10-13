@@ -54,6 +54,35 @@ color:#333;
 .input-box input::placeholder {
   color: #000000;
 }
+.avatar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar .add-avatar{
+  font-size: 120px;
+  border: 1px solid gray;
+  border-radius: 50%;
+
+  
+}
+.avatar .add-avatar{
+  max-width: 120px;
+  max-height: 120px;
+  min-width: 120px;
+  min-height: 120px;
+  border: 3px color gray;
+
+}
+.avatar img{
+  object-fit: cover;
+  object-position: center;
+}
+.avatar .add-avatar:hover{
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .section .remember-forgot {
   display: flex;
   justify-content: space-between;

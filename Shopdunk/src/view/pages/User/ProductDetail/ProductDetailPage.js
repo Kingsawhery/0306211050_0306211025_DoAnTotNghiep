@@ -61,7 +61,6 @@ const ProductDetailPage = () => {
     getProductDetail();
     getProduct();
     setSubProduct();
-    getImages();
     setPropertySelected({});
     setListTypeClassifyDetail({});
     window.scrollTo({ top: "0", behavior: "instant" });
@@ -89,8 +88,8 @@ const ProductDetailPage = () => {
       setImageList(result);
     }
   };
-  const getImages = async () => {
-    const results = await getProductDetailImage(id);
+  const getImages = async (productDetailId) => {
+    const results = await getProductDetailImage(productDetailId);    
     if (results?.length > 0) {
       setImageList(results);
       setImageSelected(results[0].image);
@@ -105,6 +104,7 @@ const ProductDetailPage = () => {
       console.log("check", result);
       if (result) {
         setProductDetail(result);
+        getImages(result.id);
         setPosts(result.post);
       }
     } catch (e) {
@@ -250,21 +250,21 @@ const ProductDetailPage = () => {
                     ? `${(
                         subProduct.price -
                         subProduct.price * (product.promotion / 100)
-                      ).toLocaleString("VN-vi")}
+                      ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`
                     : `${(
                         product.price -
                         product.price * (product.promotion / 100)
-                      ).toLocaleString("VN-vi")}
+                      ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`}
                 </span>
               </div>
               <div>
                 <span className="promotion">
                   {subProduct && subProduct.price
-                    ? `${subProduct.price.toLocaleString("VN-vi")}VNĐ`
+                    ? `${subProduct.price.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ`
                     : product.price
-                    ? `${product.price.toLocaleString("VN-vi")}VNĐ`
+                    ? `${product.price.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ`
                     : 0}
                 </span>
               </div>

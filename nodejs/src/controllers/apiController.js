@@ -41,7 +41,6 @@ const handleRegister = async (req, res) => {
 const handleLogin = async (req, res) => {
   try {
     let a = await req.body;
-    console.log(a);
     let data = await loginRegisterService.handleLoginUser(a);
     if (data.EC == "1") {
       return res.status(200).json({
@@ -50,17 +49,18 @@ const handleLogin = async (req, res) => {
       });
     }
     const token = userService.random(200);
+    
     await db.User.update(
       {
         token: token,
       },
       {
         where: {
-          email: data.DT.user.dataValues.email,
+          email: data.DT.user.email,
         },
       }
     );
-    let dataUser = data.DT.user.dataValues;
+    let dataUser = data.DT.user;
     // HttpOnly: user không thể lấy ra bằng script hoặc trình duyệt, chỉ sever lấy ra được
     return res
       .cookie("token", token, {
@@ -82,6 +82,7 @@ const handleLogin = async (req, res) => {
           phone: dataUser.phone,
           token: token,
           role: dataUser.role,
+          image: dataUser.image
         },
         EM: "Login success",
         EC: 0,

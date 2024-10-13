@@ -174,18 +174,18 @@ const ProductDetail = (props) => {
                   ? `${(
                       subProduct.price -
                       subProduct.price * (data.promotion / 100)
-                    ).toLocaleString("VN-vi")}
+                    ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`
                   : `${(
                       data.price -
                       data.price * (data.promotion / 100)
-                    ).toLocaleString("VN-vi")}
+                    ).toLocaleString("VN-vi").replace(/,/g, '.')}
                 VNĐ`}
               </span>
             </div>
             <div>
               <span className="promotion">
-                {data.price.toLocaleString("VN-vi")}VNĐ
+                {data.price.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ
               </span>
             </div>
             <div>

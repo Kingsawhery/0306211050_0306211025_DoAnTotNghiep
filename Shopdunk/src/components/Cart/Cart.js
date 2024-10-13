@@ -114,7 +114,7 @@ const Cart = () => {
                           (type) => ` ${type.name}`
                         )}
                       </p>
-                      <span className="price">{item.sub_product.price.toLocaleString("VN-vi")} VNĐ</span>
+                      <span className="price">{item.sub_product.price.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</span>
                       <div className="quantity">
                         <i
                           className="fas fa-minus"
@@ -172,9 +172,9 @@ const Cart = () => {
                       <tr key={item.sub_productId}>
                         <td>{item.sub_product.name}</td>
                         <td>{item.quantity}</td>
-                        <td>{item.sub_product.price.toLocaleString("VN-vi")} VNĐ</td>
+                        <td>{item.sub_product.price.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
                         <td>
-                          {(item.sub_product.price * item.quantity).toLocaleString("VN-vi")}{" "}
+                          {(item.sub_product.price * item.quantity).toLocaleString("VN-vi").replace(/,/g, '.')}{" "}
                           VNĐ
                         </td>
                       </tr>
@@ -183,7 +183,7 @@ const Cart = () => {
                 </table>
               </div>
               <div className="invoice-footer">
-                <h3>Tổng cộng: {totalAmount.toLocaleString("VN-vi")} VNĐ</h3>
+                <h3>Tổng cộng: {totalAmount.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</h3>
               </div>
             </div>
           </div>}

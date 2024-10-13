@@ -7,6 +7,8 @@ import {
   faChartLine,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import Footer from "../../../../components/Footer/Footer";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -153,7 +155,7 @@ const Layout = () => {
         </div>
       </div>
 
-      <h1>Footer</h1>
+      <Footer/>
     </>
   );
 };

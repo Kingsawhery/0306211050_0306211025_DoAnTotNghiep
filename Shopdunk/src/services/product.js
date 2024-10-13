@@ -4,11 +4,23 @@ export const getProductBySubCategory = (page, id) => {
     `${process.env.REACT_APP_API_SERVER}/product?page=${page}&id=${id}`
   );
 };
+
 export const getProductDetailById = (id) => {
   return instance.get(
     `${process.env.REACT_APP_API_SERVER}/product-detail?id=${id}`
   );
 };
+export const getAllTypeClassify = () => {
+  return instance.get(
+    `${process.env.REACT_APP_API_SERVER}/type-classifies`
+  );
+};
+export const getTypeClassifyDetail = (id) => {
+  return instance.get(
+    `${process.env.REACT_APP_API_SERVER}/type-classifies-detail?id=${id}`
+  );
+};
+
 export const getSubProduct = (list) => {
   return instance.get(`${process.env.REACT_APP_API_SERVER}/sub-product`, {
     params: list,

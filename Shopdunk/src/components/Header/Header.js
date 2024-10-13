@@ -103,7 +103,8 @@ const Header = () => {
               }}
             >
               {user ? (
-                <AccountCircleIcon />
+                /* avatar-default.jpg */
+                <img className="avatar-header" src={JSON.parse(localStorage.getItem("user")).image && JSON.parse(localStorage.getItem("user")).name ? `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${JSON.parse(localStorage.getItem("user")).name}/${JSON.parse(localStorage.getItem("user")).image}`: `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/avatar-default.jpg`}></img>
               ) : (
                 <Link to="/login">
                   <Login className="logo-login" />

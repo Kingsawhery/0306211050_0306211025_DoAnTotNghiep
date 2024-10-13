@@ -288,8 +288,6 @@ let getProductByCategory = async (page, id) => {
 };
 const createProduct = async (data, files) => {
   return new Promise(async (resolve, reject) => {
-    console.log(data);
-
     try {
       const newProduct = await db.product.create({
         name: data.name ? data.name : "New device",

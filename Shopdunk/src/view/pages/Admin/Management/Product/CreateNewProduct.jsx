@@ -12,16 +12,24 @@ import { validateNumber } from "../../../../../function/validate";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
-import { postProduct } from "../../../../../services/product";
+import {
+  postProduct,
+  getAllTypeClassify,
+  getTypeClassifyDetail,
+} from "../../../../../services/product";
 import { ImageList, ImageListItem } from "@mui/material";
+import DivClassify from "./DivClassify";
 const CreateNewProduct = () => {
+  const [listTypeClassify, setListTypeClassify] = useState([]);
+  const [disable, setDisable] = useState({});
+
   const [listCategories, setListCategories] = useState([]);
   const [listSubCategories, setListSubCategories] = useState([]);
   const [imageDemo, setImageDemo] = useState([]);
-  const [imageFile, setImageFile] = useState({});
+  // const [imageFile, setImageFile] = useState({});
   const fileRef = useRef(null);
   const [data, setData] = useState({
-    price: 0,
+    price: 1000,
     promotion: 0,
     category: "",
     subCategoryName: "",
@@ -30,12 +38,18 @@ const CreateNewProduct = () => {
     stock: 0,
     image: "",
     fileImage: [],
+    typeClassifies: [],
+    typeClassifyDetail: [],
+
   });
   const [validateData, setValidation] = useState(false);
+  const [state,setState] = useState(0);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [categorySelected, setCategorySelected] = useState(0);
+  const [typeClassifyDetail, setTypeClassifyDetail] = useState([]);
   useEffect(() => {
     getAllNameCategory();
+    getTypeClassify();
   }, []);
   useEffect(() => {
     getSubCategoriesName();
@@ -47,6 +61,25 @@ const CreateNewProduct = () => {
       setListCategories(listNames);
     }
   };
+  const getTypeClassify = async () => {
+    const listTypeClassify = await getAllTypeClassify();
+    if (listTypeClassify) {
+      setListTypeClassify(listTypeClassify);
+    }
+  };
+  const getClassifyDetailData = async (id) => {
+    const result = await getTypeClassifyDetail(id)
+    if(result && typeClassifyDetail.find(item => item.id === id) === undefined){
+      setTypeClassifyDetail([...typeClassifyDetail,{id:id, data:result}])
+      // console.log(typeClassifyDetail);
+      
+      
+    }
+
+  }
+  const handleClearTypeClassifyDetail = (setDataTypeClassify) =>{
+    setDataTypeClassify([]);
+  }
   const getSubCategoriesName = async () => {
     const listNames = await getSubCategoryByCategoryId(categorySelected);
     if (listNames) {
@@ -56,8 +89,8 @@ const CreateNewProduct = () => {
   const handleData = async (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(validateNumber(data.price));
     setData({ ...data, [name]: value });
+    console.log(data);
   };
   const handleSubmit = async () => {
     try {
@@ -88,8 +121,7 @@ const CreateNewProduct = () => {
             {
               fileName: e.target.files[i].name,
               img: URL.createObjectURL(e.target.files[i]),
-            }
-            
+            },
           ]);
         }
       }
@@ -111,27 +143,31 @@ const CreateNewProduct = () => {
           />
           {imageDemo.length > 0 ? (
             <ImageList
-          sx={{ width: 500, height: 300 }}
-          variant="quilted"
-          cols={3}
-          rowHeight={121}
->
-  {imageDemo.map((item,index) => (
-    <ImageListItem key={index} cols={1} rows={1}>
-
-      <img
-        alt={item.name}
-        className="image-item"
-        src={item.img}
-        loading="lazy"
-        onClick={(()=>{
-          setData({...data,image:item.fileName})
-    })}
-      />
-    </ImageListItem>
-  ))}
-</ImageList>
-          ): (
+              sx={{ width: 500, height: 300 }}
+              variant="quilted"
+              cols={3}
+              rowHeight={121}
+            >
+              {imageDemo.map((item, index) => (
+                <ImageListItem key={index} cols={1} rows={1}>
+                  <img
+                    alt={item.fileName}
+                    className="image-item"
+                    style={
+                      item.fileName == data.image
+                        ? { border: "4px solid gray" }
+                        : {}
+                    }
+                    src={item.img}
+                    loading="lazy"
+                    onClick={() => {
+                      setData({ ...data, image: item.fileName });
+                    }}
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          ) : (
             <div
               className="add-new-image"
               onClick={() => {
@@ -141,13 +177,14 @@ const CreateNewProduct = () => {
               <FontAwesomeIcon icon={faPlus} style={{ color: "#707070" }} />
             </div>
           )}
-          
+
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formGridProductName">
               <Form.Label>Tên sản phẩm</Form.Label>
               <Form.Control
                 onChange={handleData}
                 name="name"
+                style={{ width: "100%" }}
                 type="ProductName"
                 placeholder="Enter Product Name"
               />
@@ -211,10 +248,13 @@ const CreateNewProduct = () => {
               <Form.Control
                 onChange={handleData}
                 value={data.price}
+                defaultValue={1000}
                 name="price"
                 placeholder="Enter price..."
                 type="number"
+                style={{ width: "100%" }}
                 pattern="[0-9]*"
+                min={1000}
               />
               {!data.price && !validateNumber(data.price) ? (
                 <p className="text-danger error-message">
@@ -233,6 +273,9 @@ const CreateNewProduct = () => {
                 placeholder="Enter promotion..."
                 type="number"
                 pattern="[0-9]*"
+                style={{ width: "100%" }}
+                min={0}
+                max={100}
               />
               {!data.promotion && !validateNumber(data.promotion) ? (
                 <p className="text-danger error-message">
@@ -245,12 +288,101 @@ const CreateNewProduct = () => {
           </Row>
           <Row>
             <Form.Group>
-              <Form.Control name="stock" type="number" onChange={handleData} />
+              <Form.Label>Tồn kho</Form.Label>
+              <Form.Control
+                style={{ width: "100%" }}
+                name="stock"
+                type="number"
+                min={0}
+                onChange={handleData}
+                defaultValue={0}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Phân loại</Form.Label>
+              {/* <Form.Select
+                // style={{ width: "100%" }}
+                multiple
+                name="type-classify"
+                type="select"
+
+                onChange={(e)=>{
+                  if(data.typeClassifies.find(element => element == e.target.value)){
+                    setData({...data,typeClassifies:[...data.typeClassifies.filter(num => num !== e.target.value)]})
+                  }else{
+                    setData({...data,typeClassifies:[...data.typeClassifies,e.target.value]})
+                  }
+                }}
+                >
+              {listTypeClassify.map(option => (
+            <option style={data.typeClassifies.includes(`${option.id}`) ? {backgroundColor:"gray"} : {backgroundColor:"#ffffff"} } key={option.id} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+          </Form.Select> */}
+          <div className="classify" style={{display:"flex"}}>
+          <Form>
+                {listTypeClassify &&
+                  listTypeClassify.length > 0 &&
+                  listTypeClassify.map((item, index) => {
+                    const id = item.id;
+                    return (
+                      <Form.Check // prettier-ignore
+                        type="switch"
+                        id="custom-switch"
+                        value={item.id}
+                        label={`${item.name}`}
+                        disabled={disable[id]}
+                        // disabled={}
+                        onChange={(e) => {
+                          if (
+                            data.typeClassifies.find(
+                              (element) => element == item.id
+                            )
+                          ) {
+                            setData({
+                              ...data,
+                              typeClassifies: [
+                                ...data.typeClassifies.filter(
+                                  (num) => num !== item.id
+                                ),
+                              ],
+                              
+                            });
+                            setState(item.id)
+                            
+                          } else {
+                            setData({
+                              ...data,
+                              typeClassifies: [
+                                ...data.typeClassifies,
+                                item.id,
+                              ],
+                            });
+                          }
+                          setTypeClassifyDetail(prev => prev.filter(i => i.id !== item.id))
+                          if(typeClassifyDetail.find(i => i.id == item.id) == undefined && !data.typeClassifies.includes(Number(e.target.value))){
+                            getClassifyDetailData(item.id);
+                          }
+                        }}
+                      />
+                    );
+                  })}
+              </Form>
+              {typeClassifyDetail && typeClassifyDetail.length > 0 && typeClassifyDetail.map((item,index)=>{
+                return <DivClassify disable={disable} setDisable={setDisable} state={state} data={item} dataCreate={data} setDataCreate={setData}/>
+
+              })}
+          </div>
+              
             </Form.Group>
           </Row>
           <div className="div-btn">
             <Button
-              onClick={handleSubmit}
+              onClick={()=>{
+                // handleSubmit
+                console.log(data.typeClassifyDetail, data.typeClassifies)
+                }}
               className="btn-submit"
               variant="primary"
             >

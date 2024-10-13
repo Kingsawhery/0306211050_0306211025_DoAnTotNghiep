@@ -34,7 +34,7 @@ const ProductCard = (props) => {
         </div>
         <h3 className="product-name">{product.name}</h3>
         <h5 className="product-price">
-          {product.price.toLocaleString("VN-vi")}VNĐ
+          {product.price.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ
         </h5>
       </div>
     </Link>
