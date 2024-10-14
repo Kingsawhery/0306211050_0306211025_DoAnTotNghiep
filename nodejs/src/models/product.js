@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.BOOLEAN,
     categoryId:DataTypes.INTEGER,
     image:DataTypes.STRING,
-    promotion:DataTypes.FLOAT   
+    promotion:DataTypes.FLOAT,
   }, {
     sequelize,
     modelName: 'product',

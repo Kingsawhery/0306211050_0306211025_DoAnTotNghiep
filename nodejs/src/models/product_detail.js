@@ -27,7 +27,9 @@ module.exports = (sequelize, DataTypes) => {
       productId: DataTypes.INTEGER,
       postId:DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
-      rate:DataTypes.INTEGER
+      rate:DataTypes.INTEGER,
+      classify:DataTypes.TEXT
+
     },
     {
       sequelize,

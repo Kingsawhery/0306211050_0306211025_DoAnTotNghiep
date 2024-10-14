@@ -19,6 +19,7 @@ import { Button as buttonBootstrap } from "react-bootstrap";
 import { apiAddCart } from "../../../../services/cartService";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductRowRandom from "../../../../components/Product/ProductRowRandom/ProductRowRandom";
+import ClassifyDetailDiv from "./ClassifyDetailDiv";
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [productDetail, setProductDetail] = useState([]);
@@ -101,7 +102,6 @@ const ProductDetailPage = () => {
   const getProductDetail = async () => {
     try {
       const result = await getProductDetailById(id);
-      console.log("check", result);
       if (result) {
         setProductDetail(result);
         getImages(result.id);
@@ -160,14 +160,14 @@ const ProductDetailPage = () => {
     setPropertySelected({ ...propertySelected, [name]: index });
   };
 
-  console.log("pro", productDetail);
+  // console.log("pro", productDetail);
 
   return (
     product && (
       <>
-        <div className="row">
+        <div className="row product-detail">
           <div className="col-12 col-md-6">
-            <div style={{ position: "sticky", top: 0 }}>
+            <div style={{ position: "sticky", top: 0, padding:"40px" }}>
               <div className="picture">
                 <div
                   className="out-of-stock"
@@ -188,7 +188,7 @@ const ProductDetailPage = () => {
                   src={
                     imageSelected === ""
                       ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
-                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${imageSelected}`
+                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${imageSelected}`
                   }
                   className="img-thumbnail"
                   alt="..."
@@ -199,13 +199,15 @@ const ProductDetailPage = () => {
                   return (
                     <div
                       className="card-slick "
+                      style={imageSelected == item.image ? {border:"3px solid gray"} : {}}
                       onClick={() => {
                         setImageSelected(item.image);
                       }}
                       key={index}
                     >
-                      <div className="bg">
+                      <div className="div-image" >
                         <img
+                        className="list-image"
                           style={{
                             position: "absolute",
                             width: 95,
@@ -213,7 +215,7 @@ const ProductDetailPage = () => {
                             right: 6,
                             backgroundColor: "#F5F5F7",
                           }}
-                          src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${item.image}`}
+                          src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${item.image}`}
                           alt="mota-ip"
                         />
                       </div>
@@ -379,6 +381,8 @@ const ProductDetailPage = () => {
             </Stack>
           </div>
         </div>
+        {productDetail.classify && JSON.parse(productDetail.classify) && <ClassifyDetailDiv data = {JSON.parse(productDetail.classify)}/>}
+        
         {posts && (
           <>
             <div className="post-page container">

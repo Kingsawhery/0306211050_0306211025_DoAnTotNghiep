@@ -12,6 +12,7 @@ import { validateNumber } from "../../../../../function/validate";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import {
   postProduct,
   getAllTypeClassify,
@@ -19,10 +20,23 @@ import {
 } from "../../../../../services/product";
 import { ImageList, ImageListItem } from "@mui/material";
 import DivClassify from "./DivClassify";
+import { AddCircleOutline, Label } from "@mui/icons-material";
 const CreateNewProduct = () => {
   const [listTypeClassify, setListTypeClassify] = useState([]);
   const [disable, setDisable] = useState({});
-
+  const [detailData, setDetailData] = useState([
+    {
+      id: 0,
+      label: "",
+      data: [
+        {
+          id: 0,
+          labelData: "",
+          data: "",
+        },
+      ],
+    },
+  ]);
   const [listCategories, setListCategories] = useState([]);
   const [listSubCategories, setListSubCategories] = useState([]);
   const [imageDemo, setImageDemo] = useState([]);
@@ -40,10 +54,9 @@ const CreateNewProduct = () => {
     fileImage: [],
     typeClassifies: [],
     typeClassifyDetail: [],
-
   });
   const [validateData, setValidation] = useState(false);
-  const [state,setState] = useState(0);
+  const [state, setState] = useState(0);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [categorySelected, setCategorySelected] = useState(0);
   const [typeClassifyDetail, setTypeClassifyDetail] = useState([]);
@@ -68,18 +81,18 @@ const CreateNewProduct = () => {
     }
   };
   const getClassifyDetailData = async (id) => {
-    const result = await getTypeClassifyDetail(id)
-    if(result && typeClassifyDetail.find(item => item.id === id) === undefined){
-      setTypeClassifyDetail([...typeClassifyDetail,{id:id, data:result}])
+    const result = await getTypeClassifyDetail(id);
+    if (
+      result &&
+      typeClassifyDetail.find((item) => item.id === id) === undefined
+    ) {
+      setTypeClassifyDetail([...typeClassifyDetail, { id: id, data: result }]);
       // console.log(typeClassifyDetail);
-      
-      
     }
-
-  }
-  const handleClearTypeClassifyDetail = (setDataTypeClassify) =>{
+  };
+  const handleClearTypeClassifyDetail = (setDataTypeClassify) => {
     setDataTypeClassify([]);
-  }
+  };
   const getSubCategoriesName = async () => {
     const listNames = await getSubCategoryByCategoryId(categorySelected);
     if (listNames) {
@@ -94,9 +107,26 @@ const CreateNewProduct = () => {
   };
   const handleSubmit = async () => {
     try {
-      const result = await postProduct(data);
+      
+      const result = await postProduct({
+    price: data.price,
+    promotion: data.promotion,
+    category: data.category,
+    subCategoryName: data.subCategoryName,
+    subCategory: data.subCategory,
+    name: data.name,
+    stock: data.stock,
+    image: data.image,
+    fileImage: data.fileImage,
+    typeClassifies: data.typeClassifies,
+    typeClassifyDetail: data.typeClassifyDetail,
+    detailData: JSON.stringify(detailData)
+      });
+      
     } catch (e) {
       toast("Data is invalid!");
+      console.log(e);
+      
     }
   };
   const handleImageDemo = (e) => {
@@ -234,7 +264,7 @@ const CreateNewProduct = () => {
                   listSubCategories.length > 0 &&
                   listSubCategories.map((item, index) => {
                     return (
-                      <option name={item.name} value={item.id}>
+                      <option  name={item.name} value={item.id}>
                         {item.name}
                       </option>
                     );
@@ -320,69 +350,255 @@ const CreateNewProduct = () => {
             </option>
           ))}
           </Form.Select> */}
-          <div className="classify" style={{display:"flex"}}>
-          <Form>
-                {listTypeClassify &&
-                  listTypeClassify.length > 0 &&
-                  listTypeClassify.map((item, index) => {
-                    const id = item.id;
+              <div className="classify" style={{ display: "flex" }}>
+                <Form>
+                  {listTypeClassify &&
+                    listTypeClassify.length > 0 &&
+                    listTypeClassify.map((item, index) => {
+                      const id = item.id;
+                      return (
+                        <Form.Check // prettier-ignore
+                          type="switch"
+                          id="custom-switch"
+                          value={item.id}
+                          label={`${item.name}`}
+                          disabled={disable[id]}
+                          // disabled={}
+                          onChange={(e) => {
+                            if (
+                              data.typeClassifies.find(
+                                (element) => element == item.id
+                              )
+                            ) {
+                              setData({
+                                ...data,
+                                typeClassifies: [
+                                  ...data.typeClassifies.filter(
+                                    (num) => num !== item.id
+                                  ),
+                                ],
+                              });
+                              setState(item.id);
+                            } else {
+                              setData({
+                                ...data,
+                                typeClassifies: [
+                                  ...data.typeClassifies,
+                                  item.id,
+                                ],
+                              });
+                            }
+                            setTypeClassifyDetail((prev) =>
+                              prev.filter((i) => i.id !== item.id)
+                            );
+                            if (
+                              typeClassifyDetail.find((i) => i.id == item.id) ==
+                                undefined &&
+                              !data.typeClassifies.includes(
+                                Number(e.target.value)
+                              )
+                            ) {
+                              getClassifyDetailData(item.id);
+                            }
+                          }}
+                        />
+                      );
+                    })}
+                </Form>
+                {typeClassifyDetail &&
+                  typeClassifyDetail.length > 0 &&
+                  typeClassifyDetail.map((item, index) => {
                     return (
-                      <Form.Check // prettier-ignore
-                        type="switch"
-                        id="custom-switch"
-                        value={item.id}
-                        label={`${item.name}`}
-                        disabled={disable[id]}
-                        // disabled={}
-                        onChange={(e) => {
-                          if (
-                            data.typeClassifies.find(
-                              (element) => element == item.id
-                            )
-                          ) {
-                            setData({
-                              ...data,
-                              typeClassifies: [
-                                ...data.typeClassifies.filter(
-                                  (num) => num !== item.id
-                                ),
-                              ],
-                              
-                            });
-                            setState(item.id)
-                            
-                          } else {
-                            setData({
-                              ...data,
-                              typeClassifies: [
-                                ...data.typeClassifies,
-                                item.id,
-                              ],
-                            });
-                          }
-                          setTypeClassifyDetail(prev => prev.filter(i => i.id !== item.id))
-                          if(typeClassifyDetail.find(i => i.id == item.id) == undefined && !data.typeClassifies.includes(Number(e.target.value))){
-                            getClassifyDetailData(item.id);
-                          }
-                        }}
+                      <DivClassify
+                        disable={disable}
+                        setDisable={setDisable}
+                        state={state}
+                        data={item}
+                        dataCreate={data}
+                        setDataCreate={setData}
                       />
                     );
                   })}
-              </Form>
-              {typeClassifyDetail && typeClassifyDetail.length > 0 && typeClassifyDetail.map((item,index)=>{
-                return <DivClassify disable={disable} setDisable={setDisable} state={state} data={item} dataCreate={data} setDataCreate={setData}/>
-
-              })}
-          </div>
-              
+              </div>
             </Form.Group>
           </Row>
+          <div className="detail">
+            <Form.Label>Chi tiết sản phẩm</Form.Label>
+            {detailData &&
+              detailData.length > 0 &&
+              detailData.map((detailDataItem, indexDetail) => {
+                return (
+                  <>
+                    <Form.Group key={indexDetail} className="g-0">
+                      <Col md={12}>
+                        <Form.Label>Tên Phân Loại</Form.Label>
+                        <div className="d-flex align-items-center name-detail">
+                          <Form.Control
+                            name={`name-detail-${indexDetail}`}
+                            style={{ width: "100%" }}
+                            type="text"
+                            value={
+                              detailData.find(
+                                (item) => item.id === detailDataItem.id
+                              ).label
+                            }
+                            onChange={(e) => {
+                              setDetailData((prevState) =>
+                                prevState.map((item) =>
+                                  item.id === detailDataItem.id
+                                    ? {
+                                        ...item,
+                                        label: e.target.value, // Cập nhật label
+                                      }
+                                    : item
+                                )
+                              );
+                            }}
+                          />
+                          <AddCircleIcon
+                            className="m-3 add-icon-detail-product"
+                            onClick={() => {
+                              setDetailData([
+                                ...detailData,
+                                {
+                                  id: detailData.length,
+                                  label: "",
+                                  data: [
+                                    {
+                                      id: 0,
+                                      labelData: "",
+                                      data: "",
+                                    },
+                                  ],
+                                },
+                              ]);
+                            }}
+                          />
+                        </div>
+                      </Col>
+                      {detailDataItem.data &&
+                        detailDataItem.data.length > 0 &&
+                        detailDataItem.data.map(
+                          (detailDataDataItem, indexDetailSub) => {
+                            console.log(detailDataDataItem);
+                            return (
+                              <>
+                                <Row
+                                  key={indexDetailSub}
+                                  style={{ display: "flex" }}
+                                >
+                                  <Col mt md={6}>
+                                    <Form.Label>
+                                      Tên Chi Tiết Phân Loại
+                                    </Form.Label>
+                                    <div className="d-flex name-sub-detail">
+                                      <Form.Control
+                                        name={`name-sub-detail-${indexDetailSub}`}
+                                        style={{ width: "100%" }}
+                                        value={detailDataDataItem.labelData}
+                                        type="text"
+                                        onChange={(e) => {
+                                          setDetailData((prevState) =>
+                                            prevState.map((item) =>
+                                              item.id === detailDataItem.id
+                                                ? {
+                                                    ...item,
+                                                    data: item.data.map(
+                                                      (subItem) =>
+                                                        subItem.id ===
+                                                        detailDataDataItem.id
+                                                          ? {
+                                                              ...subItem,
+                                                              labelData:
+                                                                e.target.value, // Cập nhật labelData
+                                                            }
+                                                          : subItem
+                                                    ),
+                                                  }
+                                                : item
+                                            )
+                                          );
+                                        }}
+                                      />
+                                      <AddCircleIcon
+                                        className="m-3 add-icon-detail-product"
+                                        onClick={() => {
+                                          console.log(detailDataItem.id);
+                                          setDetailData((prevState) =>
+                                            prevState.map((item) =>
+                                              item.id === detailDataItem.id
+                                                ? {
+                                                    ...item,
+                                                    data: [
+                                                      ...item.data,
+                                                      {
+                                                        id:
+                                                          item.data.length + 1, // Tạo id mới cho đối tượng con
+                                                        labelData: "",
+                                                        data: "",
+                                                      },
+                                                    ],
+                                                  }
+                                                : item
+                                            )
+                                          );
+                                        }}
+                                      />
+                                    </div>
+                                  </Col>
+                                  <Col md={6}>
+                                    <Col key={indexDetailSub} md={12}>
+                                      <Form.Label>Mô tả</Form.Label>
+                                      <div className="d-flex name-sub-detail">
+                                        <Form.Control
+                                          name={`name-sub-sub-detail-${indexDetailSub}`}
+                                          style={{ width: "100%" }}
+                                          type="text"
+                                          value={detailDataDataItem.data}
+                                          onChange={(e) => {
+                                            setDetailData((prevState) =>
+                                              prevState.map((item) =>
+                                                item.id === detailDataItem.id
+                                                  ? {
+                                                      ...item,
+                                                      data: item.data.map(
+                                                        (subItem) =>
+                                                          subItem.id ===
+                                                          detailDataDataItem.id
+                                                            ? {
+                                                                ...subItem,
+                                                                data: e.target
+                                                                  .value, // Cập nhật labelData
+                                                              }
+                                                            : subItem
+                                                      ),
+                                                    }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        />{" "}
+                                        {/* <AddCircleIcon
+                                                    className="m-3 add-icon-detail-product"
+                                                      /> */}
+                                      </div>
+
+                                      {/* Form control chiếm 50% */}
+                                    </Col>
+                                  </Col>
+                                </Row>
+                              </>
+                            );
+                          }
+                        )}
+                    </Form.Group>
+                  </>
+                );
+              })}
+          </div>
           <div className="div-btn">
             <Button
-              onClick={()=>{
-                // handleSubmit
-                console.log(data.typeClassifyDetail, data.typeClassifies)
-                }}
+              onClick={handleSubmit}
               className="btn-submit"
               variant="primary"
             >

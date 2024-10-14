@@ -89,12 +89,22 @@ span ms {
   border: none;
   text-align: center;
   padding-bottom: 10px;
+  object-fit: contain;
+  object-position: center;
 }
 .slick {
   position: relative;
   display: flex;
 }
+.card-slick .list-image{
+  object-fit: contain;
+  object-position: center;
+}
+.card-slick .div-image{
+  background-color: red!important;
+}
 .card-slick {
+  
   margin-right: 2px;
   position: relative;
   border: 1px solid #c8bfbf;

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import "../Product/CreateNewProduct.scss"
+import "../Product/DivClassify.scss"
 
 const DivClassify = (props, ref) => {    
     const [dataSelect, setDataSelect] = useState([]);
@@ -60,12 +60,12 @@ const DivClassify = (props, ref) => {
                 ))}
             </div>
         ) : (
-            <div className="div-classify" style={{marginLeft: "12px"}}>
+            <div className="div-classify " style={{marginLeft: "12px"}}>
                 {data && data.data && data.data.map((item) => (
                     <div
                         style={dataSelect.includes(item.id) ? { cursor: "pointer", border: "2px solid gray", marginTop: "12px", display: "flex" } : { cursor: "pointer", marginTop: "12px", display: "flex" }}
                         key={item.id}
-                        className="div-classify-detail"
+                        className="div-classify-detail div-classify-not-color"
                         onClick={() => { handleData(item.id); }}
                     >
                         <div style={{ marginLeft: "12px" }} className="name">{item.name}</div>

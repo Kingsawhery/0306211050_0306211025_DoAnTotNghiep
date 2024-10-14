@@ -86,8 +86,15 @@ let getProductDetailById = async (id) => {
               },
             ],
           },
+          {
+            model:db.product,
+            include:{
+              model:db.sub_category
+            }
+          }
         ],
-        attributes: ["id", "rate", "productId", "stock"],
+        attributes: ["id", "rate", "productId", "stock", "classify"],
+
       });
       if (productDetail) {
         resolve(productDetail);
@@ -289,6 +296,7 @@ let getProductByCategory = async (page, id) => {
 const createProduct = async (data, files) => {
   return new Promise(async (resolve, reject) => {
     try {
+      
       const newProduct = await db.product.create({
         name: data.name ? data.name : "New device",
         subCategoryId: data.subCategory,
@@ -302,9 +310,75 @@ const createProduct = async (data, files) => {
         productId: newProduct.id,
         stock: data.stock,
         rate: 5,
+        classify: data.detailData
+
       });
+      const typeClassifies = data.typeClassifies.split(",");
+      const typeClassifyDetail = data.typeClassifyDetail.split(",");
+
+      
+      if(typeClassifies && typeClassifies.length > 0){
+        for(let i = 0; i < typeClassifies.length; i++){
+          
+          
+          const checkTypeClassifiesExist = await db.type_classify.findOne({
+            where:{
+              id:typeClassifies[i]
+            }
+            
+          })
+          if(checkTypeClassifiesExist){
+            
+            const createProductDetailTypeClassify = await db.product_detail_type_classify.create({
+              productDetailId: newProductDetail.id,
+              typeClassifyId: Number(typeClassifies[i])
+            })
+            
+          }
+          
+
+        }
+    }
+    if(typeClassifyDetail && typeClassifyDetail.length > 0){
+      for(let i = 0; i < typeClassifyDetail.length; i++){
+        
+        const checkTypeClassifyDetailExist = await db.type_classify_detail.findOne({
+          where:{
+            id:typeClassifyDetail[i]
+          }
+        })
+        if(checkTypeClassifyDetailExist){
+          const checkProductDetailExistClassify = await db.product_detail_type_classify.findOne({
+            where:{
+              [Op.and]:{
+                productDetailId: newProductDetail.id,
+                typeClassifyId: checkTypeClassifyDetailExist.typeClassifyId
+              }
+            }
+          })
+          if(checkProductDetailExistClassify){
+            const createProductDetailTypeClassify = await db.product_detail_type_classify_detail.create({
+              productDetailId: newProductDetail.id,
+              typeClassifyDetailId: typeClassifyDetail[i]
+            })
+          }
+     
+          if(createProduct){
+            resolve();
+          }
+          else{
+            
+          }
+          }
+        }
+       
+        
+
+    }
+  // }
+    
       await saveImage(files, newProductDetail.id);
-      resolve();
+      resolve(newProduct);
     } catch (e) {
       reject(e);
     }
