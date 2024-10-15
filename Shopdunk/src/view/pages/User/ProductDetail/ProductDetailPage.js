@@ -22,9 +22,9 @@ import ProductRowRandom from "../../../../components/Product/ProductRowRandom/Pr
 import ClassifyDetailDiv from "./ClassifyDetailDiv";
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const [productDetail, setProductDetail] = useState([]);
+  const [productDetail, setProductDetail] = useState({});
   const [subProduct, setSubProduct] = useState([]);
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState({});
   const [listTypeClassifyDetail, setListTypeClassifyDetail] = useState({});
   const [propertySelected, setPropertySelected] = useState({});
   const [posts, setPosts] = useState({});
@@ -59,8 +59,8 @@ const ProductDetailPage = () => {
   //   window.scrollTo({ top: "0", behavior: "instant" });
   // }, []);
   useEffect(() => {
-    getProductDetail();
     getProduct();
+    getProductDetail();
     setSubProduct();
     setPropertySelected({});
     setListTypeClassifyDetail({});
@@ -120,6 +120,8 @@ const ProductDetailPage = () => {
         setProduct(results);
         setSubCategoryId(results.subCategoryId)
         
+      }else{
+        navigate("/");
       }
     } catch (e) {
       toast.error("Đã có lỗi xảy ra!");
@@ -160,10 +162,9 @@ const ProductDetailPage = () => {
     setPropertySelected({ ...propertySelected, [name]: index });
   };
 
-  // console.log("pro", productDetail);
 
   return (
-    product && (
+    product && productDetail && (
       <>
         <div className="row product-detail">
           <div className="col-12 col-md-6">
@@ -188,7 +189,7 @@ const ProductDetailPage = () => {
                   src={
                     imageSelected === ""
                       ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
-                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${imageSelected}`
+                      : productDetail && productDetail.product.sub_category  ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${imageSelected}` : ""
                   }
                   className="img-thumbnail"
                   alt="..."
@@ -215,7 +216,11 @@ const ProductDetailPage = () => {
                             right: 6,
                             backgroundColor: "#F5F5F7",
                           }}
-                          src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${item.image}`}
+                          src={
+                    productDetail && product && productDetail.product.sub_category
+                      ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${productDetail.product.sub_category.name}/${item.image}`
+                      : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                  }
                           alt="mota-ip"
                         />
                       </div>

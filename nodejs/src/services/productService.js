@@ -316,7 +316,7 @@ const createProduct = async (data, files) => {
       const typeClassifies = data.typeClassifies.split(",");
       const typeClassifyDetail = data.typeClassifyDetail.split(",");
 
-      
+      let nameTypeClassify = "";
       if(typeClassifies && typeClassifies.length > 0){
         for(let i = 0; i < typeClassifies.length; i++){
           
@@ -327,12 +327,20 @@ const createProduct = async (data, files) => {
             }
             
           })
+          const checkTypeClassifyDetailExist = await db.type_classify_detail.findOne({
+            where:{
+              typeClassifyId:typeClassifies[i]
+            }
+            
+          })
+          nameTypeClassify += checkTypeClassifyDetailExist.name + " ";
           if(checkTypeClassifiesExist){
             
             const createProductDetailTypeClassify = await db.product_detail_type_classify.create({
               productDetailId: newProductDetail.id,
               typeClassifyId: Number(typeClassifies[i])
             })
+            
             
           }
           
@@ -375,6 +383,7 @@ const createProduct = async (data, files) => {
         
 
     }
+    handleDataDetail(typeClassifies, typeClassifyDetail, data, nameTypeClassify, newProductDetail.id)
   // }
     
       await saveImage(files, newProductDetail.id);
@@ -384,6 +393,85 @@ const createProduct = async (data, files) => {
     }
   });
 };
+const handleDataDetail = async (type, typeDetail,data ,nameTypeClassify, detail) =>{
+  try{
+    console.log(detail.id);
+    
+    let arr = [];
+    for(let i = 0; i < typeDetail.length; i++){
+      const check = await db.type_classify_detail.findOne({
+        where:{
+          id:typeDetail[i]
+        }
+      })
+      arr.push({id:check.typeClassifyId, data:typeDetail[i]})
+    }
+
+  const grouped = arr.reduce((acc, current) => {
+    // Kiểm tra xem id đã tồn tại trong accumulator hay chưa
+    const existingGroup = acc.find(group => group.id === current.id);
+  
+    if (existingGroup) {
+      // Nếu tồn tại, thêm type vào mảng types
+      existingGroup.types.push(current.data);
+    } else {
+      // Nếu chưa tồn tại, tạo nhóm mới
+      acc.push({
+        id: current.id,
+        types: [current.data]
+      });
+    }
+  
+    return acc;
+  }, []);
+  const result = grouped.map(item => item.types);
+  function createNumber(arr, index = 0, number = [], result = []) {
+    if (index === arr.length) {
+        result.push([...number]); // Đẩy bản sao của mảng vào kết quả
+        return;
+    }
+    
+    for (let i = 0; i < arr[index].length; i++) {
+        if (!number.includes(arr[index][i])) { // Kiểm tra nếu phần tử chưa tồn tại trong mảng `number`
+            number.push(arr[index][i]); // Thêm phần tử vào mảng `number`
+            createNumber(arr, index + 1, number, result); // Đệ quy với mảng mới
+            number.pop(); // Xóa phần tử cuối cùng để thử giá trị khác
+        }
+    }
+    return result; // Trả về mảng kết quả
+}
+const dataSubProduct = createNumber(result);
+for(let i = 0; i < dataSubProduct.length; i++){
+  console.log(detail.id)
+  console.log(detail.name)
+
+  
+  const creatSubProduct = await db.sub_product.create({
+    name:  data.name + " " + nameTypeClassify,
+    price: data.price,
+    productDetailId: detail,
+    sold:0,
+    stock:0,
+    image: data.image
+})
+  for(let y = 0; y < dataSubProduct[i].length; y++){
+    console.log(dataSubProduct[i][y]);
+    
+    const creatSubProductDetail = await db.sub_product_type_classify_detail.create({
+      subProductId:creatSubProduct.id,
+      typeClassifyDetailId:dataSubProduct[i][y]
+    })
+  }
+}
+  
+      
+    
+  }catch(e){
+    console.log(e);
+    
+  }
+  
+}
 const saveImage = async (files, productDetailId) => {
   for (let i = 0; i < files.length; i++) {
     await db.product_detail_image.create({

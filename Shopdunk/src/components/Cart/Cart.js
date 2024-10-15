@@ -99,7 +99,8 @@ const Cart = () => {
                   <div className="card-cart" key={item.sub_productId}>
                     <img
                       src={
-                        item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.name}/${item.sub_product.image}`
+                        item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category
+.name}/${item.sub_product.image}`
                           : item.sub_product.product_detail.product_detail_images.image &&  item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
                           : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                           // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`

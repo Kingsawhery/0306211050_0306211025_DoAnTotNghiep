@@ -121,6 +121,11 @@ let getProductById = async (req, res) => {
       data: data,
     });
   }
+  else{
+    return res.status(200).json({
+      data: null,
+    });
+  }
 };
 
 let getProducts = async (req, res) => {
@@ -164,8 +169,6 @@ const getSubProductImage = async (req, res) => {
 const createNewProduct = async (req, res) => {
   try {
     const data = await req.body;
-    console.log(req.files);
-
     if (!req.body.name || !req.body.category || !req.body.subCategory) {
       return res.status(400).json({
         message: "Missing requirment field!",

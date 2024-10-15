@@ -143,7 +143,7 @@ const CreateNewProduct = () => {
         } else {
           setData((prevData) => ({
             ...prevData,
-            image: e.target.files[0],
+            image: e.target.files[0].name,
             fileImage: [...(prevData.fileImage || []), e.target.files[i]],
           }));
           setImageDemo((prevImages) => [
