@@ -4,7 +4,8 @@ module.exports = {
     return queryInterface.addColumn(
       'users',
       'image',
-     Sequelize.STRING
+    Sequelize.STRING,
+     
     );
 
   },

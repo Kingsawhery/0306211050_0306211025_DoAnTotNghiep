@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:"categoryId"
       });
       product.hasOne(models.product_detail)
+      product.belongsToMany(models.promotion,{through:"promotionProduct"})
+
       
     }
   };

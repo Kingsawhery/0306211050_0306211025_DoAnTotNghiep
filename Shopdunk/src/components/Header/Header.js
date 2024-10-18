@@ -1,12 +1,21 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useContext, useEffect, useState } from "react";
 import "./Header.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { getAllCategories } from "../../services/categoryService";
 import { Logout, Login } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Badge from '@mui/material/Badge';
+import {IconButton} from "@mui/material";
+import { styled } from '@mui/material/styles';
+import { Context } from "../../App";
+// import IconButton from '@mui/material/IconButton';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const Header = () => {
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
+  const {totalCart} = useContext(Context);
+  console.log(useContext(Context));
+  
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     getListCategories();
@@ -23,6 +32,7 @@ const Header = () => {
       window.location.reload();
     }
   };
+
   return (
     <div id="header">
       <div className="container p-0">
@@ -73,6 +83,7 @@ const Header = () => {
                 />
               </div>
             </div>
+            
             <Link
             onClick={()=>{
               window.scrollTo({ top: "0", behavior: "smooth" })
@@ -87,18 +98,17 @@ const Header = () => {
                 cursor: "pointer",
               }}
             >
-              <i
-                style={{ color: "#d2d2d7", fontSize: 23 }}
-                className="fas fa-shopping-bag"
-              />
+              <IconButton aria-label="cart" className="cart-icon">
+    <ShoppingCartIcon />
+              <span className="number-cart">{totalCart > 99 ? "99+" : totalCart}</span>
+</IconButton>
             </Link>
             <div
-              className="bag"
+              className="avatar"
               style={{
                 width: 14,
                 position: "relative",
-                top: 20,
-                left: 65,
+               right:-91 + "px",
                 cursor: "pointer",
               }}
             >

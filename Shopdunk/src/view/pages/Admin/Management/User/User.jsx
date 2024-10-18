@@ -28,6 +28,7 @@ export default function User() {
         setIsLoading(false);
       }
     } catch (e) {
+      toast.dismiss();
       toast.warning("Đã có lỗi xảy ra!");
     }
   };

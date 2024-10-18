@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import "./ProductDetailPage.scss";
 import {
   getProductDetailById,
@@ -20,9 +20,14 @@ import { apiAddCart } from "../../../../services/cartService";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductRowRandom from "../../../../components/Product/ProductRowRandom/ProductRowRandom";
 import ClassifyDetailDiv from "./ClassifyDetailDiv";
+import { Context } from "../../../../App";
+import _ from "lodash";
+import ModalConfirm from "./ModalConfirm";
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [productDetail, setProductDetail] = useState({});
+  const [open,setOpen] = useState(false)
   const [subProduct, setSubProduct] = useState([]);
   const [product, setProduct] = useState({});
   const [listTypeClassifyDetail, setListTypeClassifyDetail] = useState({});
@@ -34,6 +39,7 @@ const ProductDetailPage = () => {
   const postPageRef = useRef();
   const [subCategoryId,setSubCategoryId] = useState(null);
   const [outOfStock, setOutOfStock] = useState(false);
+  const {setTotalCart} = useContext(Context);
   const [dataAddCart, setDataAddCart] = useState({
     userId:
       localStorage.getItem("user") &&
@@ -138,20 +144,24 @@ const ProductDetailPage = () => {
       setSubProduct(product);
     }
   };
-  const handleAddCart = async () => {
+  const handleAddCart = _.debounce(async () => {
     if (!localStorage.getItem("user")) {
       navigate("/login");
     } else {
       if (dataAddCart.currentSubProduct && dataAddCart.currentSubProduct > 0) {
         const cart = await apiAddCart(dataAddCart);
         if (cart.data.EC === 0) {
-          toast("Đã thêm sản phẩm vào giỏ hàng!");
+          toast.dismiss();
+          alert("Đã thêm sản phẩm vào giỏ hàng thành công!")
+          // toast("Đã thêm sản phẩm vào giỏ hàng!");
+          setTotalCart(cart.data.total)
         } else {
-          toast("Đã hết hàng!");
+          // toast.dismiss();
+          // toast("Đã hết hàng!");
         }
       }
     }
-  };
+  },0);
   const handleListProerty = async (e, property, index) => {
     const name = e.target.getAttribute("name");
     setListTypeClassifyDetail({
@@ -372,7 +382,9 @@ const ProductDetailPage = () => {
             </div>
             <Stack marginTop={4} direction="row" spacing={1}>
               <Button
-                onClick={handleAddCart}
+                onClick={()=>{
+                  setOpen(true)
+                }}
                 variant="contained"
                 endIcon={<AddIcon color="success" />}
                 disabled={
@@ -398,6 +410,7 @@ const ProductDetailPage = () => {
         {subCategoryId && <ProductRowRandom id={subCategoryId}/>
       
       }
+      {open && <ModalConfirm handleAddCart={handleAddCart} setOpen={setOpen}/>}
       </>
     )
   );

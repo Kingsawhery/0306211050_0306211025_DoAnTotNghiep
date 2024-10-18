@@ -38,6 +38,7 @@ const ProductDetail = (props) => {
         setProductDetail(result);
       }
     } catch (e) {
+      toast.dismiss();
       toast.error("Đã có lỗi xảy ra!");
     }
   };

@@ -38,6 +38,7 @@ const handleAddCart = async (req, res) => {
     const rs = await postCart(idSubProduct, idUser, quantity);
     if (rs) {
       res.status(200).json({
+        total:rs.total,
         EC: 0,
         EM: "Add product to cart successfully!",
       });

@@ -124,6 +124,7 @@ const CreateNewProduct = () => {
       });
       
     } catch (e) {
+      toast.dismiss();
       toast("Data is invalid!");
       console.log(e);
       
@@ -192,6 +193,7 @@ const CreateNewProduct = () => {
                     loading="lazy"
                     onClick={() => {
                       setData({ ...data, image: item.fileName });
+                      console.log(data.image)
                     }}
                   />
                 </ImageListItem>
@@ -480,7 +482,6 @@ const CreateNewProduct = () => {
                         detailDataItem.data.length > 0 &&
                         detailDataItem.data.map(
                           (detailDataDataItem, indexDetailSub) => {
-                            console.log(detailDataDataItem);
                             return (
                               <>
                                 <Row

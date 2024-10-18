@@ -41,7 +41,6 @@ const createUser = async (email, password, username, type_ = "LOCAL") => {
         type: type_,
       });
     }
-    console.log("abc:", user.dataValues);
 
     return user.dataValues;
   } catch (err) {

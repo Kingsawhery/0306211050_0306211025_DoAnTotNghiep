@@ -15,6 +15,7 @@ const TableSubCategory = (props) => {
         setSubCategory(results);
       }
     }catch(e){
+      toast.dismiss();
       toast.error("Đã có lỗi xảy ra");
     }
   }

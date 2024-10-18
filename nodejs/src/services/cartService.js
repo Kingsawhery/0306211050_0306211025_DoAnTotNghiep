@@ -40,7 +40,17 @@ let getCart = async (id) => {
           },
         ],
       });
-      resolve(listProductCart);
+      if(listProductCart){
+        const totalQuantity = listProductCart.reduce((sum, item) => sum + item.quantity, 0);
+        resolve(
+          {
+            total: totalQuantity,
+            data:listProductCart
+          })
+      }else{
+        resolve();
+
+      }
     } catch (e) {}
   });
 };
@@ -68,34 +78,6 @@ let deleteCart = async (idSubProduct, idUser) => {
 };
 let postCart = async (idSubProduct, idUser, quantity) => {
   return new Promise(async (resolve, reject) => {
-    // try {
-    //   const check = await db.Cart.findOne({
-    //     where: {
-    //       userId: idUser,
-    //       sub_productId: idSubProduct,
-    //     },
-    //   });
-    //   if (!check) {
-    //     await db.Cart.create({
-    //       userId: user.id,
-    //       sub_productId: id,
-    //       quantity: 1,
-    //     });
-    //   } else {
-    //     check.quantity += 1;
-    //     await check.save();
-    //   }
-
-    //   resolve({
-    //     EC: 0,
-    //     EM: "Đã thêm sản phẩm vào giỏ hàng",
-    //   });
-    // } catch (error) {
-    //   reject({
-    //     EC: 500,
-    //     EM: "Đã xảy ra lỗi khi thêm vào giỏ hàng",
-    //   });
-    // }
     try {
       const check = await db.Cart.findOne({
         where: {
@@ -118,14 +100,6 @@ let postCart = async (idSubProduct, idUser, quantity) => {
           quantity: 1,
         });
       }
-      // else if (check.quantity > 0) {
-      //   check.quantity += quantity;
-      //   check.price = subProduct.price * check.quantity;
-      //   await check.save();
-      // }
-      // else if (check == quantity < 0) {
-      //   await check.destroy();
-      // }
       else {
         if (quantity > 0) {
           if (check.quantity > 0) {
@@ -143,8 +117,15 @@ let postCart = async (idSubProduct, idUser, quantity) => {
           }
         }
       }
-
+      const listProductCart = await db.Cart.findAll({
+        where: [
+          {
+            userId: idUser,
+          },
+        ]})
+      const totalQuantity = listProductCart.reduce((sum, item) => sum + item.quantity, 0);
       resolve({
+        total:totalQuantity,
         EC: 0,
         EM: "Đã thêm sản phẩm vào giỏ hàng",
       });

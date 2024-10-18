@@ -8,9 +8,11 @@ let readCategoriesHomepage = async () => {
         include: [{
           model:db.product,
           limit:8,
-          attributes:["id","name","price","status","subCategoryId","image","promotion"]
-
-        }]
+          attributes:["id","name","price","status","subCategoryId","image","promotion"],
+          include:[{
+            model:db.sub_category
+          }]
+        },]
       });
       if (categories) {
         resolve(categories);

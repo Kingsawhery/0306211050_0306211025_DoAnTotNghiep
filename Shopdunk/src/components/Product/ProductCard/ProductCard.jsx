@@ -26,8 +26,8 @@ const ProductCard = (props) => {
         <div className="div-img">
           <img
             src={
-              product.image
-                ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.name}/${product.image}`
+              product.image && product.sub_category
+                ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${product.sub_category.name}/${product.image}`
                 : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
             }
           />

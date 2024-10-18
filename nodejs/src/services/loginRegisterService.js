@@ -71,6 +71,7 @@ const handleLoginUser = async (rawUser) => {
           id: user.id,
           email: user.email,
           username: user.username,
+          phone:user.phone,
           token: user.token,
           role: user.role,
           image: user.image

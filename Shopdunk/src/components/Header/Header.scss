@@ -78,3 +78,25 @@ li.nav:hover {
   color:#ffffff;
   cursor: pointer;
 }
+.cart-icon{
+  position: relative;
+  color:#d2d2d7!important;
+  margin-right: 12px!important;
+  .number-cart{
+    position: absolute;
+    top:0;
+    right: -4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    color:#fff;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    border-radius: 50%;
+  }
+}
+.avatar{
+  
+}

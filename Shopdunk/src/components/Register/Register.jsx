@@ -47,13 +47,16 @@ const Register = (props) => {
       ) {
         const rsRegister = await userServices(dataRegister);
         if (rsRegister.EC !== 0) {
+          toast.dismiss();
           toast(rsRegister.EM);
         } else {
+          toast.dismiss();
           toast(rsRegister.EM);
           // navigate("/login");
         }
       }
     } else {
+      toast.dismiss();
       toast.error("Mật khẩu không trùng khớp!");
     }
   };

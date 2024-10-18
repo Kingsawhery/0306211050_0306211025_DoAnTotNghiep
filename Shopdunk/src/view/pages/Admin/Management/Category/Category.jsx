@@ -53,6 +53,7 @@ const Category = () => {
         setCategories(results);
       }
     } catch (e) {
+      toast.dismiss();
       toast("Đã có lỗi xảy ra!");
     }
   };

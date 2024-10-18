@@ -3,7 +3,9 @@ import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { loginServices } from "../../services/userServices";
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGG from "../LoginGG";
@@ -40,9 +42,11 @@ const Login = (props) => {
   };
   const handleLogin = async () => {
     if (!data.email) {
+      toast.dismiss();
       toast.error("Enter email/phone or Password");
       return;
     } else if (!data.password) {
+      toast.dismiss();
       toast.error("Enter email/phone or Password");
       return;
     }

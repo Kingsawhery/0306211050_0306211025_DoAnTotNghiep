@@ -7,7 +7,10 @@ let getProductsRandom = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let products = await db.product.findAll({
-        order: Sequelize.literal("rand()"),
+        // order: Sequelize.literal("rand()"),
+        include:[{
+          model: db.sub_category
+        }],
         where:[
         {
         subCategoryId:id
@@ -383,7 +386,7 @@ const createProduct = async (data, files) => {
         
 
     }
-    handleDataDetail(typeClassifies, typeClassifyDetail, data, nameTypeClassify, newProductDetail.id)
+    handleDataDetail(typeClassifies, typeClassifyDetail, data, newProductDetail.id)
   // }
     
       await saveImage(files, newProductDetail.id);
@@ -393,7 +396,7 @@ const createProduct = async (data, files) => {
     }
   });
 };
-const handleDataDetail = async (type, typeDetail,data ,nameTypeClassify, detail) =>{
+const handleDataDetail = async (type, typeDetail,data , detail) =>{
   try{
     console.log(detail.id);
     
@@ -447,7 +450,7 @@ for(let i = 0; i < dataSubProduct.length; i++){
 
   
   const creatSubProduct = await db.sub_product.create({
-    name:  data.name + " " + nameTypeClassify,
+    name:  data.name,
     price: data.price,
     productDetailId: detail,
     sold:0,
@@ -455,8 +458,20 @@ for(let i = 0; i < dataSubProduct.length; i++){
     image: data.image
 })
   for(let y = 0; y < dataSubProduct[i].length; y++){
-    console.log(dataSubProduct[i][y]);
-    
+    const subProduct = await db.sub_product.findOne({
+      where:{
+        id: creatSubProduct.id
+      }
+    })
+    const typeName = await db.type_classify_detail.findOne({
+      where:{
+        id: dataSubProduct[i][y]
+      }
+    })
+    if(subProduct){
+      subProduct.name = subProduct.name + " " + typeName.name;
+      await subProduct.save();
+    }
     const creatSubProductDetail = await db.sub_product_type_classify_detail.create({
       subProductId:creatSubProduct.id,
       typeClassifyDetailId:dataSubProduct[i][y]

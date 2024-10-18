@@ -25,12 +25,36 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryPage from "./view/pages/User/CategoryPage/CategoryPage";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
+import { apiShowCart } from "./services/cartService";
 const App = () => {
   const user = localStorage.getItem("user");
+  const [totalCart, setTotalCart] = useState(0);
 
+  useEffect(()=>{
+    if(user && JSON.parse(user).token){ 
+      handleGetData();
+     }
+
+  },[])
+ 
+    const handleGetData = async () => {
+      if (JSON.parse(user).id && JSON.parse(user).token) {
+        const data = {
+          userId: JSON.parse(user).id,
+          token: JSON.parse(user).token,
+        };
+        const dataRs = await apiShowCart(data);
+        if (dataRs) {
+          setTotalCart(dataRs.data.total);
+          
+        }
+      }
+    };
   return (
     <>
+    <Context.Provider
+    value={{totalCart,setTotalCart}}>
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -68,7 +92,7 @@ const App = () => {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
-      <ToastContainer
+      <ToastContainer 
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -81,7 +105,10 @@ const App = () => {
         theme="light"
       />
       <ToastContainer />
+      </Context.Provider>
     </>
+    
   );
 };
 export default App;
+export const Context = createContext(null);

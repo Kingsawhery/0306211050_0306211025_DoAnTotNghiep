@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       Invoice.belongsToMany(models.sub_product, {
         through: "sub_product_invoice",
       });
-      Invoice.belongsTo(models.Promotion, { foreignKey: "promotionId " });
+      Invoice.belongsTo(models.promotion, { foreignKey: "promotionId" });
+      Invoice.belongsTo(models.promotion, { foreignKey: "statusInvoceId" });
+
     }
   }
   Invoice.init(
@@ -27,10 +29,13 @@ module.exports = (sequelize, DataTypes) => {
       status_invoice: DataTypes.STRING,
       price: DataTypes.FLOAT,
       total: DataTypes.FLOAT,
+      statusInvoceId:DataTypes.INTEGER
     },
     {
       sequelize,
       modelName: "Invoice",
+      deletedAt:"softDelete",
+    paranoid:true,
     }
   );
   return Invoice;
