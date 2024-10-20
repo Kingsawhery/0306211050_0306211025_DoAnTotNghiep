@@ -70,3 +70,8 @@ export const getSubProductImage = (productDetailId, typeClassifyDetailId) => {
     `${process.env.REACT_APP_API_SERVER}/sub-product-image?productDetailId=${productDetailId}&typeClassifyDetailId=${typeClassifyDetailId}`
   );
 };
+export const getPromotion = (code) => {
+  return instance.get(
+    `${process.env.REACT_APP_API_SERVER}/promotion?code=${code}`
+  );
+};

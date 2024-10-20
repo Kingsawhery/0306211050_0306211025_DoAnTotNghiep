@@ -62,6 +62,8 @@ import {
 import { getAllPosts, getPostPage } from "../controllers/postController";
 // Type Classify - 6
 import {getAllTypeClassify,getAllTypeClassifyDetailById} from "../controllers/classifyController"
+import {getPromotion} from "../controllers/promotionController"
+
 let router = express.Router();
 let storage = multer.diskStorage({
   destination: async function (req, file, cb) {
@@ -205,6 +207,9 @@ let apiWebRoutes = (app) => {
   // Type Classify - 8 
   router.get("/type-classifies",getAllTypeClassify);
   router.get("/type-classifies-detail",getAllTypeClassifyDetailById);
+
+  //
+  router.get("/promotion",getPromotion);
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

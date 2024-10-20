@@ -6,53 +6,64 @@ import {
   apiDeleteCart,
   apiShowCart,
 } from "../../services/cartService";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ProductRowRandom from "../Product/ProductRowRandom/ProductRowRandom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../App";
 import { Form } from "react-bootstrap";
-import {Row} from "react-bootstrap";
-import {Col} from "react-bootstrap";
-import { TextField, Tooltip } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import {FormControl} from "@mui/material";
-import {InputLabel} from "@mui/material";
+import { Row } from "react-bootstrap";
+import { Col } from "react-bootstrap";
+import { Button, TextField, Tooltip } from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import { FormControl } from "@mui/material";
+import { InputLabel } from "@mui/material";
+import _ from "lodash";
+import { getPromotion } from "../../services/product";
 const Cart = () => {
   const [listProductInCart, setProductInCart] = useState([]);
+  const [promotionInfor, setPromotionInfor] = useState({});
+  const [listProductInPromotion, setProductInPromotion] = useState([]);
+  const [totalPromotion,setTotalPromotion] = useState(0);
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
   const [currentSubProduct, setCurrentSubProduct] = useState(true);
-  const {setTotalCart} = useContext(Context)
-  const [paymentInfomation,setPaymentInformation] = useState({
-    name:user && JSON.parse(user).name ? JSON.parse(user).name : "",
-    phone:user && JSON.parse(user).phone ? JSON.parse(user).phone : "",
-    email:user && JSON.parse(user).email ? JSON.parse(user).email : "",
-    city:"",
-    district:"",
-    ward:"",
-    street:""
-  })
-  const [address,setAddress] = useState({
-    city:[],
-    district:[],
-    ward:[],
-  })
-  const [addressPayment,setAddressPayment] = useState({
-    city:{
-      id:null,
-      name:""
+  const { setTotalCart } = useContext(Context);
+  const [paymentInformation, setPaymentInformation] = useState({
+    name: user && JSON.parse(user).name ? JSON.parse(user).name : "",
+    phone: user && JSON.parse(user).phone ? JSON.parse(user).phone : "",
+    email: user && JSON.parse(user).email ? JSON.parse(user).email : "",
+    city: "",
+    district: "",
+    ward: "",
+    street: "",
+    promotion: {
+      name: "",
+      status: false,
+      percent: 0,
     },
-    district:{
-      id:null,
-      name:""
+  });
+  const [address, setAddress] = useState({
+    city: [],
+    district: [],
+    ward: [],
+  });
+  const [addressPayment, setAddressPayment] = useState({
+    city: {
+      id: null,
+      name: "",
     },
-    ward:{
-      id:null,
-      name:""
+    district: {
+      id: null,
+      name: "",
     },
-  })
+    ward: {
+      id: null,
+      name: "",
+    },
+  });
   useEffect(() => {
     if (!localStorage.getItem("user")) {
       navigate("/login");
@@ -63,10 +74,61 @@ const Cart = () => {
   useEffect(() => {
     handleGetData();
   }, [currentSubProduct]);
-  const getDataCity = async () =>{
+  const getDataCity = async () => {
     const dataCity = await axios.get(`https://esgoo.net/api-tinhthanh/1/0.htm`);
-    setAddress({...address,city:dataCity.data.data})
-  }
+    setAddress({ ...address, city: dataCity.data.data });
+  };
+  const handlePromotion = _.debounce(async (e) => {
+    if (
+      paymentInformation.promotion &&
+      paymentInformation.promotion.name !== ""
+    ) {
+      const promotion = await getPromotion(paymentInformation.promotion.name);
+      if (promotion) {
+        setPaymentInformation({
+          ...paymentInformation,
+          promotion: {
+            name: promotion.code,
+            status: true,
+            percent: promotion.percent,
+          },
+        });
+        setPromotionInfor(promotion)
+        if(promotion){
+          let newTotalPromotion = 0;
+          listProductInCart.map((item) => {
+             // Tạo một biến tạm thời để tính tổng
+          
+            for (let i = 0; i < promotion.products.length; i++) {
+              if (item.sub_product.product_detail.productId === promotion.products[i].id) {
+                newTotalPromotion += (item.sub_product.price * item.quantity * (100 - promotion.percent) / 100);
+              }else{
+                newTotalPromotion += (item.sub_product.price * item.quantity);
+              }
+            }
+            console.log(newTotalPromotion);
+  
+            // Nếu không tìm thấy sản phẩm trong khuyến mãi thì cộng giá gốc
+            
+            setTotalPromotion(newTotalPromotion); // Cập nhật giá trị sau khi đã tính xong
+          });
+        }
+       
+        
+        setProductInPromotion(promotion.products);
+       
+      } else {
+        setPaymentInformation({
+          ...paymentInformation,
+          promotion: {
+            name: e.target.value,
+            status: false,
+            percent: 0,
+          },
+        });
+      }
+    }
+  }, 1000);
   const handleGetData = async () => {
     if (JSON.parse(user).id && JSON.parse(user).token) {
       const data = {
@@ -76,7 +138,7 @@ const Cart = () => {
       const dataRs = await apiShowCart(data);
       if (dataRs) {
         setProductInCart(dataRs.data.data);
-        setTotalCart(dataRs.data.total)
+        setTotalCart(dataRs.data.total);
       }
     }
   };
@@ -90,6 +152,11 @@ const Cart = () => {
     });
     if (rs.data) {
       setCurrentSubProduct(!currentSubProduct);
+      setPaymentInformation({...paymentInformation, promotion:{
+        name:"",
+        status:false,
+        percent:0,
+      }})
     }
   };
 
@@ -102,16 +169,24 @@ const Cart = () => {
       });
       if (rs.data) {
         setCurrentSubProduct(!currentSubProduct);
+        setPaymentInformation({...paymentInformation, promotion:{
+          name:"",
+          status:false,
+          percent:0,
+        }})
+      
       }
     } catch (e) {
       toast.dismiss();
+      console.log(e);
+      
       toast.error("Đã có lỗi xảy ra!");
     }
   };
   const hanldeSetValue = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setPaymentInformation({ ...paymentInfomation, [name]: value });
+    setPaymentInformation({ ...paymentInformation, [name]: value });
   };
   const handleMinusCart = async (id) => {
     try {
@@ -123,8 +198,15 @@ const Cart = () => {
       });
       if (rs.data) {
         setCurrentSubProduct(!currentSubProduct);
+        setPaymentInformation({...paymentInformation, promotion:{
+          name:"",
+          status:false,
+          percent:0,
+        }})
       }
     } catch (e) {
+      console.log();
+      
       toast.dismiss();
       toast.error("Đã có lỗi xảy ra!");
     }
@@ -134,7 +216,6 @@ const Cart = () => {
     (total, item) => total + item.price,
     0
   );
-
   return (
     <div className="main">
       <div className="container">
@@ -143,14 +224,25 @@ const Cart = () => {
             <div className="div-cart">
               {listProductInCart.length > 0 ? (
                 listProductInCart.map((item) => (
-                  <div className="card-cart" key={item.sub_productId}>
+                  <div
+                    className="card-cart"
+                    key={item.sub_productId}
+                    onClick={() => {
+                      console.log(item);
+                    }}
+                  >
                     <img
                       src={
-                        item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category
-.name}/${item.sub_product.image}`
-                          : item.sub_product.product_detail.product_detail_images.image &&  item.sub_product.product_detail.product_detail_images.length > 0 ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
+                        item.sub_product.product_detail.product_detail_images
+                          .length > 0
+                          ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.image}`
+                          : item.sub_product.product_detail
+                              .product_detail_images.image &&
+                            item.sub_product.product_detail
+                              .product_detail_images.length > 0
+                          ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
                           : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
-                          // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                        // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                       }
                       alt={item.sub_product.name}
                     />
@@ -162,7 +254,13 @@ const Cart = () => {
                           (type) => ` ${type.name}`
                         )}
                       </p>
-                      <span className="price">{item.sub_product.price.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</span>
+                      <span className="d-flex align-items-center">
+                        {item.sub_product.price
+                          .toLocaleString("VN-vi")
+                          .replace(/,/g, ".")}{" "}
+                        VNĐ
+                      </span>
+
                       <div className="quantity">
                         <i
                           className="fas fa-minus"
@@ -191,193 +289,393 @@ const Cart = () => {
               <h3>Gợi ý phụ kiện đi kèm</h3>
               <ProductRowRandom />
             </div>
-            <div className="abate">
-              <h3>Thông tin thanh toán</h3>
-              <p className="text-content-login">
-                Đăng nhập ngay để nhận được “điểm thưởng” hấp dẫn khi mua hàng
-                thành công.
-              </p>
-              <button className="btn-login-abate" onClick={()=>{
-                console.log({
-                  name: paymentInfomation.name ,
-    phone: paymentInfomation.phone ,
-    email: paymentInfomation.email ,
-    address: paymentInfomation.street + ", "  + paymentInfomation.ward + ", " + paymentInfomation.district + ", " + paymentInfomation.city
-                })
-              }}>Đăng nhập ngay</button>
-            </div>
           </div>
-          {listProductInCart.length > 0 && <div className="col-4">
-            <div className="invoice">
-              <h2>HÓA ĐƠN</h2>
-              <p>Mã hóa đơn: #12345</p>
-              <p>Ngày: {new Date().toLocaleDateString()}</p>
-              <div className="invoice-body">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Số lượng</th>
-                      <th>Giá</th>
-                      <th>Tổng</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {listProductInCart.map((item) => (
-                      <tr key={item.sub_productId}>
-                        <td>{item.sub_product.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.sub_product.price.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
-                        <td>
-                          {(item.sub_product.price * item.quantity).toLocaleString("VN-vi").replace(/,/g, '.')}{" "}
-                          VNĐ
-                        </td>
+          {listProductInCart.length > 0 && (
+            <div className="col-4">
+              <div className="invoice">
+                <h2>HÓA ĐƠN</h2>
+                <Col style={{ display: "flex", position: "relative" }} xs={12}>
+                  <Tooltip title={paymentInformation.promotion.name}>
+                    <TextField
+                      name="promotion"
+                      onChange={(e) => {
+                        setPaymentInformation({
+                          ...paymentInformation,
+                          promotion: {
+                            name: e.target.value,
+                            status: false,
+                            percent: 100,
+                          },
+                        });
+                      }}
+                      value={paymentInformation.promotion.name}
+                      id="standard-basic-1"
+                      label="Mã khuyến mãi"
+                      variant="outlined"
+                      fullWidth
+                    />
+                  </Tooltip>
+                  <ArrowForwardIosIcon
+                    className="button-apply-promotion"
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "8px",
+                      top: "15px",
+                    }}
+                    onClick={handlePromotion}
+                  />
+                </Col>
+                <p>Mã hóa đơn: #12345</p>
+                <p>Ngày: {new Date().toLocaleDateString()}</p>
+                <div className="invoice-body">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {listProductInCart.map((item) => (
+                        <tr
+                          key={item.sub_productId}
+                          onClick={() => {
+                            console.log(item);
+                          }}
+                        >
+                          <td>{item.sub_product.name}</td>
+                          <td>{item.quantity}</td>
+                          <td>
+                            <p>
+                              {item.sub_product.price
+                                .toLocaleString("VN-vi")
+                                .replace(/,/g, ".")}{" "}
+                              VNĐ
+                            </p>
+                            {paymentInformation.promotion.status &&
+                            listProductInPromotion.find(
+                              (i) =>
+                                i.id ==
+                                item.sub_product.product_detail.productId
+                            ) ? (
+                              <>
+                                <p
+                                  style={{
+                                    fontSize: "15px",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Giá khuyến mãi
+                                </p>
+                                <p>
+                                  {paymentInformation.promotion.status &&
+                                  paymentInformation.promotion.percent > 0 &&
+                                  paymentInformation.promotion.percent <= 100
+                                    ? `${(
+                                        (item.sub_product.price *
+                                          (100 -
+                                            paymentInformation.promotion
+                                              .percent)) /
+                                        100
+                                      )
+                                        .toLocaleString("vi-VN")
+                                        .replace(/,/g, ".")} VNĐ`
+                                    : " "}
+                                </p>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+
+                          <td>
+                            {paymentInformation.promotion.status &&
+                            listProductInPromotion.find(
+                              (i) =>
+                                i.id ==
+                                item.sub_product.product_detail.productId
+                            ) ? (
+                              <>
+                              
+                                <p>
+                                  {paymentInformation.promotion.percent > 0 &&
+                                  paymentInformation.promotion.percent <= 100
+                                    ? `${(
+                                        (item.sub_product.price *
+                                          item.quantity *
+                                          (100 -
+                                            paymentInformation.promotion
+                                              .percent)) /
+                                        100
+                                      )
+                                        .toLocaleString("vi-VN")
+                                        .replace(/,/g, ".")} VNĐ`
+                                    : " "}
+                                </p>
+                              </>
+                            ) : 
+                              (item.sub_product.price * item.quantity).toLocaleString("VN-vi").replace(/,/g, '.')}
+                            
+                            
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="invoice-footer">
+                  <h3>
+                    Tổng cộng:{" "}
+                    { paymentInformation.promotion.status ? `${totalPromotion.toLocaleString("VN-vi").replace(/,/g, ".")}`  : `${totalAmount.toLocaleString("VN-vi").replace(/,/g, ".")}`} VNĐ
+                  </h3>
+                </div>
               </div>
-              <div className="invoice-footer">
-                <h3>Tổng cộng: {totalAmount.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</h3>
+              <div className="invoice payment-information">
+                <h2>Thông tin thanh toán</h2>
+                <Row className="mb-3">
+                  <Row className="mt-3">
+                    <Col xs={12}>
+                      <Tooltip title={paymentInformation.email}>
+                        <TextField
+                          name="name"
+                          onChange={hanldeSetValue}
+                          value={paymentInformation.name}
+                          id="standard-basic-1"
+                          label="Họ và tên"
+                          variant="outlined"
+                          fullWidth
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col xs={6}>
+                      <TextField
+                        name="phone"
+                        onChange={hanldeSetValue}
+                        value={paymentInformation.phone}
+                        id="standard-basic-1"
+                        label="Số điện thoại"
+                        variant="outlined"
+                        fullWidth
+                      />
+                    </Col>
+                    <Col xs={6}>
+                      <Tooltip title={paymentInformation.email}>
+                        <TextField
+                          name="email"
+                          onChange={hanldeSetValue}
+                          value={paymentInformation.email}
+                          id="standard-basic-1"
+                          label="Email"
+                          variant="outlined"
+                          fullWidth
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col xs={12}>
+                      <Box sx={{ minWidth: 120 }}>
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-simple-select-label">
+                            Thành Phố
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={addressPayment.city.name}
+                            label="Thành Phố"
+                            onChange={hanldeSetValue}
+                            name="city"
+                          >
+                            {address.city &&
+                              address.city.length > 0 &&
+                              address.city.map((item, index) => {
+                                return (
+                                  <MenuItem
+                                    key={index}
+                                    value={item.name}
+                                    onClick={async () => {
+                                      setAddressPayment({
+                                        ...addressPayment,
+                                        city: {
+                                          id: item.id,
+                                          name: item.name,
+                                        },
+                                      });
+                                      const dataDistrict = await axios.get(
+                                        `https://esgoo.net/api-tinhthanh/2/${
+                                          item.id ? item.id : 1
+                                        }.htm`
+                                      );
+                                      setAddress({
+                                        ...address,
+                                        district: dataDistrict.data.data,
+                                      });
+                                    }}
+                                  >
+                                    {" "}
+                                    {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
+                                    {item.name}{" "}
+                                    {/* Thay thế bằng thuộc tính thích hợp của item */}
+                                  </MenuItem>
+                                );
+                              })}
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col xs={6}>
+                      <Box sx={{ minWidth: 120 }}>
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-simple-select-label">
+                            Quận/Huyện
+                          </InputLabel>
+                          <Select
+                            disabled={
+                              addressPayment.city.name == "" ? true : false
+                            }
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={addressPayment.district.name}
+                            label="Quận Huyện"
+                            onChange={hanldeSetValue}
+                            name="district"
+                          >
+                            {address.district &&
+                              address.district.length > 0 &&
+                              address.district.map((item, index) => {
+                                return (
+                                  <MenuItem
+                                    key={index}
+                                    value={item.name}
+                                    onClick={async () => {
+                                      setAddressPayment({
+                                        ...addressPayment,
+                                        district: {
+                                          id: item.id,
+                                          name: item.name,
+                                        },
+                                      });
+                                      const dataWard = await axios.get(
+                                        `https://esgoo.net/api-tinhthanh/3/${
+                                          item.id ? item.id : 1
+                                        }.htm`
+                                      );
+                                      setAddress({
+                                        ...address,
+                                        ward: dataWard.data.data,
+                                      });
+                                    }}
+                                  >
+                                    {" "}
+                                    {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
+                                    {item.name}{" "}
+                                    {/* Thay thế bằng thuộc tính thích hợp của item */}
+                                  </MenuItem>
+                                );
+                              })}
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </Col>
+                    <Col xs={6}>
+                      <Tooltip
+                        title={
+                          addressPayment.ward.name
+                            ? addressPayment.ward.name
+                            : ""
+                        }
+                      >
+                        <Box sx={{ minWidth: 120 }}>
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">
+                              Phường/Xã
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              disabled={
+                                addressPayment.district.name == ""
+                                  ? true
+                                  : false
+                              }
+                              value={addressPayment.ward.name}
+                              label="Phường/Xã"
+                              onChange={hanldeSetValue}
+                              name="ward"
+                            >
+                              {address.ward &&
+                                address.ward.length > 0 &&
+                                address.ward.map((item, index) => {
+                                  return (
+                                    <MenuItem
+                                      key={index}
+                                      value={item.name}
+                                      onClick={async () => {
+                                        setAddressPayment({
+                                          ...addressPayment,
+                                          ward: {
+                                            id: item.id,
+                                            name: item.name,
+                                          },
+                                        });
+                                      }}
+                                    >
+                                      {" "}
+                                      {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
+                                      {item.name}{" "}
+                                      {/* Thay thế bằng thuộc tính thích hợp của item */}
+                                    </MenuItem>
+                                  );
+                                })}
+                            </Select>
+                          </FormControl>
+                        </Box>
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col xs={12}>
+                      <Tooltip title={paymentInformation.email}>
+                        <TextField
+                          disabled={
+                            addressPayment.ward.name == "" ? true : false
+                          }
+                          name="street"
+                          onChange={hanldeSetValue}
+                          value={paymentInformation.street}
+                          id="standard-basic-1"
+                          label="Đường"
+                          variant="outlined"
+                          fullWidth
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                </Row>
+                <Row className="mt-3">
+                  <Col xs={12}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        console.log(paymentInformation);
+                        console.log(listProductInPromotion);
+                      }}
+                    >
+                      Thanh Toán
+                    </Button>
+                  </Col>
+                </Row>
               </div>
             </div>
-            <div className="invoice payment-information">
-            <h2>Thông tin thanh toán</h2>
-            <Row className="mb-3">
-
-  <Row className="mt-3">
-    <Col xs={12}> {/* Cột thứ hai không cần margin */}
-    <Tooltip title={paymentInfomation.email}>
-         <TextField name="name" onChange={hanldeSetValue} value={paymentInfomation.name} id="standard-basic-1" label="Họ và tên" variant="outlined" fullWidth />
-
-    </Tooltip>
-    </Col>
-  </Row>
-  <Row className="mt-3">
-  <Col xs={6}> {/* Cột thứ hai không cần margin */}
-  <TextField name="phone" onChange={hanldeSetValue} value={paymentInfomation.phone} id="standard-basic-1" label="Số điện thoại" variant="outlined" fullWidth />
-  </Col>
-    <Col xs={6}> {/* Cột thứ hai không cần margin */}
-    <Tooltip title={paymentInfomation.email}>
-    <TextField name="email" onChange={hanldeSetValue} value={paymentInfomation.email} id="standard-basic-1" label="Email" variant="outlined" fullWidth />
-    </Tooltip>
-    </Col>
-  </Row>
-  <Row className="mt-3">
-  <Col xs={12}> {/* Cột thứ hai không cần margin */}
-  <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Thành Phố</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={addressPayment.city.name}
-          label="Thành Phố"
-          onChange={hanldeSetValue}
-          name="city"
-        >
-          {address.city && address.city.length > 0 && address.city.map((item, index) => {
-  return (
-    <MenuItem key={index} value={item.name} onClick={async()=>{
-      setAddressPayment({...addressPayment,city:{
-        id:item.id,
-        name:item.name
-      }})
-      const dataDistrict = await axios.get(`https://esgoo.net/api-tinhthanh/2/${item.id ? item.id : 1 }.htm`);
-    setAddress({...address,district:dataDistrict.data.data})
-    }}> {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
-      {item.name} {/* Thay thế bằng thuộc tính thích hợp của item */}
-    </MenuItem>
-  );
-})}
-        </Select>
-      </FormControl>
-    </Box>
-  </Col>
-   
-  </Row>
-  <Row className="mt-3">
-  <Col xs={6}> 
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Quận/Huyện</InputLabel>
-        <Select
-                disabled={addressPayment.city.name == "" ? true : false}
-
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={addressPayment.district.name}
-          label="Quận Huyện"
-          onChange={hanldeSetValue}
-          name="district"
-        
-        >
-          {address.district && address.district.length > 0 && address.district.map((item, index) => {
-  return (
-    <MenuItem key={index} value={item.name} onClick={async()=>{
-      
-      setAddressPayment({...addressPayment,district:{
-        id:item.id,
-        name:item.name
-      }})
-      const dataWard = await axios.get(`https://esgoo.net/api-tinhthanh/3/${item.id ? item.id : 1 }.htm`);
-    setAddress({...address,ward:dataWard.data.data})
-    }}> {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
-      {item.name} {/* Thay thế bằng thuộc tính thích hợp của item */}
-    </MenuItem>
-  );
-})}
-        </Select>
-      </FormControl>
-    </Box>
-    </Col>
-  <Col xs={6}> {/* Cột thứ hai không cần margin */}
-  <Tooltip title={addressPayment.ward.name ? addressPayment.ward.name : ""}>
-  <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Phường/Xã</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          disabled={addressPayment.district.name == "" ? true : false}
-
-          value={addressPayment.ward.name}
-          label="Phường/Xã"
-          onChange={hanldeSetValue}
-          name="ward"
-        >
-          {address.ward && address.ward.length > 0 && address.ward.map((item, index) => {
-  return (
-    <MenuItem key={index} value={item.name} onClick={async()=>{
-      setAddressPayment({...addressPayment,ward:{
-        id:item.id,
-        name:item.name
-      }})
-
-    }}> {/* Sử dụng item.id hoặc thuộc tính duy nhất khác */}
-      {item.name} {/* Thay thế bằng thuộc tính thích hợp của item */}
-    </MenuItem>
-  );
-})}
-        </Select>
-      </FormControl>
-    </Box>
-    </Tooltip>
-  </Col>
-   
-  </Row>
-  <Row className="mt-3">
-  <Col xs={12} > 
-  <Tooltip title={paymentInfomation.email}>
-    <TextField           disabled={addressPayment.ward.name == "" ? true : false}
- name="street" onChange={hanldeSetValue} value={paymentInfomation.street} id="standard-basic-1" label="Đường" variant="outlined" fullWidth />
-    </Tooltip>
-    </Col>
-  </Row>
-</Row>
-            </div>
-          </div>}
-          
+          )}
         </div>
       </div>
     </div>

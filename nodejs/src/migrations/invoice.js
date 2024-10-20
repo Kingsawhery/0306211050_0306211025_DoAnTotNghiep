@@ -14,9 +14,6 @@ module.exports = {
       dayShip: {
         type: Sequelize.DATE,
       },
-      status: {
-        type: Sequelize.STRING,
-      },
       name: {
         type: Sequelize.STRING,
       },
@@ -26,14 +23,8 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
       },
-      procedure_invoice: {
-        type: Sequelize.STRING,
-      },
       promotionId: {
         type: Sequelize.INTEGER,
-      },
-      status_invoice: {
-        type: Sequelize.STRING,
       },
       total: {
         type: Sequelize.FLOAT,

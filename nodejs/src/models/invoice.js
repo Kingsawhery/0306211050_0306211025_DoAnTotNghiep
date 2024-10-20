@@ -20,13 +20,11 @@ module.exports = (sequelize, DataTypes) => {
   Invoice.init(
     {
       dayShip: DataTypes.DATE,
-      status: DataTypes.STRING,
+      invoiceCode: DataTypes.STRING,
       name: DataTypes.STRING,
       phone: DataTypes.STRING,
       email: DataTypes.STRING,
-      procedure_invoice: DataTypes.STRING,
       promotionId: DataTypes.INTEGER,
-      status_invoice: DataTypes.STRING,
       price: DataTypes.FLOAT,
       total: DataTypes.FLOAT,
       statusInvoceId:DataTypes.INTEGER

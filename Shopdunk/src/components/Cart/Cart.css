@@ -392,3 +392,6 @@ p {
 .total-price {
   color: #ff5722; /* Highlighting the total price */
 }
+.button-apply-promotion:active{
+  transform: scale(1.2);
+}
