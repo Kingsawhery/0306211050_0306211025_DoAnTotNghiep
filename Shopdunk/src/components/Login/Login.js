@@ -12,6 +12,7 @@ import LoginGG from "../LoginGG";
 import Cookies from "js-cookie";
 import { Box } from "@mui/material";
 import { TextField } from "@mui/material";
+import { Helmet } from "react-helmet";
 
 const Login = (props) => {
   let navigate = useNavigate();
@@ -71,6 +72,10 @@ const Login = (props) => {
 
   return (
     <div>
+ <Helmet>
+        <meta charSet="utf-8" />
+        <title>Đăng nhập</title>
+      </Helmet>
       <div className="body p-2">
         <div className="section">
           <div>

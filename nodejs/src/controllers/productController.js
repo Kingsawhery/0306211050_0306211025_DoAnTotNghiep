@@ -10,6 +10,7 @@ import {
   getProductByCategory,
   createProduct,
   getProductDetailImages,
+  deleteProductById
 } from "../services/productService";
 const getProduct = async (req, res) => {
   try {
@@ -141,6 +142,28 @@ let getProducts = async (req, res) => {
     },
   });
 };
+let deleteProduct = async (req, res) => {
+  let id = req.query.id;
+  if(id){
+    let productDelete = await deleteProductById(id);
+    if(productDelete.EC === 0){
+      return res.status(200).json({
+        EM:"Đã xóa thành công!"
+      });
+    }else{
+      return res.status(200).json({
+        EM:"Không tìm thấy sản phẩm!"
+      });
+    }
+    
+  ;
+  }else{
+    return res.status(200).json({
+      EM:"Không có tham số cần thiết!"
+    });
+  }
+};
+deleteProductById
 const getSubProductImage = async (req, res) => {
   try {
     console.log(req.query);
@@ -206,4 +229,5 @@ module.exports = {
   getTypeClassifySubProduct,
   getSubProductImage,
   createNewProduct,
+  deleteProduct
 };

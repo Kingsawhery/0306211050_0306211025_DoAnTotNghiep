@@ -496,6 +496,55 @@ const saveImage = async (files, productDetailId) => {
     });
   }
 };
+let deleteProductById = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {      
+      let product = await db.product.findOne({
+        where: {
+          id: id,
+        },
+        
+      });
+
+      if(product){
+        let productDetail = await db.product_detail.findOne({
+          where: {
+            productId: id,
+          }
+        })
+      if(productDetail){
+        console.log(productDetail.id);
+
+        let subProduct = await db.sub_product.findAll();
+        console.log(subProduct);
+        
+        // if(subProduct && subProduct.length > 0){
+        //   for(let i = 0; i < subProduct.length; i++){
+        //     const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
+        //       where:{
+        //         subProductId: subProduct[i].id
+        //       }
+        //     })
+        //     if(sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0){
+        //       for(let y = 0; y < sub_product_type_classify_detail.length; y++){
+        //         await sub_product_type_classify_detail[y].destroy();
+        //       }
+        //     }
+        //     await subProduct[i].destroy();
+           
+        //   }
+        // }
+      }
+      resolve(productDetail)
+
+      }
+    } catch (e) {
+      reject(e);
+      console.log(e);
+      
+    }
+  });
+};
 module.exports = {
   getProductBySubCategory,
   getDataProductById,
@@ -507,4 +556,5 @@ module.exports = {
   getSubProductByProduct,
   getProductDetailImages,
   createProduct,
+  deleteProductById
 };

@@ -75,3 +75,9 @@ export const getPromotion = (code) => {
     `${process.env.REACT_APP_API_SERVER}/promotion?code=${code}`
   );
 };
+export const deleteProductById = (id,token,userId) => {
+  return instance.delete(
+    `${process.env.REACT_APP_API_SERVER}/product?id=${id}&token=${token}&userId=${userId}`
+  );
+};
+

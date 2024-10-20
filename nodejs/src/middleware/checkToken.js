@@ -24,11 +24,14 @@ async function checkToken(req, res, next) {
 
     next();
   } catch (error) {
+    console.log(error);
+
     return res.status(200).json({
       EM: "Bạn chưa đăng nhập",
       EC: 1,
       status: "403",
     });
+    
   }
 }
 

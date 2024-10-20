@@ -7,11 +7,14 @@
                     
                     .div-img{
                         width: 100%;
-                        background-color: red;
+                        background-color: rgb(255, 255, 255);
                         .ng-star-inserted{
                            img{
                             width: 100%;
                             display: flex;
+                            max-height: 440px;
+                            object-fit: contain;
+                            object-position: center;
                            }
                             
                         }

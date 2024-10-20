@@ -23,6 +23,7 @@ import ClassifyDetailDiv from "./ClassifyDetailDiv";
 import { Context } from "../../../../App";
 import _ from "lodash";
 import ModalConfirm from "./ModalConfirm";
+import { Helmet } from "react-helmet";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -176,6 +177,10 @@ const ProductDetailPage = () => {
   return (
     product && productDetail && (
       <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{product.name}</title>
+      </Helmet>
         <div className="row product-detail">
           <div className="col-12 col-md-6">
             <div style={{ position: "sticky", top: 0, padding:"40px" }}>

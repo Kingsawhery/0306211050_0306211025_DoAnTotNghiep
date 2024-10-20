@@ -16,6 +16,7 @@ const HomePageCarousel = () => {
     autoplay: true,
     speed: 2000,
     autoplaySpeed: 2000,
+    draggable: true
   };
 
   useEffect(() => {

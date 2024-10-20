@@ -47,6 +47,7 @@ import {
   getTypeClassifySubProduct,
   getSubProductImage,
   createNewProduct,
+  deleteProduct
 } from "../controllers/productController";
 
 import {
@@ -145,6 +146,7 @@ let apiWebRoutes = (app) => {
     upload.array("fileImage", 10),
     createNewProduct
   );
+  router.delete("/product",checkToken,deleteProduct)
   // Post - 5
   router.get("/posts", getAllPosts);
   router.get("/post/:id", getPostPage);

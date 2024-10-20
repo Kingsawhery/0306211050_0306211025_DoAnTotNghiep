@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 const Register = (props) => {
   const user = localStorage.getItem("user");
   const fileRef = useRef(null);
@@ -100,6 +101,10 @@ const Register = (props) => {
   };
   return (
     <div>
+     <Helmet>
+        <meta charSet="utf-8" />
+        <title>Đăng ký</title>
+      </Helmet>
       <div class="body">
         <div class="section">
           <from action="#">
