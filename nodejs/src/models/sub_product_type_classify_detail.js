@@ -25,6 +25,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'sub_product_type_classify_detail',
+    deletedAt:"softDelete",
+    paranoid:true,
   });
   return sub_product_type_classify_detail;
 };

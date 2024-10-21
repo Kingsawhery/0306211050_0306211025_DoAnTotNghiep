@@ -75,7 +75,7 @@ const TableProduct = (props) => {
                 <td>{index + 1 + (products.currentPage - 1) * 10}</td>
                 <td>{item.name}</td>
                 <td>{item.price.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
-                <td>{item.product_detail.stock}</td>
+                <td>{item.product_detail.stock ? item.product_detail.stock : ""}</td>
                 <td>
                   <span onClick={()=>{
                     setDeleteProduct(item)

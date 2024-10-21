@@ -513,27 +513,74 @@ let deleteProductById = async (id) => {
           }
         })
       if(productDetail){
-        console.log(productDetail.id);
+        // console.log(productDetail.id);
 
-        let subProduct = await db.sub_product.findAll();
-        console.log(subProduct);
+        let subProduct = await db.sub_product.findAll(
+          {
+          where:{
+            productDetailId:productDetail.id
+          }
+      });
         
-        // if(subProduct && subProduct.length > 0){
-        //   for(let i = 0; i < subProduct.length; i++){
-        //     const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
-        //       where:{
-        //         subProductId: subProduct[i].id
-        //       }
-        //     })
-        //     if(sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0){
-        //       for(let y = 0; y < sub_product_type_classify_detail.length; y++){
-        //         await sub_product_type_classify_detail[y].destroy();
-        //       }
-        //     }
-        //     await subProduct[i].destroy();
+        if(subProduct && subProduct.length > 0){
+          for(let i = 0; i < subProduct.length; i++){
+            const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
+              where:{
+                subProductId: subProduct[i].id
+              }
+            })
+            if(sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0){
+              for(let y = 0; y < sub_product_type_classify_detail.length; y++){
+                await sub_product_type_classify_detail[y].destroy();
+              }
+              const cart = await db.Cart.findAll({
+                where:{
+                  sub_productId:subProduct[i].id
+                }
+              })
+              if(cart && cart.length>0){
+                for(let k = 0; k < cart.length; k++){
+                  await cart[k].destroy();
+                }
+              }
+            }
+            
+            await subProduct[i].destroy();
            
-        //   }
-        // }
+          }
+          const productDetailTypeClassifyDetails = await db.product_detail_type_classify_detail.findAll({
+            where:{
+              productDetailId:productDetail.id
+            }
+          })
+          if(productDetailTypeClassifyDetails && productDetailTypeClassifyDetails.length > 0){
+            for(let x = 0; x < productDetailTypeClassifyDetails.length; x++){
+              await productDetailTypeClassifyDetails[x].destroy();
+            }
+          }
+          const productDetailTypeClassify = await db.product_detail_type_classify.findAll({
+            where:{
+              productDetailId:productDetail.id
+            }
+          })
+          if(productDetailTypeClassify && productDetailTypeClassify.length > 0){
+            for(let z = 0; z < productDetailTypeClassify.length; z++){
+              await productDetailTypeClassify[z].destroy();
+            }
+          }
+          const productDetailImage = await db.product_detail_image.findAll({
+            where:{
+              productDetailId:productDetail.id
+            }
+          })
+          if(productDetailImage && productDetailImage.length > 0){
+            for(let o = 0; o < productDetailImage.length; o++){
+              await productDetailImage[o].destroy();
+            }
+          }
+          await productDetail.destroy();
+          await product.destroy();
+        }
       }
       resolve(productDetail)
 

@@ -255,8 +255,9 @@ class Footer extends Component {
             </div>
           </div>
           <div className="lower" style={{ paddingTop: 20, paddingBottom: 32 }}>
-            <div className="container">
-              <p style={{ fontSize: 13, lineHeight: 12, color: "#515154" }}>
+            <div className="container d-flex justify-content-around">
+            <div className="infor-store">
+            <p style={{ fontSize: 13, lineHeight: 12, color: "#515154" }}>
                 © 2016 Công ty Cổ Phần HL Việt Nam GPDKKD: 0107465657 do Sở
                 KH &amp; ĐT TP. HỒ CHÍ MINH cấp ngày 08/06/2024.</p>
                 <p>
@@ -264,6 +265,32 @@ class Footer extends Component {
                 <p>
                 NGUYỄN HOÀNG LÂM | ĐT: 0923.986.418 | Email: 0306211050@caothan.edu.vn
               </p>
+            </div>
+            <div className="col-xs-12 col-sm-6 col-md-3 col-lg d-flex justify-content-end">
+            <div className="footer-col in">
+              <h4 className="footer-title">Fanpage</h4>
+              <div className="footer-content footer-contact">
+                <div className="footer-static-content">
+        
+                    <span style={{ width: "268px", height: "130px" }}>
+                      
+                      
+                      <iframe
+                        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61552540726424%26is_tour_dismissed%3Dtrue&amp;tabs=timeline&amp;width=340&amp;height=331&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId"
+
+                        style={{border: "none", visibility: "visible", width: "400px", height: "130px"}}
+                        scrolling="no"
+                        frameBorder="0"
+                        allowtransparency="true"
+                        allowFullScreen={true}
+                        allow="encrypted-media"
+                      ></iframe>
+                    </span>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
             </div>
           </div>
         </div>
@@ -275,6 +302,7 @@ class Footer extends Component {
             <i style={{ fontSize: 55 }} className="bx bx-headphone" />
           </div>
         </div>
+        
       </div>
     );
   }
