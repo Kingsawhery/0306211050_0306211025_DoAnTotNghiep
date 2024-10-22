@@ -1,8 +1,10 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginGoogle } from "../../services/userServices";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginGG({ onGet }) {
+  const navigate = useNavigate();
   const handleSuccess = async (res) => {
     // Nếu không gg không trả về jwt thì dừng
     console.log(res.credential);
@@ -11,7 +13,21 @@ export default function LoginGG({ onGet }) {
 
     // Có jwt thì gửi lên sever xử lí
     const response = await loginGoogle(res.credential);
-    console.log(response);
+    if(response){
+      const dataSaveLocal = {
+        id: response.id,
+        name: response.username,
+        phone: response.phone,
+        email: response.email,
+        token: response.token,
+        image: response.image
+      };
+      console.log(response);
+      
+      localStorage.setItem("user", JSON.stringify(dataSaveLocal));
+      window.location.reload();
+      navigate("/");
+    }
     onGet(response);
   };
 

@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles';
 export default function ModalConfirm(props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-const {handleAddCart, setOpen} = props;
+const {data ,handleAddCart, setOpen} = props;
 
 
   return (
@@ -23,19 +23,18 @@ const {handleAddCart, setOpen} = props;
         aria-labelledby="responsive-dialog-title"
       >
         <DialogTitle id="responsive-dialog-title">
-          {"Use Google's location service?"}
+          {data.name}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
+            Bạn có chắc muốn thêm {data.name} vào giỏ hàng
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={()=>{
+          <Button autoFocus color="error" onClick={()=>{
             setOpen(false)
           }}>
-            Disagree
+            Cancel
           </Button>
           <Button  autoFocus onClick={()=>{
             handleAddCart();

@@ -66,209 +66,9 @@ class Footer extends Component {
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col"
-                  style={{ color: "#d2d2d7", fontWeight: "normal" }}
-                >
-                  <div className="header-title" style={{ paddingLeft: 60 }}>
-                    <strong style={{ fontWeight: 400 }}>Thông báo</strong>
-                    <ul
-                      style={{
-                        listStyleType: "none",
-                        padding: 0,
-                        marginTop: 10,
-                      }}
-                    >
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Tin tức
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giới thiệu
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Thông tin
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Nhà báo
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Check QA
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Truyền hình
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Lịch sử
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div
-                  className="col"
-                  style={{ color: "#d2d2d7", fontWeight: "normal" }}
-                >
-                  <div className="header-title" style={{ paddingLeft: 60 }}>
-                    <strong style={{ fontWeight: 400 }}>Chính sách</strong>
-                    <ul
-                      style={{
-                        listStyleType: "none",
-                        padding: 0,
-                        marginTop: 10,
-                      }}
-                    >
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Thu củ đổi mới
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giao hàng
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giao hàng (ZaloPay)
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Hủy Giao dịch
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Đổi trả
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Bảo hành
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Dịch vụ
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giải quyết khiếu nại
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Bảo mật thông tin
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Hướng dẫn thanh toán
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div
-                  className="col"
-                  style={{ color: "#d2d2d7", fontWeight: "normal" }}
-                >
-                  <div className="header-title" style={{ paddingLeft: 60 }}>
-                    <strong style={{ fontWeight: 400 }}>
-                      Địa chỉ &amp; Liên hệ
-                    </strong>
-                    <ul
-                      style={{
-                        listStyleType: "none",
-                        padding: 0,
-                        marginTop: 10,
-                      }}
-                    >
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Thu củ đổi mới
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giao hàng
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giao hàng (ZaloPay)
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Hủy Giao dịch
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Đổi trả
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Bảo hành
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Dịch vụ
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Giải quyết khiếu nại
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Bảo mật thông tin
-                        </a>
-                      </li>
-                      <li>
-                        <a style={{ fontWeight: 400, color: "#86867b" }} href>
-                          Hướng dẫn thanh toán
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="lower" style={{ paddingTop: 20, paddingBottom: 32 }}>
-            <div className="container d-flex justify-content-around">
-            <div className="infor-store">
-            <p style={{ fontSize: 13, lineHeight: 12, color: "#515154" }}>
-                © 2016 Công ty Cổ Phần HL Việt Nam GPDKKD: 0107465657 do Sở
-                KH &amp; ĐT TP. HỒ CHÍ MINH cấp ngày 08/06/2024.</p>
-                <p>
-                Địa chỉ: 65 Đ. Huỳnh Thúc Kháng, Bến Nghé, Quận 1, Hồ Chí Minh 700000</p>
-                <p>
-                NGUYỄN HOÀNG LÂM | ĐT: 0923.986.418 | Email: 0306211050@caothan.edu.vn
-              </p>
-            </div>
-            <div className="col-xs-12 col-sm-6 col-md-3 col-lg d-flex justify-content-end">
+                <div className="col-xs-12 col-sm-6 col-md-3 col-lg d-flex justify-content-end">
             <div className="footer-col in">
-              <h4 className="footer-title">Fanpage</h4>
+              <h4 style={{fontWeight:"bold",color:"#fff"}} className="footer-title">Fanpage</h4>
               <div className="footer-content footer-contact">
                 <div className="footer-static-content">
         
@@ -291,6 +91,22 @@ class Footer extends Component {
               </div>
             </div>
           </div>
+              </div>
+            </div>
+          </div>
+          <div className="lower" style={{ paddingTop: 20, paddingBottom: 32 }}>
+            <div className="container d-flex justify-content-around">
+            <div className="infor-store">
+            <p style={{ fontSize: 13, lineHeight: 12, color: "#515154" }}>
+                © 2016 Công ty Cổ Phần HL Việt Nam GPDKKD: 0107465657 do Sở
+                KH &amp; ĐT TP. HỒ CHÍ MINH cấp ngày 08/06/2024.</p>
+                <p>
+                Địa chỉ: 65 Đ. Huỳnh Thúc Kháng, Bến Nghé, Quận 1, Hồ Chí Minh 700000</p>
+                <p>
+                NGUYỄN HOÀNG LÂM | ĐT: 0923.986.418 | Email: 0306211050@caothan.edu.vn
+              </p>
+            </div>
+           
             </div>
           </div>
         </div>

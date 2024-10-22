@@ -3,8 +3,8 @@ module.exports = {
     // logic for transforming into the new state
     return queryInterface.addColumn(
       'invoices',
-      'address',
-     Sequelize.STRING
+      'totalNotIncludePro',
+     Sequelize.FLOAT
     );
 
   },

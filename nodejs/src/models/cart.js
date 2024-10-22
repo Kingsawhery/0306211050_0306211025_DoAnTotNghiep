@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.FLOAT,
       quantity: DataTypes.INTEGER,
       total: DataTypes.FLOAT,
+      status:DataTypes.BOOLEAN
     },
     {
       sequelize,

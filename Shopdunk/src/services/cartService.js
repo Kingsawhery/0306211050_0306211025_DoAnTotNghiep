@@ -15,3 +15,10 @@ export const apiShowCart = (data) => {
     data
   );
 };
+
+export const changeStatus = (data) => {
+  return axios.patch(
+    `${process.env.REACT_APP_API_SERVER}/cart-change-status?token=${data.token}&userId=${data.userId}`,
+    data
+  );
+};

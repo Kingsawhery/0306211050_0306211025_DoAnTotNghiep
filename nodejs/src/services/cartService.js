@@ -51,7 +51,10 @@ let getCart = async (id) => {
         resolve();
 
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+      
+    }
   });
 };
 let deleteCart = async (idSubProduct, idUser) => {
@@ -134,8 +137,41 @@ let postCart = async (idSubProduct, idUser, quantity) => {
     }
   });
 };
+let changeStatusCart = async (idSubProduct, idUser) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const check = await db.Cart.findOne({
+        where: {
+          [Op.and]:{
+            sub_productId:idSubProduct,
+            userId:idUser
+          }
+        },
+
+      });
+      if (check) {
+        check.status = !check.status;
+        await check.save();
+        resolve({
+          data:check
+          
+        });
+      } else {
+        resolve({
+          data:check
+
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      
+      reject(e);
+    }
+  });
+};
 module.exports = {
   postCart,
   getCart,
   deleteCart,
+  changeStatusCart
 };

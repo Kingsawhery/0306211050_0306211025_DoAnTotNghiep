@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import cartController from "../controllers/cartController";
 import apiController from "../controllers/apiController";
+import invoiceController from "../controllers/invoiceController"
 import forgotPasswordToken from "../controllers/forgotPasswordToken";
 import { verify } from "../function/verify";
 import { checkToken } from "../middleware/checkToken";
@@ -9,31 +10,13 @@ const cookieParser = require("cookie-parser");
 import multer from "multer";
 import fs from "fs";
 //Danh mục - Category 1
-import {
-  getAllCategories,
-  getCategories,
-  postNewCategory,
-  editCategory,
-  deleteCategory,
-  searchCategories,
-  getAllCategoriesInList,
-  getListNameCategory,
-  getProductByCategoryId,
-} from "../controllers/categoryController";
+import categoryController from "../controllers/categoryController";
 
 //Danh mục con - Sub Category 2
-import {
-  getAllSubCategories,
-  getSubCategory,
-  postNewSubCategory,
-  editSubCategory,
-  deleteSubCategory,
-  searchSubCategories,
-  getSubCategoryNameById,
-} from "../controllers/subCategoryController";
+import subCategoryController from "../controllers/subCategoryController";
 
 // Banner - 3
-import { getAllBanners } from "../controllers/bannerController";
+import bannerController from "../controllers/bannerController";
 
 // Product - 4
 import {
@@ -106,30 +89,30 @@ const uploadUserImage = multer({ storage: storageUser });
 
 let apiWebRoutes = (app) => {
   //Danh mục - Category 1
-  router.get("/categories", getListNameCategory); //
-  router.get("/categories-name", getListNameCategory); //
-  router.get("/sub-product-category", getProductByCategoryId); //
-  router.get("/categories", getAllCategoriesInList); //
-  router.get("/categories-name", getListNameCategory); //
-  router.get("/sub-product-category", getProductByCategoryId); //
-  router.get("/categories-homepage", getAllCategories);
-  router.get("/categories/page=:page", getCategories);
-  router.get("/categories/search", searchCategories);
-  router.post("/categories", postNewCategory);
-  router.put("/categories", editCategory);
-  router.delete("/categories/:id", deleteCategory);
+  router.get("/categories", categoryController.getListNameCategory); //
+  router.get("/categories-name", categoryController.getListNameCategory); //
+  router.get("/sub-product-category", categoryController.getProductByCategoryId); //
+  router.get("/categories", categoryController.getAllCategoriesInList); //
+  router.get("/categories-name", categoryController.getListNameCategory); //
+  router.get("/sub-product-category", categoryController.getProductByCategoryId); //
+  router.get("/categories-homepage", categoryController.getAllCategories);
+  router.get("/categories/page=:page", categoryController.getCategories);
+  router.get("/categories/search", categoryController.searchCategories);
+  router.post("/categories", categoryController.postNewCategory);
+  router.put("/categories", categoryController.editCategory);
+  router.delete("/categories/:id", categoryController.deleteCategory);
 
   //Danh mục con - Sub Category 2
-  router.get("/sub-categories", getAllSubCategories);
-  router.get("/sub-category", getSubCategory);
-  router.get("/sub-categories/search", searchSubCategories);
-  router.post("/sub-categories", postNewSubCategory);
-  router.put("/sub-categories", editSubCategory);
-  router.delete("/sub-categories/:id", deleteSubCategory);
-  router.get("/sub-categories-name", getSubCategoryNameById);
+  router.get("/sub-categories", subCategoryController.getAllSubCategories);
+  router.get("/sub-category", subCategoryController.getSubCategory);
+  router.get("/sub-categories/search", subCategoryController.searchSubCategories);
+  router.post("/sub-categories", subCategoryController.postNewSubCategory);
+  router.put("/sub-categories", subCategoryController.editSubCategory);
+  router.delete("/sub-categories/:id", subCategoryController.deleteSubCategory);
+  router.get("/sub-categories-name", subCategoryController.getSubCategoryNameById);
 
   // Banner - 3
-  router.get("/banners", getAllBanners);
+  router.get("/banners", bannerController.getAllBanners);
 
   // Product - 4
   router.get("/product", getProduct);
@@ -204,6 +187,9 @@ let apiWebRoutes = (app) => {
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
   router.delete("/cart-delete", checkToken, cartController.handleDestroyCart);
+  router.patch("/cart-change-status", checkToken, cartController.handleChangeStatus);
+
+  
 
 
   // Type Classify - 8 
@@ -212,6 +198,8 @@ let apiWebRoutes = (app) => {
 
   //
   router.get("/promotion",getPromotion);
+  //
+  router.post("/create-invoice",invoiceController.handleCreateInvoice)
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

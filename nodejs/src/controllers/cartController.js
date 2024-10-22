@@ -1,5 +1,5 @@
 import db from "../models";
-import { postCart, getCart, deleteCart } from "../services/cartService";
+import { postCart, getCart, deleteCart, changeStatusCart} from "../services/cartService";
 const handleGetCart = async (req, res) => {
   const id = req.query.userId;
   const data = await getCart(req.query.userId);
@@ -7,7 +7,29 @@ const handleGetCart = async (req, res) => {
     res.status(200).json(data);
   }
 };
+const handleChangeStatus = async (req,res)=>{
+  try{
+    
+  const idSubProduct = req.body.currentSubProduct;
+  const idUser = req.body.userId;
+  if(idSubProduct && idUser){
+    const changeStatus = changeStatusCart(idSubProduct,idUser);
+    if(changeStatus){
+      res.status(200).json(changeStatus);
+    }else{
+      res.status(200).json({
+        EM:"Not found!"
+      });
+
+    }
+  }
+}catch(e){
+  console.log(e);
+  
+}
+}
 const handleDestroyCart = async (req, res) => {
+  
   const idSubProduct = req.query.currentSubProduct;
   const idUser = req.query.userId;
   if (!idSubProduct && !idUser) {
@@ -50,4 +72,5 @@ module.exports = {
   handleGetCart,
   handleAddCart,
   handleDestroyCart,
+  handleChangeStatus
 };

@@ -5,6 +5,7 @@ import {
   apiAddCart,
   apiDeleteCart,
   apiShowCart,
+  changeStatus,
 } from "../../services/cartService";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ProductRowRandom from "../Product/ProductRowRandom/ProductRowRandom";
@@ -14,7 +15,7 @@ import { Context } from "../../App";
 import { Form } from "react-bootstrap";
 import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
-import { Button, TextField, Tooltip } from "@mui/material";
+import { Button, FormGroup, TextField, Tooltip } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
@@ -22,11 +23,13 @@ import { FormControl } from "@mui/material";
 import { InputLabel } from "@mui/material";
 import _ from "lodash";
 import { getPromotion } from "../../services/product";
+import { PacmanLoader } from "react-spinners";
+import { createInvoice } from "../../services/invoiceService";
 const Cart = () => {
   const [listProductInCart, setProductInCart] = useState([]);
   const [promotionInfor, setPromotionInfor] = useState({});
   const [listProductInPromotion, setProductInPromotion] = useState([]);
-  const [totalPromotion,setTotalPromotion] = useState(0);
+  const [totalPromotion, setTotalPromotion] = useState(0);
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
   const [currentSubProduct, setCurrentSubProduct] = useState(true);
@@ -35,6 +38,8 @@ const Cart = () => {
     name: user && JSON.parse(user).name ? JSON.parse(user).name : "",
     phone: user && JSON.parse(user).phone ? JSON.parse(user).phone : "",
     email: user && JSON.parse(user).email ? JSON.parse(user).email : "",
+    token:user && JSON.parse(user).token ? JSON.parse(user).token : "",
+    id:user && JSON.parse(user).id ? JSON.parse(user).id : "",
     city: "",
     district: "",
     ward: "",
@@ -44,7 +49,10 @@ const Cart = () => {
       status: false,
       percent: 0,
     },
+    option: 0,
+    data:[]
   });
+  const [loadingPage,setLoadingPage] = useState(true);
   const [address, setAddress] = useState({
     city: [],
     district: [],
@@ -93,30 +101,42 @@ const Cart = () => {
             percent: promotion.percent,
           },
         });
-        setPromotionInfor(promotion)
-        if(promotion){
+        setPromotionInfor(promotion);
+        if (promotion) {
           let newTotalPromotion = 0;
+
           listProductInCart.map((item) => {
-             // Tạo một biến tạm thời để tính tổng
-          
-            for (let i = 0; i < promotion.products.length; i++) {
-              if (item.sub_product.product_detail.productId === promotion.products[i].id) {
-                newTotalPromotion += (item.sub_product.price * item.quantity * (100 - promotion.percent) / 100);
-              }else{
-                newTotalPromotion += (item.sub_product.price * item.quantity);
+            if (promotion.products.length > 0) {
+              for (let i = 0; i < promotion.products.length; i++) {
+                if (item.status) {
+                  if (
+                    promotion.products.length > 0 &&
+                    item.sub_product.product_detail.productId ===
+                      promotion.products[i].id
+                  ) {
+                    newTotalPromotion +=
+                      (item.sub_product.price *
+                        item.quantity *
+                        (100 - promotion.percent)) /
+                      100;
+                  } else {
+                    newTotalPromotion +=
+                      (item.sub_product.price *
+                        item.quantity)
+                  }
+                }
               }
+            } else {
+              newTotalPromotion += item.sub_product.price * item.quantity;
             }
-            console.log(newTotalPromotion);
-  
+
             // Nếu không tìm thấy sản phẩm trong khuyến mãi thì cộng giá gốc
-            
+
             setTotalPromotion(newTotalPromotion); // Cập nhật giá trị sau khi đã tính xong
           });
         }
-       
-        
+
         setProductInPromotion(promotion.products);
-       
       } else {
         setPaymentInformation({
           ...paymentInformation,
@@ -129,20 +149,46 @@ const Cart = () => {
       }
     }
   }, 1000);
+
   const handleGetData = async () => {
-    if (JSON.parse(user).id && JSON.parse(user).token) {
-      const data = {
-        userId: JSON.parse(user).id,
-        token: JSON.parse(user).token,
-      };
-      const dataRs = await apiShowCart(data);
-      if (dataRs) {
-        setProductInCart(dataRs.data.data);
-        setTotalCart(dataRs.data.total);
+    try {
+      if (JSON.parse(user).id && JSON.parse(user).token) {
+        // setLoadingPage(true);
+        const data = {
+          userId: JSON.parse(user).id,
+          token: JSON.parse(user).token,
+        };
+        const dataRs = await apiShowCart(data);
+        if (dataRs) {
+          setProductInCart(dataRs.data.data);
+          setTotalCart(dataRs.data.total);
+          setPaymentInformation({...paymentInformation,data:dataRs.data.data.filter(item => item.status === true)})
+          // setLoadingPage(false);
+        }
       }
+    } catch (e) {
+      localStorage.clear();
+      window.reload();
     }
   };
-
+  const handleChangeStatus = async (id) => {
+    const rs = await changeStatus({
+      userId: JSON.parse(user).id,
+      token: JSON.parse(user).token,
+      currentSubProduct: id,
+    });
+    if (rs) {
+      handleGetData();
+      setPaymentInformation({
+        ...paymentInformation,
+        promotion: {
+          name: "",
+          status: false,
+          percent: 0,
+        },
+      });
+    }
+  };
   const handleAddCart = async (id) => {
     const rs = await apiAddCart({
       userId: JSON.parse(user).id,
@@ -152,14 +198,49 @@ const Cart = () => {
     });
     if (rs.data) {
       setCurrentSubProduct(!currentSubProduct);
-      setPaymentInformation({...paymentInformation, promotion:{
-        name:"",
-        status:false,
-        percent:0,
-      }})
+      setPaymentInformation({
+        ...paymentInformation,
+        promotion: {
+          name: "",
+          status: false,
+          percent: 0,
+        },
+      });
     }
   };
+  const handleCreateInvoice = async () => {
+    if(paymentInformation.name !== "" && 
+      paymentInformation.phonee !== "" && 
+      paymentInformation.email !== "" && 
+      paymentInformation.token !== "" && 
+      paymentInformation.id !== "" &&
+      paymentInformation.city !== "" &&
+      paymentInformation.ward !== "" &&
+      paymentInformation.district !== "" &&
+      paymentInformation.street !== ""
+    ) {
+      const rs = await createInvoice({
+        name: paymentInformation.name,     
+        phone: paymentInformation.phone ,
+        email: paymentInformation.email,
+        token: paymentInformation.token,
+        id: paymentInformation.id ,
+        address: paymentInformation.street + ", " + paymentInformation.district + ", " + paymentInformation.ward + " ," + paymentInformation.city + ".",
+        promotion: paymentInformation.promotion,
+        option: paymentInformation.option,
+        data:paymentInformation.data
+      });
+      if (rs) {
+        console.log(rs);   
+    }
+    }else{
+      console.log("No");   
 
+    }
+  
+    
+  };
+  
   const handleDestroyCart = async (id) => {
     try {
       const rs = await apiDeleteCart({
@@ -169,17 +250,19 @@ const Cart = () => {
       });
       if (rs.data) {
         setCurrentSubProduct(!currentSubProduct);
-        setPaymentInformation({...paymentInformation, promotion:{
-          name:"",
-          status:false,
-          percent:0,
-        }})
-      
+        setPaymentInformation({
+          ...paymentInformation,
+          promotion: {
+            name: "",
+            status: false,
+            percent: 0,
+          },
+        });
       }
     } catch (e) {
       toast.dismiss();
       console.log(e);
-      
+
       toast.error("Đã có lỗi xảy ra!");
     }
   };
@@ -198,25 +281,29 @@ const Cart = () => {
       });
       if (rs.data) {
         setCurrentSubProduct(!currentSubProduct);
-        setPaymentInformation({...paymentInformation, promotion:{
-          name:"",
-          status:false,
-          percent:0,
-        }})
+        setPaymentInformation({
+          ...paymentInformation,
+          promotion: {
+            name: "",
+            status: false,
+            percent: 0,
+          },
+        });
       }
     } catch (e) {
       console.log();
-      
+
       toast.dismiss();
       toast.error("Đã có lỗi xảy ra!");
     }
   };
 
   const totalAmount = listProductInCart.reduce(
-    (total, item) => total + item.price,
+    (total, item) => (item.status ? total + item.price : total),
     0
   );
   return (
+    // !loadingPage ? (
     <div className="main">
       <div className="container">
         <div className="row d-flex">
@@ -230,7 +317,14 @@ const Cart = () => {
                     onClick={() => {
                       console.log(item);
                     }}
+                    style={item.status ? { position: "relative", backgroundColor:"#e0e0e0" } : { position: "relative" }}
                   >
+                    <Form.Check
+                      checked={item.status}
+                      onChange={() => handleChangeStatus(item.sub_productId)}
+                      className="cart-check"
+                      style={{ position: "absolute", top:"12px" , right:"24px"}}
+                    />
                     <img
                       src={
                         item.sub_product.product_detail.product_detail_images
@@ -298,6 +392,7 @@ const Cart = () => {
                   <Tooltip title={paymentInformation.promotion.name}>
                     <TextField
                       name="promotion"
+                      // disabled={listProductInCart.find(item=>item.status===true)}
                       onChange={(e) => {
                         setPaymentInformation({
                           ...paymentInformation,
@@ -339,97 +434,106 @@ const Cart = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {listProductInCart.map((item) => (
-                        <tr
-                          key={item.sub_productId}
-                          onClick={() => {
-                            console.log(item);
-                          }}
-                        >
-                          <td>{item.sub_product.name}</td>
-                          <td>{item.quantity}</td>
-                          <td>
-                            <p>
-                              {item.sub_product.price
-                                .toLocaleString("VN-vi")
-                                .replace(/,/g, ".")}{" "}
-                              VNĐ
-                            </p>
-                            {paymentInformation.promotion.status &&
-                            listProductInPromotion.find(
-                              (i) =>
-                                i.id ==
-                                item.sub_product.product_detail.productId
-                            ) ? (
-                              <>
-                                <p
-                                  style={{
-                                    fontSize: "15px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Giá khuyến mãi
-                                </p>
+                      {listProductInCart.map(
+                        (item) =>
+                          item.status && (
+                            <tr key={item.sub_productId}>
+                              <td>{item.sub_product.name}</td>
+                              <td>{item.quantity}</td>
+                              <td>
                                 <p>
-                                  {paymentInformation.promotion.status &&
-                                  paymentInformation.promotion.percent > 0 &&
-                                  paymentInformation.promotion.percent <= 100
-                                    ? `${(
-                                        (item.sub_product.price *
-                                          (100 -
-                                            paymentInformation.promotion
-                                              .percent)) /
-                                        100
-                                      )
-                                        .toLocaleString("vi-VN")
-                                        .replace(/,/g, ".")} VNĐ`
-                                    : " "}
+                                  {item.sub_product.price
+                                    .toLocaleString("VN-vi")
+                                    .replace(/,/g, ".")}{" "}
+                                  VNĐ
                                 </p>
-                              </>
-                            ) : (
-                              ""
-                            )}
-                          </td>
+                                {paymentInformation.promotion.status &&
+                                listProductInPromotion.find(
+                                  (i) =>
+                                    i.id ==
+                                    item.sub_product.product_detail.productId
+                                ) ? (
+                                  <>
+                                    <p
+                                      style={{
+                                        fontSize: "15px",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      Giá khuyến mãi
+                                    </p>
+                                    <p>
+                                      {paymentInformation.promotion.status &&
+                                      paymentInformation.promotion.percent >
+                                        0 &&
+                                      paymentInformation.promotion.percent <=
+                                        100
+                                        ? `${(
+                                            (item.sub_product.price *
+                                              (100 -
+                                                paymentInformation.promotion
+                                                  .percent)) /
+                                            100
+                                          )
+                                            .toLocaleString("vi-VN")
+                                            .replace(/,/g, ".")} VNĐ`
+                                        : " "}
+                                    </p>
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </td>
 
-                          <td>
-                            {paymentInformation.promotion.status &&
-                            listProductInPromotion.find(
-                              (i) =>
-                                i.id ==
-                                item.sub_product.product_detail.productId
-                            ) ? (
-                              <>
-                              
-                                <p>
-                                  {paymentInformation.promotion.percent > 0 &&
-                                  paymentInformation.promotion.percent <= 100
-                                    ? `${(
-                                        (item.sub_product.price *
-                                          item.quantity *
-                                          (100 -
-                                            paymentInformation.promotion
-                                              .percent)) /
+                              <td>
+                                {paymentInformation.promotion.status &&
+                                listProductInPromotion.find(
+                                  (i) =>
+                                    i.id ==
+                                    item.sub_product.product_detail.productId
+                                ) ? (
+                                  <>
+                                    <p>
+                                      {paymentInformation.promotion.percent >
+                                        0 &&
+                                      paymentInformation.promotion.percent <=
                                         100
-                                      )
-                                        .toLocaleString("vi-VN")
-                                        .replace(/,/g, ".")} VNĐ`
-                                    : " "}
-                                </p>
-                              </>
-                            ) : 
-                              (item.sub_product.price * item.quantity).toLocaleString("VN-vi").replace(/,/g, '.')}
-                            
-                            
-                          </td>
-                        </tr>
-                      ))}
+                                        ? `${(
+                                            (item.sub_product.price *
+                                              item.quantity *
+                                              (100 -
+                                                paymentInformation.promotion
+                                                  .percent)) /
+                                            100
+                                          )
+                                            .toLocaleString("vi-VN")
+                                            .replace(/,/g, ".")} VNĐ`
+                                        : " "}
+                                    </p>
+                                  </>
+                                ) : (
+                                  (item.sub_product.price * item.quantity)
+                                    .toLocaleString("VN-vi")
+                                    .replace(/,/g, ".")
+                                )}
+                              </td>
+                            </tr>
+                          )
+                      )}
                     </tbody>
                   </table>
                 </div>
                 <div className="invoice-footer">
                   <h3>
                     Tổng cộng:{" "}
-                    { paymentInformation.promotion.status ? `${totalPromotion.toLocaleString("VN-vi").replace(/,/g, ".")}`  : `${totalAmount.toLocaleString("VN-vi").replace(/,/g, ".")}`} VNĐ
+                    {paymentInformation.promotion.status
+                      ? `${totalPromotion
+                          .toLocaleString("VN-vi")
+                          .replace(/,/g, ".")}`
+                      : `${totalAmount
+                          .toLocaleString("VN-vi")
+                          .replace(/,/g, ".")}`}{" "}
+                    VNĐ
                   </h3>
                 </div>
               </div>
@@ -438,7 +542,7 @@ const Cart = () => {
                 <Row className="mb-3">
                   <Row className="mt-3">
                     <Col xs={12}>
-                      <Tooltip title={paymentInformation.email}>
+                      <Tooltip title={paymentInformation.name}>
                         <TextField
                           name="name"
                           onChange={hanldeSetValue}
@@ -661,13 +765,40 @@ const Cart = () => {
                   </Row>
                 </Row>
                 <Row className="mt-3">
-                  <Col xs={12}>
+                  <Col xs={6}>
+                    <Form.Check
+                      type="radio"
+                      checked={paymentInformation.option === 0}
+                      onChange={() =>
+                        setPaymentInformation({
+                          ...paymentInformation,
+                          option: 0,
+                        })
+                      }
+                      value={paymentInformation.option}
+                      label={"Thanh Toán Online"}
+                    />
+                  </Col>
+                  <Col xs={6}>
+                    <Form.Check
+                      type="radio"
+                      checked={paymentInformation.option === 1}
+                      onChange={() =>
+                        setPaymentInformation({
+                          ...paymentInformation,
+                          option: 1,
+                        })
+                      }
+                      label={"Thanh Toán Tại Cửa Hàng"}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-3">
+                  <Col xs={12} className="d-flex justify-content-end">
                     <Button
+                      style={{backgroundColor:"#0d6efe",color:"#fff"}}
                       variant="secondary"
-                      onClick={() => {
-                        console.log(paymentInformation);
-                        console.log(listProductInPromotion);
-                      }}
+                      onClick={handleCreateInvoice}
                     >
                       Thanh Toán
                     </Button>
@@ -679,7 +810,9 @@ const Cart = () => {
         </div>
       </div>
     </div>
-  );
+  ) 
+  // : <PacmanLoader/>
+  // );
 };
 
 export default Cart;

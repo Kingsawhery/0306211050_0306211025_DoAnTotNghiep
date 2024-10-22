@@ -19,9 +19,10 @@ li.nav {
     object-position: center;
   }
   .header-logo{
+    position: relative;
     img{
-      max-width: 173px;
-      max-height: 64px;
+       max-width: 74px;
+    max-height: 67px;
       opacity: 1;
       object-fit: cover;
       cursor: pointer,

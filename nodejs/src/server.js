@@ -12,7 +12,7 @@ let app = express();
 // Cấu hình CORS với các tùy chọn cụ thể
 const corsOptions = {
   origin: ["http://localhost:3000"], // Chỉ cho phép các nguồn gốc cụ thể
-  methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các phương thức HTTP được cho phép
+  methods: ["GET", "POST", "PUT", "DELETE","PATCH"], // Chỉ định các phương thức HTTP được cho phép
   allowedHeaders: ["Content-Type", "Authorization"], // Chỉ định các tiêu đề được cho phép
   credentials: true, // Cho phép gửi cookies qua CORS
 };

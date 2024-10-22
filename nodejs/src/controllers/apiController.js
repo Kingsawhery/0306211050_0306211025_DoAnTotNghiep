@@ -213,17 +213,18 @@ const handleLoginGG = async (req, res) => {
       email: email,
     },
   });
+  let userNew;
   if (!checkUser) {
-    const user = await userService.createUser(
+    let user = await userService.createUser(
       infor_email.email,
       "",
       infor_email.name,
       "GOOGLE"
     ); // (email, password, username, type)
-  }
+  userNew = user;
 
+  }
   const tk = await userService.random(200);
-  console.log(tk);
   await db.User.update(
     {
       token: tk,
@@ -242,7 +243,7 @@ const handleLoginGG = async (req, res) => {
   });
 
   return res.status(200).json({
-    data: (checkUser ? checkUser : user).dataValues,
+    data: {...(checkUser ? checkUser : userNew).dataValues, token:tk},
     status: 200,
     message: "Login gg success",
   });

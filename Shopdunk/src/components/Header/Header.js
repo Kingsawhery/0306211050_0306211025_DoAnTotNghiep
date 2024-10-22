@@ -40,9 +40,10 @@ const Header = () => {
           <Link to="/" onClick={()=>{
                 window.scrollTo({ top: "0", behavior: "smooth" });
           }}>
-            <div className="mt-3 header-logo">
+            <div style={{width:"100%"}} className="header-logo">
               <img
-                src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
+              style={{width:"100%"}}
+                src={`${process.env.REACT_APP_LOCALHOST_SERVER}/bannerImage/avatar_preview_rev_1.png`}
                 alt="logo"
               />
             </div>

@@ -48,6 +48,8 @@ const TableProduct = (props) => {
           navigate("/admin/create-product")
       }}>+ Create</Button>
     </div>
+    {products && products.length > 0 ?
+    <>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -98,6 +100,7 @@ const TableProduct = (props) => {
     </Stack>
       {tabName.product !== "" && localStorage.getItem("detail") &&  (<ProductDetail id = {+localStorage.getItem("detailId")} data={dataProduct}/>)}
                 {open && <ModalConfirmDeleteProduct item={deleteProduct} handleDelete = {handleDelete} setOpen={setOpen}/>}
+    </> : ""}
     </>
   );
 };

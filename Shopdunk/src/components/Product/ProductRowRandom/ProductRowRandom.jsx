@@ -4,9 +4,7 @@ import { getProductsRandom } from "../../../services/product";
 // import "./ProductRowRandom.scss";
 const ProductRowRandom = (props) => {
   
-  const {id} = props;
-  console.log(id);
-  
+  const {id} = props;  
   const [listProductSuggestion, setListProductSuggestion] = useState([]);
   useEffect(() => {
     showListProductSuggestion(id);
@@ -14,7 +12,6 @@ const ProductRowRandom = (props) => {
   const showListProductSuggestion = async (idCategory) => {
     const listProducts = await getProductsRandom(idCategory);
     if (listProducts) {
-      console.log(listProducts);
       setListProductSuggestion(listProducts);
     }
   };

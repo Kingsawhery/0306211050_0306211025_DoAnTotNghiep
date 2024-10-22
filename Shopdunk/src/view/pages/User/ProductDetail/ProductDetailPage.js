@@ -415,7 +415,7 @@ const ProductDetailPage = () => {
         {subCategoryId && <ProductRowRandom id={subCategoryId}/>
       
       }
-      {open && <ModalConfirm handleAddCart={handleAddCart} setOpen={setOpen}/>}
+      {open && <ModalConfirm data={subProduct} handleAddCart={handleAddCart} setOpen={setOpen}/>}
       </>
     )
   );
