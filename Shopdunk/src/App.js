@@ -27,17 +27,30 @@ import CategoryPage from "./view/pages/User/CategoryPage/CategoryPage";
 import { useNavigate } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
 import { apiShowCart } from "./services/cartService";
+import { checkToken } from "./function/checkToken";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
-
+  const [tokenTrue, setTokenTrue] = useState(false);
   useEffect(()=>{
-    if(user && JSON.parse(user).token){ 
-      handleGetData();
-     }
-
+   check();    
   },[])
- 
+  const check = async ()=>{
+    const checkData = await checkToken();
+    if(checkData.EC !== 1){
+      setTokenTrue(true);
+      if(user && JSON.parse(user).token){ 
+        handleGetData();
+       }else{
+          localStorage.clear();
+       }
+    }
+    else{
+      setTokenTrue(false);
+      localStorage.clear();
+    }
+    return checkData;
+  }
     const handleGetData = async () => {
       if (JSON.parse(user).id && JSON.parse(user).token) {
         const data = {
@@ -45,9 +58,13 @@ const App = () => {
           token: JSON.parse(user).token,
         };
         const dataRs = await apiShowCart(data);
-        if (dataRs) {
+        console.log(dataRs);
+        
+        if (dataRs && dataRs.data.EC !== 1) {
           setTotalCart(dataRs.data.total);
           
+        }else{
+          localStorage.clear();
         }
       }
     };
@@ -63,7 +80,7 @@ const App = () => {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="post/:slug/:id" element={<PostPage />} />
             <Route path="/category/:name" element={<CategoryPage />} />
-            {user && (
+            {user && tokenTrue && (
               <>
                 <Route path="/cart" element={<Cart />} />
               </>

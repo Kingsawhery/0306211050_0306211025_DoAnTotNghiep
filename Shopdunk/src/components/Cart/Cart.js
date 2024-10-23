@@ -168,7 +168,7 @@ const Cart = () => {
       }
     } catch (e) {
       localStorage.clear();
-      window.reload();
+      window.location.reload();
     }
   };
   const handleChangeStatus = async (id) => {

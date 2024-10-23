@@ -33,14 +33,14 @@ const handleRegister = async (req, res) => {
       },
     });
   } catch (e) {
-    return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
+    return res.status(200).json({ EM: "err from services", EC: "-1", DT: "" });
   }
   console.log("<<<check call me", req.body);
 };
 
 const handleLogin = async (req, res) => {
   try {
-    let a = await req.body;
+    let a = await req.body;    
     let data = await loginRegisterService.handleLoginUser(a);
     if (data.EC == "1") {
       return res.status(200).json({
@@ -81,7 +81,7 @@ const handleLogin = async (req, res) => {
           username: dataUser.username,
           phone: dataUser.phone,
           token: token,
-          role: dataUser.role,
+          roleId: dataUser.roleId,
           image: dataUser.image
         },
         EM: "Login success",
@@ -89,7 +89,7 @@ const handleLogin = async (req, res) => {
       });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ EM: "err from services", EC: "-1", DT: "" });
+    return res.status(200).json({ EM: "err from services", EC: "-1", DT: "" });
   }
 };
 const transporter = nodemailer.createTransport({

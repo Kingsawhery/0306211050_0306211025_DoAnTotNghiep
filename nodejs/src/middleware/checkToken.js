@@ -14,7 +14,7 @@ async function checkToken(req, res, next) {
       },
     });
     if (!user) {
-      return res.status(401).json({
+      return res.status(200).json({
         EC: 1,
         EM: "Xác thực thất bại",
       });
@@ -23,7 +23,6 @@ async function checkToken(req, res, next) {
 
     next();
   } catch (error) {
-    console.log(error);
 
     return res.status(200).json({
       EM: "Bạn chưa đăng nhập",

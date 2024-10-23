@@ -10,16 +10,49 @@ import { styled } from '@mui/material/styles';
 import { Context } from "../../App";
 // import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { checkToken } from "../../function/checkToken";
 const Header = () => {
-  const user = localStorage.getItem("user");
   const navigate = useNavigate();
   const {totalCart} = useContext(Context);
-  console.log(useContext(Context));
-  
+  let user = localStorage.getItem("user");
   const [categories, setCategories] = useState([]);
+  try{
+    user = JSON.parse(user);
+  }catch(e){
+
+  }
   useEffect(() => {
-    getListCategories();
+try{
+  
+  check();
+  getListCategories();
+}catch(e){
+  if(user){
+    localStorage.clear();
+    navigate("/login")
+
+  }
+
+}
+    
+
   }, []);
+  const check = async ()=>{
+    const checkData = await checkToken();
+    if(checkData.EC !== 1){
+      
+
+    }
+    else{
+      if(user){
+      localStorage.clear();
+      window.location.reload();
+      window.location.reload();
+
+      }
+    }
+    return checkData;
+  }
   const getListCategories = async () => {
     const results = await getAllCategories();
     if (results) {
@@ -27,10 +60,9 @@ const Header = () => {
     }
   };
   const handleLogout = () => {
-    if (user) {
-      localStorage.removeItem("user");
+      localStorage.clear();
       window.location.reload();
-    }
+      navigate("/login")
   };
 
   return (
@@ -67,7 +99,7 @@ const Header = () => {
             )}
           </div>
           <div className="action">
-            <div
+            {/* <div
               className="tool"
               style={{
                 width: 14,
@@ -83,9 +115,10 @@ const Header = () => {
                   className="fas fa-search"
                 />
               </div>
-            </div>
-            
-            <Link
+            </div> */}
+            {user && user.token && 
+            (
+              <Link
             onClick={()=>{
               window.scrollTo({ top: "0", behavior: "smooth" })
             }}
@@ -104,7 +137,13 @@ const Header = () => {
               <span className="number-cart">{totalCart > 99 ? "99+" : totalCart}</span>
 </IconButton>
             </Link>
-            <div
+            )
+            }
+            
+          
+              {user ? (
+                /* avatar-default.jpg */
+                <div
               className="avatar"
               style={{
                 width: 14,
@@ -113,20 +152,27 @@ const Header = () => {
                 cursor: "pointer",
               }}
             >
-              {user ? (
-                /* avatar-default.jpg */
-                <img className="avatar-header" src={JSON.parse(localStorage.getItem("user")).image && JSON.parse(localStorage.getItem("user")).name ? `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${JSON.parse(localStorage.getItem("user")).name}/${JSON.parse(localStorage.getItem("user")).image}`: `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/avatar-default.jpg`}></img>
+                <img className="avatar-header" src={user.image && user.name ? `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${user.name}/${user.image}`: `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/avatar-default.jpg`}></img>
+                </div>
+
               ) : (
+                <div className="d-flex" style={{marginLeft:"40px",width:"100%", alignItems:"center"}}>
+                <strong style={{whiteSpace:"no-wrap",marginRight:"12px",color:"#fff",}}>Bạn chưa đăng nhập?</strong>
                 <Link to="/login">
                   <Login className="logo-login" />
                 </Link>
+                </div>
+               
               )}
-            </div>
-          </div>
-          {user && JSON.parse(localStorage.getItem("user")).name && (
+              {user && user.name && (
             <div className="div-name">
-              <h3>Xin chào {JSON.parse(localStorage.getItem("user")).name}!</h3>
-              <div className="logout">
+              <h3>Xin chào {user.name}!</h3>
+              
+            </div>
+          )}
+          </div>
+         
+          <div className="logout">
                 {user && (
                   <Logout
                     className="logo"
@@ -135,8 +181,6 @@ const Header = () => {
                   />
                 )}
               </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

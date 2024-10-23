@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasMany(models.Cart, { foreignKey: "userId", as: "carts" });
+      User.belongsTo(models.role,{
+        foreignKey:"roleId"
+      })
       // define association here
     }
   }
@@ -23,18 +26,23 @@ module.exports = (sequelize, DataTypes) => {
       username: DataTypes.STRING,
       image: DataTypes.STRING,
       phone: DataTypes.STRING,
-      gender: DataTypes.INTEGER,
-      groupId: DataTypes.INTEGER,
       code: DataTypes.INTEGER,
+      roleId:{
+        type: DataTypes.INTEGER,
+        defaultValue: 2,
+      },
+      status:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+      },
       address: DataTypes.STRING,
       token: DataTypes.STRING,
-      role: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: "User",
-      // deleteAt: "softDelete",
-      // paranoid: true,
+      deletedAt: "softDelete",
+      paranoid: true,
     }
   );
   return User;

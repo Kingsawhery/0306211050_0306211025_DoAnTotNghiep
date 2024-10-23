@@ -59,7 +59,7 @@ const handleLoginUser = async (rawUser) => {
        email: rawUser.value,
       },
     });
-
+    
     
     if (user) {
       let passwordSuccess = await checkPassword(
@@ -73,7 +73,6 @@ const handleLoginUser = async (rawUser) => {
           username: user.username,
           phone:user.phone,
           token: user.token,
-          role: user.role,
           image: user.image
         };
         

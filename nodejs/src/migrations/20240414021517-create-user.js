@@ -26,12 +26,6 @@ module.exports = {
       phone: {
         type: Sequelize.STRING,
       },
-      gender: {
-        type: Sequelize.INTEGER,
-      },
-      groupId: {
-        type: Sequelize.INTEGER,
-      },
       address: {
         type: Sequelize.STRING,
       },

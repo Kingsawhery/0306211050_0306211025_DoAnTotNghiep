@@ -190,7 +190,7 @@ let apiWebRoutes = (app) => {
   router.patch("/cart-change-status", checkToken, cartController.handleChangeStatus);
 
   
-
+  router.get("/check",checkToken)
 
   // Type Classify - 8 
   router.get("/type-classifies",getAllTypeClassify);
