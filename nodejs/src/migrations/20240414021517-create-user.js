@@ -35,9 +35,7 @@ module.exports = {
       token: {
         type: Sequelize.STRING,
       },
-      role: {
-        type: Sequelize.STRING,
-      },
+
       // softDelete: Sequelize.DATE,
       createdAt: {
         allowNull: false,

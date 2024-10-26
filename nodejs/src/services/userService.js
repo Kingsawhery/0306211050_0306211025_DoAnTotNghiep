@@ -55,7 +55,10 @@ const getUserList = async (page) => {
       let users = await db.User.findAndCountAll({
         limit: 10,
         offset: (page - 1) * 10,
-        attributes: ["id", "email", "username", "phone", "role","gender", "createdAt"],
+        attributes: ["id", "email", "username", "phone", "createdAt"],
+        include:{
+          mode:db.role
+        }
       });
 
       if (users) {

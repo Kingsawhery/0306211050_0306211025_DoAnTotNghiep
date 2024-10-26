@@ -146,12 +146,16 @@ let deleteProduct = async (req, res) => {
   let id = req.query.id;
   if(id){
     let productDelete = await deleteProductById(id);
+    console.log(productDelete);
+    
     if(productDelete.EC === 0){
       return res.status(200).json({
+        EC:0,
         EM:"Đã xóa thành công!"
       });
     }else{
       return res.status(200).json({
+        EC:1,
         EM:"Không tìm thấy sản phẩm!"
       });
     }

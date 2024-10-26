@@ -111,6 +111,8 @@ const ProductDetailPage = () => {
       const result = await getProductDetailById(id);
       if (result) {
         setProductDetail(result);
+        // console.log(result);
+        
         getImages(result.id);
         setPosts(result.post);
       }
@@ -393,7 +395,7 @@ const ProductDetailPage = () => {
                 variant="contained"
                 endIcon={<AddIcon color="success" />}
                 disabled={
-                  !outOfStock && Object.keys(listTypeClassifyDetail).length > 2
+                  !outOfStock &&  productDetail && productDetail.type_classifies &&  Object.keys(listTypeClassifyDetail).length - productDetail.type_classifies.length === 1
                     ? false
                     : true
                 }

@@ -53,8 +53,12 @@ li.nav:hover {
   display: flex;
 }
 .div-name{
+  position: absolute;
+  top:30px;
+
+right: 346px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   h3{
     font-size: 16px;

@@ -20,7 +20,10 @@ const ProductDetail = (props) => {
   setListTypeClassifyDetail({})
   }, [localDetail.id]);
   useEffect(() => {
+    console.log("cc");
+
     if (
+
       productDetail.type_classifies &&
       Object.keys(listTypeClassifyDetail).length -
         productDetail.type_classifies.length ===
@@ -28,11 +31,11 @@ const ProductDetail = (props) => {
     ) {
       getSubProductFunction(listTypeClassifyDetail);
     }
-    console.log(productDetail);
 
   }, [listTypeClassifyDetail]);
   const getProductDetail = async () => {
     try {
+
       const result = await getProductDetailById(localDetail.id);
       if (result) {
         setProductDetail(result);
@@ -55,8 +58,8 @@ const ProductDetail = (props) => {
       [name]: property,
       id: productDetail.id,
     });
+    
     setPropertySelected({ ...propertySelected, [name]: index });
-    console.log(propertySelected);
   };
   return (
     productDetail && (

@@ -30,7 +30,6 @@ const createRegisterUser = async (rawUser) => {
         phone: rawUser.phone,
         username: rawUser.username,
         password: isPassword,
-        role:rawUser.role,
         image:rawUser.image
       });
       return {

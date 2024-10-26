@@ -21,6 +21,7 @@ import {
 import { ImageList, ImageListItem } from "@mui/material";
 import DivClassify from "./DivClassify";
 import { AddCircleOutline, Label } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 const CreateNewProduct = () => {
   const [listTypeClassify, setListTypeClassify] = useState([]);
   const [disable, setDisable] = useState({});
@@ -60,6 +61,7 @@ const CreateNewProduct = () => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [categorySelected, setCategorySelected] = useState(0);
   const [typeClassifyDetail, setTypeClassifyDetail] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     getAllNameCategory();
     getTypeClassify();
@@ -87,7 +89,6 @@ const CreateNewProduct = () => {
       typeClassifyDetail.find((item) => item.id === id) === undefined
     ) {
       setTypeClassifyDetail([...typeClassifyDetail, { id: id, data: result }]);
-      // console.log(typeClassifyDetail);
     }
   };
   const handleClearTypeClassifyDetail = (setDataTypeClassify) => {
@@ -122,17 +123,23 @@ const CreateNewProduct = () => {
     typeClassifyDetail: data.typeClassifyDetail,
     detailData: JSON.stringify(detailData)
       });
-      
+
+      if(result.message == "Create new product successful!"){
+        navigate('/admin/danh-muc')
+        window.scrollTo({
+          top: 0,
+      });
+      }else{
+        toast.dismiss();
+        toast("Data is invalid!");
+      }
     } catch (e) {
       toast.dismiss();
       toast("Data is invalid!");
-      console.log(e);
-      
     }
   };
   const handleImageDemo = (e) => {
     try {
-      console.log(e.target.files.length);
       for (let i = 0; i < e.target.files.length; i++) {
         let exe =
           e.target.files[i].name.split(".")[

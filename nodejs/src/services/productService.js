@@ -582,13 +582,13 @@ let deleteProductById = async (id) => {
           await product.destroy();
         }
       }
-      resolve(productDetail)
+      resolve({
+        EC:0
+      })
 
       }
     } catch (e) {
       reject(e);
-      console.log(e);
-      
     }
   });
 };

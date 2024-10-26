@@ -28,6 +28,7 @@ const TableProduct = (props) => {
     const getProducts = async(numberPage) =>{
       const results = await getProductBySubCategory(numberPage,data);
       if(results){
+        
           setProducts(results);
       }
   }
@@ -38,6 +39,10 @@ const TableProduct = (props) => {
   };
   const handleDelete = _.debounce(async()=>{
       const product = await deleteProductById(deleteProduct.id,user,userId)
+      if(product.EC === 0){
+          getProducts(page);
+      }
+      
   },500)
 
  
@@ -48,7 +53,7 @@ const TableProduct = (props) => {
           navigate("/admin/create-product")
       }}>+ Create</Button>
     </div>
-    {products && products.length > 0 ?
+    {products && products.data && products.data.length > 0 ?
     <>
       <Table striped bordered hover>
         <thead>
@@ -98,9 +103,10 @@ const TableProduct = (props) => {
       <Pagination onChange={handleChange} count={products.totalPages} color="primary" />
 
     </Stack>
-      {tabName.product !== "" && localStorage.getItem("detail") &&  (<ProductDetail id = {+localStorage.getItem("detailId")} data={dataProduct}/>)}
-                {open && <ModalConfirmDeleteProduct item={deleteProduct} handleDelete = {handleDelete} setOpen={setOpen}/>}
-    </> : ""}
+      {open && <ModalConfirmDeleteProduct item={deleteProduct} handleDelete = {handleDelete} setOpen={setOpen}/>}
+    </> : (<div className="not-found">
+                  <img src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/no_result.gif`}></img>
+                </div>)}
     </>
   );
 };
