@@ -9,6 +9,7 @@ let createInvoice = async (data) => {
         let total = 0;
         let totalNotIncludePro = 0
         if(data.promotion.status){
+          if(data.data && data.data.length > 0){
             const findPromotion = await db.promotion.findOne({
                 where:{
                     code:data.promotion.name
@@ -55,16 +56,73 @@ let createInvoice = async (data) => {
                 }
             }
             
-            
+          }else{resolve({
+            EC:0,
+            EM:"Không có sản phẩm được tìm thấy!"
+          })}
         }
         else{
+          if(data.data && data.data.length > 0){
             for(let i = 0; i< data.data.length ; i++){
                 const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
+                if(!subProduct){
+                  continue;
+                }else{
                 total = total + subProduct.price * data.data[i].quantity
                 totalNotIncludePro = totalNotIncludePro + subProduct.price * data.data[i].quantity
-
+                }
+            }}
+            else{
+              resolve({
+                EC:0,
+                EM:"Không có sản phẩm được tìm thấy!"
+              })
             }
         }
+        const option = await db.paymentMethod.findOne({
+          where:{
+            id:data.option
+          }
+        })       
+         
+        if(option){
+          if(data.promotion.status){
+            const promotionId = await db.promotion.findOne({
+              where:{
+                code:data.promotion.name
+              }
+            })
+            if(promotionId){
+              const invoice = await db.Invoice.create({
+               name: "Hóa đơn cho khách hàng " + data.name + " mã hóa đơn " + code,
+               phone:data.phone,
+               email:data.email ? data.email : null,
+               total:total,
+               totalNotIncludePro: totalNotIncludePro,
+               statusInvoiceId: 1,
+               promotionId: promotionId.id,
+               invoiceCode: code,
+               address: data.address,
+               paymentMethodId: option.id
+           })
+           resolve(invoice);
+             }
+              // const invoice = await db.invoice.create({
+          //     name:data.name,
+          //     phone:data.phone,
+          //     email:data.email,
+          //     name:data.name,
+          //     name:data.name,
+          //     name:data.name,
+          //     name:data.name,
+          //     name:data.name,
+          //     name:data.name,
+          // })
+          }
+        }
+    else{
+      resolve();
+    }
         
         // const invoice = await db.invoice.create({
         //     name:data.name,
@@ -76,12 +134,12 @@ let createInvoice = async (data) => {
         //     name:data.name,
         //     name:data.name,
         //     name:data.name,
-
         // })
         
-       resolve();
       } catch (e) {
         reject(e);
+        console.log(e);
+        
       }
     });
   };

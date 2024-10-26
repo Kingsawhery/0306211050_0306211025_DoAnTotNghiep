@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
       promotionId: DataTypes.INTEGER,
       total: DataTypes.FLOAT,
       totalNotIncludePro: DataTypes.FLOAT,
-      statusInvoiceId:DataTypes.INTEGER
+      statusInvoiceId:DataTypes.INTEGER,
+      paymentMethodId:DataTypes.INTEGER,
     },
     {
       sequelize,

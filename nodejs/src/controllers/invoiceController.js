@@ -4,12 +4,13 @@ const handleCreateInvoice = async(req,res) => {
        const data = await req.body;
        console.log(data.option);
        
-        if(data.data && data.data.length > 0 && data.phone && data.phone !== "" && data.address && data.address !== "" && (data.option === 0 || data.option === 1)){
+        if(data.data && data.data.length > 0 && data.phone && data.phone !== "" && data.address && data.address !== ""){
            
             const rs = await createInvoice(data);
             if(rs){
                 res.status(200).json({
-                    message:"Tạo hóa đơn thành công!"
+                    message:"Tạo hóa đơn thành công!",
+                    data:rs
                 })
             }else{
                 res.status(200).json({
