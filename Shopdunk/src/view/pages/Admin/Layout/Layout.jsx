@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import "./Layout.scss";
 import HeaderAdmin from "../Header/HeaderAdmin";
 import {
@@ -11,9 +11,12 @@ import Footer from "../../../../components/Footer/Footer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-const Layout = () => {
+import { useEffect, useState } from "react";
+import { checkAdminRole } from "../../../../function/checkToken";
+const Layout = ({admin}) => {
+  
   const [tabActive, setTabActive] = useState(-1);
+  const navigate = useNavigate();
   const objectCategory = [
     {
       icon: faChartLine,
@@ -41,9 +44,30 @@ const Layout = () => {
           name: "Quản lý người dùng",
           link: "/admin/user",
         },
+        {
+          icon: faList,
+          name: "Quản lý đơn hàng",
+          link: "/admin/invoice",
+        },
       ],
     },
   ];
+  useEffect(()=>{
+    checkAdmin();
+  },[admin])
+  const checkAdmin = async () => {
+    const checkAdminData = await checkAdminRole();
+    console.log(checkAdminData);
+
+    if (checkAdminData.data.EC === 1) {
+      return;
+    }
+    else {
+      navigate("/")
+      
+    }
+    return checkAdminData;
+  }
   return (
     <>
       <HeaderAdmin />

@@ -24,6 +24,8 @@ export default function User() {
     try {
       const results = await getUsers(page);
       if (results) {
+        console.log(results.data);
+        
         setUsers(results.data);
         setIsLoading(false);
       }
@@ -62,16 +64,18 @@ export default function User() {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody style={{height:"200px"}}>
               {users && users.length > 0
                 ? users.map((user, index) => {
+                  console.log(user);
+                  
                     return (
                       <tr>
                         <th scope="row">{user.id + (1 - 1) * 10}</th>
                         <td>{user.email}</td>
                         <td>{user.phone}</td>
                         <td>{user.username}</td>
-                        <td>{user.role}</td>
+                        <td>{user.role.name}</td>
                       </tr>
                     );
                   })

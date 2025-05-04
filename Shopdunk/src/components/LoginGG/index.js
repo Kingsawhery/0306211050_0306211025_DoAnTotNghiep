@@ -10,7 +10,8 @@ export default function LoginGG({ onGet }) {
     console.log(res.credential);
 
     if (!res?.credential) return;
-
+    console.log(res);
+    
     // Có jwt thì gửi lên sever xử lí
     const response = await loginGoogle(res.credential);
     if(response){

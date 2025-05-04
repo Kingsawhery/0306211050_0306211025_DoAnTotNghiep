@@ -26,6 +26,24 @@ import { getPromotion } from "../../services/product";
 import { PacmanLoader } from "react-spinners";
 import { createInvoice } from "../../services/invoiceService";
 const Cart = () => {
+  const countries = [
+    {
+      cityId:1,
+      city:"Hồ Chí Minh",
+      districts:[
+        {
+          districtId:1,
+          district:"Quận 1",
+          wards:[
+            {
+              wardId:1,
+              ward:"Phường Đa Kao",
+            },
+          ]
+        }
+      ]
+    }
+  ]
   const [listProductInCart, setProductInCart] = useState([]);
   const [promotionInfor, setPromotionInfor] = useState({});
   const [listProductInPromotion, setProductInPromotion] = useState([]);
@@ -83,8 +101,13 @@ const Cart = () => {
     handleGetData();
   }, [currentSubProduct]);
   const getDataCity = async () => {
-    const dataCity = await axios.get(`https://esgoo.net/api-tinhthanh/1/0.htm`);
-    setAddress({ ...address, city: dataCity.data.data });
+    try{
+      const dataCity = await axios.get(`https://esgoo.net/api-tinhthanh/1/0.htm`);
+      setAddress({ ...address, city: dataCity.data.data });
+    }catch(e){
+      console.log(e);
+      
+    }
   };
   const handlePromotion = _.debounce(async (e) => {
     if (
@@ -233,12 +256,11 @@ const Cart = () => {
       if (rs) {
         console.log(rs.data.data);   
         if(rs.data.message === "Tạo hóa đơn thành công!"){
-          const ip = await axios.get('https://api.ipify.org?format=json');
-          console.log(ip);
-          
-          console.log(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*100}&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND${formatDateTimeGMT7Plus10Min(rs.data.data.createdAt)}&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.code}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`);
-          
-          window.open(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*100}&vnp_BankCode=VNPAYQR&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND${formatDateTimeGMT7Plus10Min(rs.data.data.createdAt)}&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.code}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`)}
+          // const ip = await axios.get('https://api.ipify.org?format=json');
+          // console.log(rs.data.data);
+          // console.log(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*10}&vnp_BankCode=VNPAYQR&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.invoiceCode}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`)
+          // window.open(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*10}&vnp_BankCode=VNPAYQR&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.invoiceCode}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`)
+        }
     }
     }else{
       console.log("No");   
@@ -309,8 +331,6 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
         });
       }
     } catch (e) {
-      console.log();
-
       toast.dismiss();
       toast.error("Đã có lỗi xảy ra!");
     }
@@ -786,7 +806,7 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                   <Col xs={6}>
                     <Form.Check
                       type="radio"
-                      checked={paymentInformation.option === 0}
+                      checked={paymentInformation.option === 2}
                       onChange={() =>
                         setPaymentInformation({
                           ...paymentInformation,
@@ -794,7 +814,7 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                         })
                       }
                       value={paymentInformation.option}
-                      label={"Thanh Toán Online"}
+                      label={"Thanh toán tại cửa hàng"}
                     />
                   </Col>
                   <Col xs={6}>
@@ -807,7 +827,7 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                           option: 1,
                         })
                       }
-                      label={"Thanh Toán Tại Cửa Hàng"}
+                      label={"Thanh toán online"}
                     />
                   </Col>
                 </Row>

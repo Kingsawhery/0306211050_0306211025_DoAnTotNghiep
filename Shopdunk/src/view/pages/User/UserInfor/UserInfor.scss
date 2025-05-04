@@ -1,0 +1,35 @@
+.user-infor-page{
+    min-height: 920px;
+    .user-infor-name{
+        // font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-family: 'Dancing Script', cursive;
+    }
+    .user-infor-table{
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.1);
+        min-height: 600px;
+        border-radius: 40px;
+        .user-infor-tab{
+            border-bottom: 2px solid #515154;
+            .user-infor-tab-left, .user-infor-tab-right{
+                padding: 20px;
+                font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+                cursor: pointer;
+                &:hover{
+                    background-color: #515154;
+                    color:#dddddd;
+                    transition: 1.5s;
+                }
+            }
+            .user-infor-tab-left{
+                border-radius: 40px 0 0 0;
+            }
+        }
+        
+    }
+}
+.under-border{
+    // border-bottom: 2px solid #515154;
+    background-color: #515154;
+    color:#dddddd;
+                    transition: 1.5s;
+}

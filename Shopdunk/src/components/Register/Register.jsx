@@ -108,7 +108,7 @@ const Register = (props) => {
       <div class="body">
         <div class="section">
           <from action="#">
-            <h1 className="title">Regiter</h1>
+            <h1 className="title">Register</h1>
             <div className="avatar">
             <input
             className="d-none"

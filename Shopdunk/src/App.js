@@ -27,104 +27,122 @@ import CategoryPage from "./view/pages/User/CategoryPage/CategoryPage";
 import { useNavigate } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
 import { apiShowCart } from "./services/cartService";
-import { checkToken } from "./function/checkToken";
+import {  checkAdminRole, checkToken } from "./function/checkToken";
+import UserInfor from "./view/pages/User/UserInfor/UserInfor";
+import { Invoices } from "./view/pages/Admin/Management/Invoices/Invoices";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
   const [tokenTrue, setTokenTrue] = useState(false);
-  useEffect(()=>{
-   check();    
-  },[])
-  const check = async ()=>{
+  const [admin, setAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+useEffect(() => {
+  const init = async () => {
+    await check();
+    setLoading(false);
+  };
+  init();
+}, []);
+  const check = async () => {
     const checkData = await checkToken();
-    if(checkData.EC !== 1){
+    if (checkData.EC !== 1) {
       setTokenTrue(true);
-      if(user && JSON.parse(user).token){ 
+      if (user && JSON.parse(user).token) {
         handleGetData();
-       }else{
-          localStorage.clear();
-       }
+      } else {
+        localStorage.clear();
+      }
     }
-    else{
+    else {
       setTokenTrue(false);
       localStorage.clear();
     }
     return checkData;
   }
-    const handleGetData = async () => {
-      if (JSON.parse(user).id && JSON.parse(user).token) {
-        const data = {
-          userId: JSON.parse(user).id,
-          token: JSON.parse(user).token,
-        };
-        const dataRs = await apiShowCart(data);
-        console.log(dataRs);
-        
-        if (dataRs && dataRs.data.EC !== 1) {
-          setTotalCart(dataRs.data.total);
-          
-        }else{
-          localStorage.clear();
-        }
+  
+  const handleGetData = async () => {
+    if (JSON.parse(user).id && JSON.parse(user).token) {
+      const data = {
+        userId: JSON.parse(user).id,
+        token: JSON.parse(user).token,
+      };
+      const dataRs = await apiShowCart(data);
+      console.log(dataRs);
+
+      if (dataRs && dataRs.data.EC !== 1) {
+        setTotalCart(dataRs.data.total);
+
+      } else {
+        localStorage.clear();
       }
-    };
+    }
+  };
   return (
     <>
-    <Context.Provider
-    value={{totalCart,setTotalCart}}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/product-detail" element={<ProductDetail />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="post/:slug/:id" element={<PostPage />} />
-            <Route path="/category/:name" element={<CategoryPage />} />
-            {user && tokenTrue && (
-              <>
-                <Route path="/cart" element={<Cart />} />
-              </>
-            )}
-            {!user && (
-              <>
-                <Route path="/login" element={<Login />}></Route>
-                <Route path="/register" element={<Register />}></Route>
-                <Route
-                  path="/forgot-password"
-                  element={<ForgotPassword />}
-                ></Route>
-                <Route path="/otp" element={<InputOtp />}></Route>
-              </>
-            )}
-          </Route>
-          {/* Admin route */}
-          <Route path="/admin" element={<LayoutAdmin />}>
-            <Route index element={<AdminPage />} />
-            <Route path="thong-ke" element={<AdminPage />} />
-            <Route path="danh-muc" element={<Category />} />
-            <Route path="tin-tuc" element={<Post />} />
-            <Route path="create-product" element={<CreateNewProduct />} />
-            <Route path="user" element={<User />}></Route>
-          </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-      <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <ToastContainer />
+      <Context.Provider
+        value={{ totalCart, setTotalCart }}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/product-detail" element={<ProductDetail />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="post/:slug/:id" element={<PostPage />} />
+              <Route path="/category/:name" element={<CategoryPage />} />
+              <Route path="/user-information" element={<UserInfor />} />
+              {user && tokenTrue && (
+                <>
+                  <Route path="/cart" element={<Cart />} />
+                </>
+              )}
+
+              {!user && (
+                <>
+                  <Route path="/login" element={<Login />}></Route>
+                  <Route path="/register" element={<Register />}></Route>
+                  <Route
+                    path="/forgot-password"
+                    element={<ForgotPassword />}
+                  ></Route>
+                  <Route path="/otp" element={<InputOtp />}></Route>
+                </>
+              )}
+            </Route>
+            <Route path="/admin" element={<LayoutAdmin  />}>
+                <Route index element={<AdminPage />} />
+                <Route path="thong-ke" element={<AdminPage />} />
+                <Route path="danh-muc" element={<Category />} />
+                <Route path="tin-tuc" element={<Post />} />
+                <Route path="create-product" element={<CreateNewProduct />} />
+                <Route path="user" element={<User />}></Route>
+                <Route path="invoice" element={<Invoices />}></Route>
+              </Route>
+            
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        
+          
+      
+
+        </Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <ToastContainer />
       </Context.Provider>
     </>
-    
+
   );
 };
 export default App;
