@@ -55,14 +55,15 @@ let createInvoice = async (data) => {
 
                 }
             }
-            
           }else{resolve({
             EC:0,
             EM:"Không có sản phẩm được tìm thấy!"
           })}
         }
         else{
+          
           if(data.data && data.data.length > 0){
+            
             for(let i = 0; i< data.data.length ; i++){
                 const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
                 if(!subProduct){
@@ -72,7 +73,7 @@ let createInvoice = async (data) => {
                 totalNotIncludePro = totalNotIncludePro + subProduct.price * data.data[i].quantity
                 }
             }}
-            else{
+            else{              
               resolve({
                 EC:0,
                 EM:"Không có sản phẩm được tìm thấy!"
@@ -84,7 +85,7 @@ let createInvoice = async (data) => {
             id:data.option
           }
         })       
-         
+
         if(option){
           if(data.promotion.status){
             const promotionId = await db.promotion.findOne({
@@ -105,8 +106,18 @@ let createInvoice = async (data) => {
                address: data.address,
                paymentMethodId: option.id
            })
+           for(let i = 0; i < data.data.length; i++){
+            const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
+            const invoiceSubProd = await db.sub_product_invoices.create({
+              subProductId:data.data[i].sub_productId,
+              invoiceId:invoice.id,
+              quantity:data.data[i].quantity,
+              total:subProduct.price
+            })
+           }
            resolve(invoice);
              }
+             
               // const invoice = await db.invoice.create({
           //     name:data.name,
           //     phone:data.phone,
@@ -119,8 +130,41 @@ let createInvoice = async (data) => {
           //     name:data.name,
           // })
           }
+          else{
+            console.log("ccccs");
+            
+            const invoice = await db.Invoice.create({
+              name: "Hóa đơn cho khách hàng " + data.name + " mã hóa đơn " + code,
+              phone:data.phone,
+              email:data.email ? data.email : null,
+              total:total,
+              totalNotIncludePro: totalNotIncludePro,
+              statusInvoiceId: 1,
+              promotionId: null,
+              invoiceCode: code,
+              address: data.address,
+              paymentMethodId: option.id
+          })
+          for(let i = 0; i < data.data.length; i++){
+            const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
+            console.log(data.data[i].sub_productId);
+            console.log(invoice.id);
+
+            
+            const invoiceSubProd = await db.sub_product_invoices.create({
+              subProductId:data.data[i].sub_productId,
+              invoiceId:invoice.id,
+              quantity:data.data[i].quantity,
+              total:subProduct.price
+            })
+           }
+           console.log("cc");
+           
+           resolve(invoice);
+          }
         }
     else{
+      
       resolve();
     }
         
@@ -143,8 +187,69 @@ let createInvoice = async (data) => {
       }
     });
   };
+  let getAllInvoiceStatus = async ()=>{
+    return new Promise(async (resolve, reject) => {
+      try{
+        const rs = await db.statusInvoice.findAll({
+          attributes:["id","name"]
+        });
+        resolve(rs)
+      }
+      catch(e){
+        reject(e);
+      }
+    })
+  }
+  let getAllInvoiceByStatus = async (data) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let invoices = await db.Invoice.findAndCountAll(
+          {
+            where:{
+              statusInvoiceId:data.id,
+            },
+            include:[
+              {
+                model:db.paymentMethod
+              },
+              {
+                model:db.statusInvoice
+              },
+            ],
+            limit:10,
+            offset:(data.page - 1) * 10,
+          }
+        );
+        if (invoices) {
+          resolve(invoices);
+        } else {
+          resolve();
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+  let changeInvoiceStatus = async (data)=>{
+    return new Promise(async (resolve, reject) => {
+      try{
+        const rs = await db.Invoice.findOne({
+          where:{
+            name:data.invoiceCode
+          }
+        });
+        resolve(rs)
+      }
+      catch(e){
+        reject(e);
+      }
+    })
+  }
   module.exports = {
     createInvoice,
+    getAllInvoiceStatus,
+    getAllInvoiceByStatus,
+    changeInvoiceStatus
   }
   const findCodeInvoiceFunction = async () => {
     const string = generateRandomString("I");

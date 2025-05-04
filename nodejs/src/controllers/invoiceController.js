@@ -1,12 +1,10 @@
-import {createInvoice} from "../services/invoiceService"
+import {createInvoice,getAllInvoiceStatus,getAllInvoiceByStatus} from "../services/invoiceService"
 const handleCreateInvoice = async(req,res) => {
     try{
-       const data = await req.body;
-       console.log(data.option);
-       
+       const data = await req.body;       
         if(data.data && data.data.length > 0 && data.phone && data.phone !== "" && data.address && data.address !== ""){
            
-            const rs = await createInvoice(data);
+            const rs = await createInvoice(data);            
             if(rs){
                 res.status(200).json({
                     message:"Tạo hóa đơn thành công!",
@@ -32,6 +30,79 @@ const handleCreateInvoice = async(req,res) => {
         })
     }
 }
+
+const handleGetInvoiceStatus = async(req,res) => {
+    try{
+        const rs = await getAllInvoiceStatus();
+        if(rs){
+            return res.status(200).json({
+                data:rs
+            })
+        }
+        else{
+            return res.status(200).json({
+                message:"Đã có lỗi xảy ra!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+        
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+    }
+}
+const handleGetInvoiceByStatus = async(req,res) => {
+    try{
+        const data = req.query;
+        const rs = await getAllInvoiceByStatus(data);
+        if(rs){
+            return res.status(200).json({
+                data:rs
+            })
+        }
+        else{
+            return res.status(200).json({
+                message:"Đã có lỗi xảy ra!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+        
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+    }
+}
+const handleChangeStatus = async(req,res) => {
+    try{
+        const data = req.body;
+        const rs = await changeInvoiceStatus(data);
+        if(rs){
+            return res.status(200).json({
+                data:rs
+            })
+        }
+        else{
+            return res.status(200).json({
+                message:"Đã có lỗi xảy ra!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+        
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+    }
+}
+
 module.exports = {
-    handleCreateInvoice
+    handleCreateInvoice,
+    handleGetInvoiceStatus,
+    handleGetInvoiceByStatus,
+    handleChangeStatus
 }

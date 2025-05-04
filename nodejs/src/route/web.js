@@ -5,7 +5,7 @@ import apiController from "../controllers/apiController";
 import invoiceController from "../controllers/invoiceController"
 import forgotPasswordToken from "../controllers/forgotPasswordToken";
 import { verify } from "../function/verify";
-import { checkToken } from "../middleware/checkToken";
+import { checkAdmin, checkToken } from "../middleware/checkToken";
 const cookieParser = require("cookie-parser");
 import multer from "multer";
 import fs from "fs";
@@ -83,8 +83,27 @@ let storageUser = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
+let storageInvoiceImage = multer.diskStorage({
+  destination: async function (req, file, cb) {
+    if (req.body.fileImage) {
+    }
+    // Set the destination folder for uploaded files
+    const dir = `public/invoiceImage/${req.body.invoiceCode + "-" + req.body.username}`;
+    if (!fs.existsSync(dir)) {
+
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    // Set the filename to be used for uploaded files
+    cb(null, file.originalname);
+  },
+});
 const upload = multer({ storage: storage });
 const uploadUserImage = multer({ storage: storageUser });
+const uploadInvoiceImage = multer({ storage: storageInvoiceImage});
+
 
 
 let apiWebRoutes = (app) => {
@@ -191,6 +210,8 @@ let apiWebRoutes = (app) => {
 
   
   router.get("/check",checkToken)
+  router.get("/check-admin-role",checkAdmin)
+
 
   // Type Classify - 8 
   router.get("/type-classifies",getAllTypeClassify);
@@ -200,6 +221,9 @@ let apiWebRoutes = (app) => {
   router.get("/promotion",getPromotion);
   //
   router.post("/create-invoice",invoiceController.handleCreateInvoice)
+  router.get("/get-invoice-status",invoiceController.handleGetInvoiceStatus)
+  router.get("/get-invoice-by-status",invoiceController.handleGetInvoiceByStatus)
+  router.post("/change-status-ivoice", uploadInvoiceImage.array("fileImage",10),invoiceController.handleChangeStatus);
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

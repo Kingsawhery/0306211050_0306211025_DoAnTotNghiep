@@ -96,7 +96,6 @@ let getProductDetailById = async (id) => {
             }
           }
         ],
-        attributes: ["id", "rate", "productId", "stock", "classify"],
 
       });
       if (productDetail) {

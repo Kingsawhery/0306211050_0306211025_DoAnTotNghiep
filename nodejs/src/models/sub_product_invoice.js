@@ -13,13 +13,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   sub_product_invoice.init(
     {
-      sub_productId: DataTypes.INTEGER,
+      subProductId: DataTypes.INTEGER,
       invoiceId: DataTypes.INTEGER,
+      quantity:DataTypes.INTEGER,
+      total:DataTypes.FLOAT,
+      totalNotPro:DataTypes.FLOAT,
       status: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "sub_product_invoice",
+      modelName: "sub_product_invoices",
     }
   );
   return sub_product_invoice;

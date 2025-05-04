@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import userService from "../services/userService";
 import JWT from "jsonwebtoken";
 import { log } from "console";
+import { jwtDecode } from "jwt-decode";
 require("dotenv").config();
 const path = require("path");
 
@@ -201,8 +202,10 @@ const handleResetPassword = async (req, res) => {
 
 const handleLoginGG = async (req, res) => {
   const token = req.body.access_token;
+  console.log("ccc" + token);
+  
   const str = token.split(".");
-  const infor_email = JSON.parse(atob(str[1]));
+  const infor_email = jwtDecode(token)
 
   // Sẽ lưu token trong db của user vào trình duyệt user.
   // Sẽ lưu token trong db của user vào trình duyệt user.

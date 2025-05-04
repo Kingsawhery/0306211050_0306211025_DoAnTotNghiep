@@ -57,7 +57,7 @@ const getUserList = async (page) => {
         offset: (page - 1) * 10,
         attributes: ["id", "email", "username", "phone", "createdAt"],
         include:{
-          mode:db.role
+          model:db.role
         }
       });
 

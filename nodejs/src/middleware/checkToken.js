@@ -32,5 +32,45 @@ async function checkToken(req, res, next) {
     
   }
 }
+async function checkAdmin(req, res, next) {
+  const token = req.body.token ? req.body.token : req.query.token;
+  const id = req.body.userId ? req.body.userId : req.query.userId;
+  try {
+    const user = await db.User.findOne({
+      where: {
+        [Op.and]: {
+          token: token,
+          id: id,
+        },
+      },
+    });
+    if (!user) {
+      return res.status(200).json({
+        EC: -1,
+        EM: "Xác thực thất bại",
+      });
+    }
+    else if( user.roleId === 1){
+      return res.status(200).json({
+        EC: 1,
+        EM: "admin",
+      });
+    }else{
+      return res.status(200).json({
+        EC: 2,
+        EM: "user",
+      });
+    }
+    next();
+  } catch (error) {
 
-module.exports = { checkToken };
+    return res.status(200).json({
+      EM: "Bạn chưa đăng nhập",
+      EC: 1,
+      status: "403",
+    });
+    
+  }
+}
+
+module.exports = { checkToken, checkAdmin};

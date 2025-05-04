@@ -14,7 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       });
       Invoice.belongsTo(models.promotion, { foreignKey: "promotionId" });
       Invoice.belongsTo(models.promotion, { foreignKey: "statusInvoiceId" });
-
+      Invoice.belongsTo(models.statusInvoice,{
+        foreignKey: "statusInvoiceId"
+      });
+      Invoice.belongsTo(models.paymentMethod,{
+        foreignKey: "paymentMethodId"
+      });
     }
   }
   Invoice.init(
