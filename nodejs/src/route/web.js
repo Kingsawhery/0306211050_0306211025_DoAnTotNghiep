@@ -5,7 +5,7 @@ import apiController from "../controllers/apiController";
 import invoiceController from "../controllers/invoiceController"
 import forgotPasswordToken from "../controllers/forgotPasswordToken";
 import { verify } from "../function/verify";
-import { checkAdmin, checkToken } from "../middleware/checkToken";
+import { checkAdmin, checkToken, checkUser, checkAdminData } from "../middleware/checkToken";
 const cookieParser = require("cookie-parser");
 import multer from "multer";
 import fs from "fs";
@@ -30,7 +30,8 @@ import {
   getTypeClassifySubProduct,
   getSubProductImage,
   createNewProduct,
-  deleteProduct
+  deleteProduct,
+  checkOutStock
 } from "../controllers/productController";
 
 import {
@@ -120,6 +121,7 @@ let apiWebRoutes = (app) => {
   router.post("/categories", categoryController.postNewCategory);
   router.put("/categories", categoryController.editCategory);
   router.delete("/categories/:id", categoryController.deleteCategory);
+  router.get("/categories-page", categoryController.handleGetProductByCategory);
 
   //Danh mục con - Sub Category 2
   router.get("/sub-categories", subCategoryController.getAllSubCategories);
@@ -148,6 +150,7 @@ let apiWebRoutes = (app) => {
     upload.array("fileImage", 10),
     createNewProduct
   );
+  router.post("/check-out-stock",checkOutStock)
   router.delete("/product",checkToken,deleteProduct)
   // Post - 5
   router.get("/posts", getAllPosts);
@@ -209,7 +212,7 @@ let apiWebRoutes = (app) => {
   router.patch("/cart-change-status", checkToken, cartController.handleChangeStatus);
 
   
-  router.get("/check",checkToken)
+  router.get("/check",checkUser)
   router.get("/check-admin-role",checkAdmin)
 
 
@@ -222,8 +225,11 @@ let apiWebRoutes = (app) => {
   //
   router.post("/create-invoice",invoiceController.handleCreateInvoice)
   router.get("/get-invoice-status",invoiceController.handleGetInvoiceStatus)
-  router.get("/get-invoice-by-status",invoiceController.handleGetInvoiceByStatus)
+  router.get("/get-invoice-by-status",checkAdminData,invoiceController.handleGetInvoiceByStatus)
+  router.get("/get-invoice-by-status-user",invoiceController.handleGetInvoiceByStatusUser)
   router.post("/change-status-ivoice", uploadInvoiceImage.array("fileImage",10),invoiceController.handleChangeStatus);
+  router.post("/callback",invoiceController.handlePaymentStatus)
+
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

@@ -37,17 +37,11 @@ let createInvoice = async (data) => {
                                                 const subProduct = await db.sub_product.findOne({where:{id:data.data[x].sub_productId}})
                                                 total = total + ((subProduct.price * data.data[x].quantity) * ((100 - findPromotion.percent ) / 100))
                                                 totalNotIncludePro = totalNotIncludePro + (subProduct.price * data.data[x].quantity);
-
-                                                
-        
-                                                
                                             }else{
                                                 const subProduct = await db.sub_product.findOne({where:{id:data.data[x].sub_productId}})
                                                 total = total + (subProduct.price * data.data[x].quantity);
                                                 totalNotIncludePro = totalNotIncludePro + (subProduct.price * data.data[x].quantity);
-
                                             }
-        
                                         }
                                     
                                 }
@@ -94,7 +88,12 @@ let createInvoice = async (data) => {
               }
             })
             if(promotionId){
-              const invoice = await db.Invoice.create({
+              const user = await db.User.findOne({
+                where:{
+                  token: data.token
+                }
+              })
+              const invoice = await db.invoice.create({
                name: "Hóa đơn cho khách hàng " + data.name + " mã hóa đơn " + code,
                phone:data.phone,
                email:data.email ? data.email : null,
@@ -104,7 +103,8 @@ let createInvoice = async (data) => {
                promotionId: promotionId.id,
                invoiceCode: code,
                address: data.address,
-               paymentMethodId: option.id
+               paymentMethodId: option.id,
+               userId: user ? user.id : 0
            })
            for(let i = 0; i < data.data.length; i++){
             const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
@@ -114,6 +114,9 @@ let createInvoice = async (data) => {
               quantity:data.data[i].quantity,
               total:subProduct.price
             })
+        subProduct.stock -= data.data[i].quantity;
+        await subProduct.save();
+
            }
            resolve(invoice);
              }
@@ -131,9 +134,12 @@ let createInvoice = async (data) => {
           // })
           }
           else{
-            console.log("ccccs");
-            
-            const invoice = await db.Invoice.create({
+            const user = await db.User.findOne({
+              where:{
+                token: data.token
+              }
+            })
+            const invoice = await db.invoice.create({
               name: "Hóa đơn cho khách hàng " + data.name + " mã hóa đơn " + code,
               phone:data.phone,
               email:data.email ? data.email : null,
@@ -143,23 +149,20 @@ let createInvoice = async (data) => {
               promotionId: null,
               invoiceCode: code,
               address: data.address,
-              paymentMethodId: option.id
+              paymentMethodId: option.id,
+              userId: user ? user.id : 0
           })
           for(let i = 0; i < data.data.length; i++){
             const subProduct = await db.sub_product.findOne({where:{id:data.data[i].sub_productId}})
-            console.log(data.data[i].sub_productId);
-            console.log(invoice.id);
-
-            
             const invoiceSubProd = await db.sub_product_invoices.create({
               subProductId:data.data[i].sub_productId,
               invoiceId:invoice.id,
               quantity:data.data[i].quantity,
               total:subProduct.price
             })
+        subProduct.stock -= data.data[i].quantity
+        await subProduct.save();
            }
-           console.log("cc");
-           
            resolve(invoice);
           }
         }
@@ -200,10 +203,57 @@ let createInvoice = async (data) => {
       }
     })
   }
+  let getAllInvoiceByStatusUser = async (data) => {
+    return new Promise(async (resolve, reject) => {
+      try {        
+         let invoices = await db.invoice.findAndCountAll(
+          {
+            where:{
+              statusInvoiceId:data.id,
+              userId: data.userId
+            },
+            include:[
+              {
+                model:db.paymentMethod
+              },
+              {
+                model:db.statusInvoice
+              },
+            ],
+            attributes:[
+              "address",
+              "createdAt",
+              "email",
+              "id",
+              "invoiceCode",
+              "name",
+              "note",
+              "paymentMethodId",
+              "phone",
+              "statusInvoiceId",
+              "total",
+              "totalNotIncludePro",
+              "paymentStatus"
+            ],
+            limit:10,
+            offset:(data.page - 1) * 10,
+          }
+        );
+        if (invoices) {
+          resolve(invoices);
+        } else {
+          resolve();
+        }
+       
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
   let getAllInvoiceByStatus = async (data) => {
     return new Promise(async (resolve, reject) => {
-      try {
-        let invoices = await db.Invoice.findAndCountAll(
+      try {        
+         let invoices = await db.invoice.findAndCountAll(
           {
             where:{
               statusInvoiceId:data.id,
@@ -216,6 +266,21 @@ let createInvoice = async (data) => {
                 model:db.statusInvoice
               },
             ],
+            attributes:[
+              "address",
+              "createdAt",
+              "email",
+              "id",
+              "invoiceCode",
+              "name",
+              "note",
+              "paymentMethodId",
+              "phone",
+              "statusInvoiceId",
+              "total",
+              "totalNotIncludePro",
+              "paymentStatus"
+            ],
             limit:10,
             offset:(data.page - 1) * 10,
           }
@@ -225,6 +290,7 @@ let createInvoice = async (data) => {
         } else {
           resolve();
         }
+       
       } catch (e) {
         reject(e);
       }
@@ -232,12 +298,19 @@ let createInvoice = async (data) => {
   }
   let changeInvoiceStatus = async (data)=>{
     return new Promise(async (resolve, reject) => {
+      console.log(data.invoiceCode);
+      
       try{
-        const rs = await db.Invoice.findOne({
+        
+        const rs = await db.invoice.findOne({
           where:{
-            name:data.invoiceCode
+            invoiceCode:data.invoiceCode
           }
         });
+        if(rs.statusInvoiceId === 1){
+          rs.statusInvoiceId = 2; 
+          await rs.save();
+        }
         resolve(rs)
       }
       catch(e){
@@ -245,16 +318,78 @@ let createInvoice = async (data) => {
       }
     })
   }
+  let handleConfirmPayment = async (data)=>{
+    return new Promise(async (resolve, reject) => {
+      const invoiceCode = data.orderInfo.split(" ")[data.orderInfo.split(" ").length-1];
+      const invoice = await db.invoice.findOne({
+        where:{
+          invoiceCode: invoiceCode
+        },
+        include:{
+          model:db.sub_product
+        }
+      })
+      if(invoice){
+          if(invoice.total === data.amount){
+            invoice.paymentStatus = "Đã thanh toán"
+            
+            await invoice.save();
+            const subInvoice = await db.sub_product_invoices.findAll({
+              where:{
+                invoiceId:invoice.id
+              }
+            })
+            for(let i = 0; i < subInvoice.length; i++){
+              const cart = await db.Cart.findOne({
+                where:{
+                  userId: invoice.userId,
+                  sub_productId: subInvoice[i].subProductId
+                }
+              })
+              if(cart){
+                await cart.destroy();
+              }
+            }            
+
+            
+
+            resolve({
+              message:"Update payment status success!"
+            })
+          }
+      }else{
+        resolve();
+      }
+    //   try{
+    //     const rs = await db.invoice.findOne({
+    //       where:{
+    //         invoiceCode:data.invoiceCode
+    //       }
+    //     });
+    //     if(rs.statusInvoiceId === 1){
+    //       rs.statusInvoiceId = 2; 
+    //       await rs.save();
+    //     }
+    //     resolve(rs)
+    //   }
+    //   catch(e){
+    //     reject(e);
+    //   }
+    // })
+    })
+  }
   module.exports = {
     createInvoice,
     getAllInvoiceStatus,
     getAllInvoiceByStatus,
-    changeInvoiceStatus
+    changeInvoiceStatus,
+    handleConfirmPayment,
+    getAllInvoiceByStatusUser
   }
   const findCodeInvoiceFunction = async () => {
     const string = generateRandomString("I");
   
-    const findCodeInvoice = await db.Invoice.findOne({
+    const findCodeInvoice = await db.invoice.findOne({
       where: {
         invoiceCode: string
       }

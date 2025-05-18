@@ -67,6 +67,33 @@ let findCategories = async(data)=>{
     }
   });
 } 
+let getProductByCategory = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let categories = await db.category.findOne({
+        where:{
+          slug:data
+        },
+        include:{
+          model:db.sub_category,
+          include:{
+            model:db.product,
+            include:{
+              model:db.sub_category
+            }
+          }
+        }
+      });
+      if (categories) {
+        resolve(categories);
+      } else {
+        resolve();
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 let postCategory = async (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data);
@@ -138,6 +165,7 @@ module.exports = {
   putCategory,
   destroyCategory,
   findCategories,
-  getAllNameCategory
+  getAllNameCategory,
+  getProductByCategory
 };
 

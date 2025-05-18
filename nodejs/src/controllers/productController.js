@@ -10,8 +10,30 @@ import {
   getProductByCategory,
   createProduct,
   getProductDetailImages,
-  deleteProductById
+  deleteProductById,
+  handleCheckOutStock
 } from "../services/productService";
+const checkOutStock = async (req, res)=>{
+  try{
+    let data = await req.body;
+    console.log(data.data.length > 0);
+    if(data.data.length > 0){
+      const rs = await handleCheckOutStock(data);
+      
+      
+      console.log(rs);
+      
+      if(rs){
+        return res.status(200).json({
+          data: rs
+        });
+      }
+    }
+    
+  }catch(e){
+
+  }
+}
 const getProduct = async (req, res) => {
   try {
     let page = await req.query.page;
@@ -233,5 +255,6 @@ module.exports = {
   getTypeClassifySubProduct,
   getSubProductImage,
   createNewProduct,
-  deleteProduct
+  deleteProduct,
+  checkOutStock
 };

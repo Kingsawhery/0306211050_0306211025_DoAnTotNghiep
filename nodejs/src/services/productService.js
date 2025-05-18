@@ -36,6 +36,41 @@ let getProductsRandom = async (id) => {
     }
   });
 };
+let handleCheckOutStock = async (data)=>{
+  return new Promise(async (resolve,reject)=>{
+    try{
+      let array = [];
+      let dataProd = data.data;
+      console.log(dataProd.length);
+            
+      if(dataProd.length > 0){
+        console.log("có");
+        
+        for(let i = 0; i < dataProd.length; i++){
+          const subProd = await db.sub_product.findOne({
+            where:{
+              id: dataProd[i].sub_productId
+            }
+          })
+          
+          
+          if(subProd.stock < dataProd[i].quantity){
+          console.log(subProd.stock + " " + dataProd[i].quantity);
+          
+            array.push(subProd)
+          }else{
+            continue;
+          }
+        }
+        resolve(array);
+      }else{
+        resolve(array);
+      }
+    }catch(e){
+
+    }
+  })
+}
 let getProductBySubCategory = async (page, id) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -602,5 +637,6 @@ module.exports = {
   getSubProductByProduct,
   getProductDetailImages,
   createProduct,
-  deleteProductById
+  deleteProductById,
+  handleCheckOutStock
 };

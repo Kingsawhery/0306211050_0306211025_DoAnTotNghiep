@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "productDetailId"
       })
       sub_product.belongsToMany(models.type_classify_detail,{through:"sub_product_type_classify_detail"})
+      sub_product.belongsToMany(models.invoice,{through:"sub_product_invoices"});
 
     }
   };

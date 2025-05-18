@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Invoice extends Model {
+  class invoice extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,20 +9,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Invoice.belongsToMany(models.sub_product, {
+      invoice.belongsToMany(models.sub_product, {
         through: "sub_product_invoice",
       });
-      Invoice.belongsTo(models.promotion, { foreignKey: "promotionId" });
-      Invoice.belongsTo(models.promotion, { foreignKey: "statusInvoiceId" });
-      Invoice.belongsTo(models.statusInvoice,{
+      invoice.belongsTo(models.promotion, { foreignKey: "promotionId" });
+      invoice.belongsTo(models.promotion, { foreignKey: "statusInvoiceId" });
+      invoice.belongsTo(models.statusInvoice,{
         foreignKey: "statusInvoiceId"
       });
-      Invoice.belongsTo(models.paymentMethod,{
+      invoice.belongsTo(models.paymentMethod,{
         foreignKey: "paymentMethodId"
       });
+      invoice.belongsTo(models.User,{
+        foreignKey: "userId"
+      });
+      invoice.belongsToMany(models.sub_product,{through:"sub_product_invoices"});
+
     }
   }
-  Invoice.init(
+  invoice.init(
     {
       dayShip: DataTypes.DATE,
       invoiceCode: DataTypes.STRING,
@@ -33,15 +38,18 @@ module.exports = (sequelize, DataTypes) => {
       promotionId: DataTypes.INTEGER,
       total: DataTypes.FLOAT,
       totalNotIncludePro: DataTypes.FLOAT,
+      note: DataTypes.TEXT,
       statusInvoiceId:DataTypes.INTEGER,
       paymentMethodId:DataTypes.INTEGER,
+      userId:DataTypes.INTEGER,
+      paymentStatus:DataTypes.STRING
     },
     {
       sequelize,
-      modelName: "Invoice",
+      modelName: "invoice",
       deletedAt:"softDelete",
     paranoid:true,
     }
   );
-  return Invoice;
+  return invoice;
 };

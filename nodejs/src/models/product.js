@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:"categoryId"
       });
       product.hasOne(models.product_detail)
+       product.belongsTo(models.brand, {
+    foreignKey: "brandId"
+  });
       product.belongsToMany(models.promotion,{through:"promotionProduct"})
 
       
@@ -31,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     categoryId:DataTypes.INTEGER,
     image:DataTypes.STRING,
     promotion:DataTypes.FLOAT,
+    brandId:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'product',
