@@ -27,6 +27,7 @@ import { Helmet } from "react-helmet";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
+  const [showButton, setShowButton] = useState(true);
   const [productDetail, setProductDetail] = useState({});
   const [open,setOpen] = useState(false)
   const [subProduct, setSubProduct] = useState([]);
@@ -141,7 +142,12 @@ const ProductDetailPage = () => {
     if (result) {
       setSubProduct(result);
       setDataAddCart({ ...dataAddCart, currentSubProduct: result.id });
-      setOutOfStock(false);
+      if(result.stock > 0){
+        setOutOfStock(false);
+      }else{
+        setOutOfStock(true);
+
+      }
     } else {
       setOutOfStock(true);
       setSubProduct(product);
@@ -403,9 +409,13 @@ const ProductDetailPage = () => {
                 Add
               </Button>
             </Stack>
+            <div className="d-flex justify-content-end p-4">
+        {productDetail.classify && JSON.parse(productDetail.classify) && <ClassifyDetailDiv data = {JSON.parse(productDetail.classify)}/>}
+
+        </div>
           </div>
         </div>
-        {productDetail.classify && JSON.parse(productDetail.classify) && <ClassifyDetailDiv data = {JSON.parse(productDetail.classify)}/>}
+        
         
         {posts && (
           <>

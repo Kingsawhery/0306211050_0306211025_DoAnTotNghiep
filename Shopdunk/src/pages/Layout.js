@@ -4,6 +4,7 @@ import Footer from "../components/Footer/Footer";
 import "./Layout.scss";
 import { useEffect } from "react";
 import { checkToken } from "../function/checkToken";
+import MessengerChat from "../components/Messenger/MessengeButton";
 export default function Layout() {
 
   return (
@@ -13,6 +14,8 @@ export default function Layout() {
       <Outlet/>
       </div>
       <Footer />
-    </>
+      <MessengerChat/>
+
+    </> 
   );
 }

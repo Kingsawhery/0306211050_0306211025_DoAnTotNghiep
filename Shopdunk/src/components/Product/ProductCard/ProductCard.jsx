@@ -2,6 +2,8 @@ import "./ProductCard.scss";
 import { Link, useHistory, useNavigate } from "react-router-dom";
 const ProductCard = (props) => {
   const { product } = props;
+  console.log(product);
+  
   const randomNumber = Math.floor(Math.random() * 7);
   const objectFade = [
     "fade-up",

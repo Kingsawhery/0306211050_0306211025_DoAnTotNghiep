@@ -13,8 +13,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { checkAdminRole } from "../../../../function/checkToken";
-const Layout = ({admin}) => {
-  
+const Layout = ({ admin }) => {
+
   const [tabActive, setTabActive] = useState(-1);
   const navigate = useNavigate();
   const objectCategory = [
@@ -52,21 +52,27 @@ const Layout = ({admin}) => {
       ],
     },
   ];
-  useEffect(()=>{
+  useEffect(() => {
     checkAdmin();
-  },[admin])
+  }, [admin])
   const checkAdmin = async () => {
-    const checkAdminData = await checkAdminRole();
-    console.log(checkAdminData);
-
-    if (checkAdminData.data.EC === 1) {
-      return;
-    }
-    else {
+    try{
+      const checkAdminData = await checkAdminRole();
+    
+      if (checkAdminData?.data?.EC === 1) {
+  
+        return;
+      }
+     else {
       navigate("/")
-      
     }
     return checkAdminData;
+
+    }catch{
+
+    }
+    
+
   }
   return (
     <>
@@ -179,7 +185,7 @@ const Layout = ({admin}) => {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

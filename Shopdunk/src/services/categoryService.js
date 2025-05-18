@@ -11,3 +11,6 @@ export const getAllCategories = (page) =>{
 export const getAllCategoryNames = () =>{
     return instance.get(process.env.REACT_APP_API_SERVER + `/categories-name`);
 }
+export const getDataCategory = (name) =>{
+    return instance.get(process.env.REACT_APP_API_SERVER + `/categories-page?slug=${name}`);
+}

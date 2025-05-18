@@ -4,11 +4,13 @@ const ClassifyDetailDiv = (props) =>{
     console.log(data);
     
     return(
-<div className="div-specification-item">
+<div className="div-specification-item" style={{width:"420px"}}>
         {data && data.length > 0 && data.map((item)=>{
             console.log(data[0].data)
 return(
-    <div className="box-specifi">
+    <div className="box-specifi" style={{
+      width:"400px"
+    }}>
     <div className="name-classify">
       <h3>{item.label}</h3>
     </div>

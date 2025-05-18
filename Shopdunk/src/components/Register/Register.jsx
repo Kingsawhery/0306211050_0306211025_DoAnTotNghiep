@@ -185,20 +185,39 @@ const Register = (props) => {
               value={dataRegister.confirmPassword}
               onChange={hanldeSetValue}
             />
-
-            <button
+  <div className="div-button d-flex justify-content-center mt-4">
+  <button
               type="button"
               className="sub-title"
               name="btn"
               onClick={() => handleDataUser()}
+              style={
+                {
+                  border: "1px solid gray",
+    padding: "12px 20px",
+    width: "40%",
+    backgroundColor:"#4f85d4",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color:"#ffffff"
+                }
+              }
             >
               Register
             </button>
+  </div>
+           
             <div class="register-link">
               <p>
                 Already have an account?
-                <a className="fw-bold" onClick={() => handlePreLogin()}>
-                  Login
+                <a className="fw-bold"
+                style={{
+                  color:"black",
+                  textDecoration:"underline",
+                }}
+                onClick={() => handlePreLogin()}>
+                  Login Here!
                 </a>
               </p>
             </div>

@@ -19,7 +19,7 @@ const PostRow = () =>{
         }
     }
     return(
-        <div className="post-row">
+        <div className="post-row mt-4 mb-4">
         <div className="banner-post">
         
             <img src={`${process.env.REACT_APP_LOCALHOST_SERVER}/bannerImage/banner-post.jpeg`}/>

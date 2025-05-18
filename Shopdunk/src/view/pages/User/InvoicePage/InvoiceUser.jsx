@@ -1,14 +1,14 @@
 import ReactPaginate from "react-paginate";
-import Spinner from "../../../../../components/Spinner/Spinner";
+import Spinner from "../../../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
-import { getInvoiceByStatus, getInvoiceStatus } from "../../../../../services/invoiceService";
+import { getInvoiceByStatusUser, getInvoiceStatus } from "../../../../services/invoiceService";
 import { get } from "lodash";
 import UploadIcon from '@mui/icons-material/Upload';
-import ModalUpload from "./ModalUpload";
+import ModalUpload from "../../Admin/Management/Invoices/ModalUpload";
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
-import "./Invoice.scss"
+// import "./Invoice.scss"
 import { KeyboardArrowDownOutlined, KeyboardArrowUpOutlined } from "@mui/icons-material";
-export function Invoices() {
+export function InvoiceUser() {
     const [isLoading, setIsLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [currentTab, setCurrentTab] = useState(1)
@@ -37,9 +37,7 @@ export function Invoices() {
                 currentTab,
                 page
             }
-            const data = await getInvoiceByStatus(dataInvoice);
-            console.log(data);
-            
+            const data = await getInvoiceByStatusUser(dataInvoice);
             if (data) {
                 setInvoiceList(data.data.data);
             } else {
@@ -91,11 +89,6 @@ export function Invoices() {
                 </div>
             ) : (
                 <>
-                    <h1 className="d-flex justify-content-start my-4" onClick={() => {
-                        console.log(invoiceList)
-                    }}>
-                        Danh sách hóa đơn
-                    </h1>
                     <div className="status-invoice d-flex justify-content-center">
                         {invoiceStatus && invoiceStatus.length > 0 ? (
                             invoiceStatus.map((item, index) => (
@@ -133,14 +126,14 @@ export function Invoices() {
                         <thead>
                             <tr>
                                 <th scope="col">STT</th>
-                                <th scope="col">Mã đơn hàng</th>
+                                <th scope="col">Mã</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Số điện thoại</th>
-                                <th scope="col">Tổng tiền cần thanh toán</th>
-                                <th scope="col">Tổng tiền khuyến mãi</th>
-                                <th scope="col">Phương thức thanh toán</th>
+                                <th scope="col">Tổng tiền</th>
+                                {/* <th scope="col">Tổng tiền khuyến mãi</th>    */}
+                                {/* <th scope="col">Phương thức thanh toán</th> */}
                                 <th scope="col">Trạng thái thanh toán</th>
-                                <th scope="col">THành động</th>
+                                <th scope="col">Hành động</th>
 
                             </tr>
                         </thead>
@@ -167,7 +160,7 @@ export function Invoices() {
                                                 <td style={{ height: "43.15px" }}>{item.email}</td>
                                                 <td style={{ height: "43.15px" }}>{item.phone}</td>
                                                 <td style={{ height: "43.15px" }}>{item.total.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
-                                                <td style={{ height: "43.15px" }}>{item.totalNotIncludePro.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
+                                                {/* <td style={{ height: "43.15px" }}>{item.totalNotIncludePro.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td> */}
                                                 <td style={{ height: "43.15px" }}>{item.paymentMethod.name}</td>
                                                 <td>{item.paymentStatus}</td>
                                                 <td style={{ height: "43.15px" }}>{currentTab === 1 ? <UploadIcon onClick={() => {

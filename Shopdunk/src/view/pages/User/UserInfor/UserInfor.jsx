@@ -4,6 +4,7 @@ import "./UserInfor.scss"
 import UserInforTab from "./UserInforTab";
 import ChangePassword from "./ChangePassword";
 import User from "../../Admin/Management/User/User";
+import { InvoiceUser } from "../InvoicePage/InvoiceUser";
 export default function UserInfor() {
     const [tabDisplay, setTabDisplay] = useState(1);
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function UserInfor() {
                 <img
                   style={{
                     width: "60%",
-                    borderRadius: "50%",
+                    borderRadius: "20%",
                   }}
                   src={
                     user?.image && user?.name
@@ -71,11 +72,11 @@ export default function UserInfor() {
                         : "user-infor-tab-right"
                     }
                   >
-                    Thay đổi mật khẩu
+                    Đơn hàng
                   </div>
                 </div>
       
-                {tabDisplay === 1 ? <UserInforTab /> : <ChangePassword />}
+                {tabDisplay === 1 ? <UserInforTab /> : <InvoiceUser />}
               </div>
             </div>
           </div>

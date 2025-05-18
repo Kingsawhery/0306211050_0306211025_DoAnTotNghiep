@@ -5,7 +5,7 @@ export const checkToken = () =>{
         
         const user = localStorage.getItem("user");
         const token = JSON.parse(user).token;
-        const userId = JSON.parse(user).userId;
+        const userId = JSON.parse(user).id;
      return axios.get(`${process.env.REACT_APP_API_SERVER}/check?token=${token}&userId=${userId}`)
     }
     catch(e){
@@ -23,7 +23,7 @@ export const checkAdminRole = () =>{
         let userId = JSON.parse(user).id;
      return axios.get(`${process.env.REACT_APP_API_SERVER}/check-admin-role?token=${token}&userId=${userId}`)
     }
-    catch(e){
+    catch(e){    
         return {
             EC: 1,
             EM: "Xác thực thất bại",

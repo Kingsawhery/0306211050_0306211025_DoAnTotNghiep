@@ -102,14 +102,11 @@ const Login = (props) => {
               value={data.password}
               onChange={hanldeSetValue}
             />
-            <div className="remember-forgot">
-              <label>
-                <input className="mx-1" type="checkbox" />
-                Remember Mez
-              </label>
-              <Link to="/forgot-password">Forgot Password?</Link>
+            <div className="remember-forgot pt-4 d-flex justify-content-end">
+              
+              <Link to="/forgot-password" className="d-flex justify-content-end">Forgot Password?</Link>
             </div>
-            <div>
+            <div className="d-flex">
               <GoogleOAuthProvider clientId="893391151246-qbd3i6uctc7guvur5etsa4s7l963jakc.apps.googleusercontent.com">
                 <LoginGG
                   onGet={(response) => {
@@ -119,20 +116,40 @@ const Login = (props) => {
                 />
               </GoogleOAuthProvider>
             </div>
-            <div></div>
+            <div className="div-button d-flex justify-content-center mt-4">
             <button
               onClick={() => {
                 handleLogin();
               }}
               name="btn"
               className="mt-2"
+              style={
+                {
+                  border: "1px solid gray",
+    padding: "12px 20px",
+    width: "40%",
+    backgroundColor:"#4f85d4",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color:"#ffffff"
+                }
+              }
             >
+              
               Login
             </button>
+            </div>
+            
             <div className="register-link">
               <p>
                 Don't have an account?
-                <a className="fw-bold" onClick={() => handleCreatNewAccount()}>
+                <a className="fw-bold" style={
+                  {
+                    color:"black",
+                    textDecoration:"underline"
+                  }
+                } onClick={() => handleCreatNewAccount()}>
                   Register Here!
                 </a>
               </p>

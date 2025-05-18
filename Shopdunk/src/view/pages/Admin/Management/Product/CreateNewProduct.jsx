@@ -109,7 +109,7 @@ const CreateNewProduct = () => {
   const handleSubmit = async () => {
     try {
       
-      const result = await postProduct({
+    const result = await postProduct({
     price: data.price,
     promotion: data.promotion,
     category: data.category,
@@ -146,7 +146,7 @@ const CreateNewProduct = () => {
             e.target.files[i].name.split(".").length - 1
           ];
 
-        if (exe !== "png" && exe !== "jpeg" && exe !== "jpg") {
+        if (exe !== "png" && exe !== "jpeg" && exe !== "jpg" && exe !== "webp") {
           continue;
         } else {
           setData((prevData) => ({
@@ -219,7 +219,9 @@ const CreateNewProduct = () => {
 
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formGridProductName">
-              <Form.Label>Tên sản phẩm</Form.Label>
+              <Form.Label onClick={()=>{
+                console.log(data.fileImage)
+              }}>Tên sản phẩm</Form.Label>
               <Form.Control
                 onChange={handleData}
                 name="name"

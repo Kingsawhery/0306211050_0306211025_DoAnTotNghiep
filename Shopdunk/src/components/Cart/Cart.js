@@ -22,32 +22,22 @@ import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
 import { InputLabel } from "@mui/material";
 import _ from "lodash";
-import { getPromotion } from "../../services/product";
+import { getPromotion, checkStockData } from "../../services/product";
 import { PacmanLoader } from "react-spinners";
 import { createInvoice } from "../../services/invoiceService";
+import { handleMockDataPayment } from "../../services/paymentService"
+import ModalConfirmPay from "./ModalConfirmPay";
+import ModalOutOfStock from "./ModalOutOfStock";
 const Cart = () => {
-  const countries = [
-    {
-      cityId:1,
-      city:"Hồ Chí Minh",
-      districts:[
-        {
-          districtId:1,
-          district:"Quận 1",
-          wards:[
-            {
-              wardId:1,
-              ward:"Phường Đa Kao",
-            },
-          ]
-        }
-      ]
-    }
-  ]
+  const [test, setTest] = useState(false);
   const [listProductInCart, setProductInCart] = useState([]);
   const [promotionInfor, setPromotionInfor] = useState({});
   const [listProductInPromotion, setProductInPromotion] = useState([]);
   const [totalPromotion, setTotalPromotion] = useState(0);
+  const [showModalConfirm, setShowModalConfirm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [listOutOfStock, setListOutOfStock] = useState([]);
+
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
   const [currentSubProduct, setCurrentSubProduct] = useState(true);
@@ -56,8 +46,8 @@ const Cart = () => {
     name: user && JSON.parse(user).name ? JSON.parse(user).name : "",
     phone: user && JSON.parse(user).phone ? JSON.parse(user).phone : "",
     email: user && JSON.parse(user).email ? JSON.parse(user).email : "",
-    token:user && JSON.parse(user).token ? JSON.parse(user).token : "",
-    id:user && JSON.parse(user).id ? JSON.parse(user).id : "",
+    token: user && JSON.parse(user).token ? JSON.parse(user).token : "",
+    id: user && JSON.parse(user).id ? JSON.parse(user).id : "",
     city: "",
     district: "",
     ward: "",
@@ -68,9 +58,14 @@ const Cart = () => {
       percent: 0,
     },
     option: 2,
-    data:[]
+    data: []
   });
-  const [loadingPage,setLoadingPage] = useState(true);
+  const handleMockData = async () => {
+    const rs = await handleMockDataPayment();
+    console.log(rs);
+
+  }
+  const [loadingPage, setLoadingPage] = useState(true);
   const [address, setAddress] = useState({
     city: [],
     district: [],
@@ -101,12 +96,12 @@ const Cart = () => {
     handleGetData();
   }, [currentSubProduct]);
   const getDataCity = async () => {
-    try{
+    try {
       const dataCity = await axios.get(`https://esgoo.net/api-tinhthanh/1/0.htm`);
       setAddress({ ...address, city: dataCity.data.data });
-    }catch(e){
+    } catch (e) {
       console.log(e);
-      
+
     }
   };
   const handlePromotion = _.debounce(async (e) => {
@@ -127,7 +122,6 @@ const Cart = () => {
         setPromotionInfor(promotion);
         if (promotion) {
           let newTotalPromotion = 0;
-
           listProductInCart.map((item) => {
             if (promotion.products.length > 0) {
               for (let i = 0; i < promotion.products.length; i++) {
@@ -135,7 +129,7 @@ const Cart = () => {
                   if (
                     promotion.products.length > 0 &&
                     item.sub_product.product_detail.productId ===
-                      promotion.products[i].id
+                    promotion.products[i].id
                   ) {
                     newTotalPromotion +=
                       (item.sub_product.price *
@@ -185,7 +179,7 @@ const Cart = () => {
         if (dataRs) {
           setProductInCart(dataRs.data.data);
           setTotalCart(dataRs.data.total);
-          setPaymentInformation({...paymentInformation,data:dataRs.data.data.filter(item => item.status === true)})
+          setPaymentInformation({ ...paymentInformation, data: dataRs.data.data.filter(item => item.status === true) })
           // setLoadingPage(false);
         }
       }
@@ -231,11 +225,28 @@ const Cart = () => {
       });
     }
   };
+  const handleCheckStock = async () => {
+    const handleCheck = await checkStockData(paymentInformation.data);
+    console.log(handleCheck.length);
+    if (handleCheck) {
+      setListOutOfStock(handleCheck);
+      setShowModal(true);
+      if (handleCheck.length === 0) {
+        setShowModalConfirm(true);
+        console.log("cc");
+
+      } else {
+        setShowModalConfirm(false);
+
+      }
+    }
+
+  }
   const handleCreateInvoice = async () => {
-    if(paymentInformation.name !== "" && 
-      paymentInformation.phonee !== "" && 
-      paymentInformation.email !== "" && 
-      paymentInformation.token !== "" && 
+    if (paymentInformation.name !== "" &&
+      paymentInformation.phone !== "" &&
+      paymentInformation.email !== "" &&
+      paymentInformation.token !== "" &&
       paymentInformation.id !== "" &&
       paymentInformation.city !== "" &&
       paymentInformation.ward !== "" &&
@@ -243,43 +254,47 @@ const Cart = () => {
       paymentInformation.street !== ""
     ) {
       const rs = await createInvoice({
-        name: paymentInformation.name,     
-        phone: paymentInformation.phone ,
+        name: paymentInformation.name,
+        phone: paymentInformation.phone,
         email: paymentInformation.email,
         token: paymentInformation.token,
-        id: paymentInformation.id ,
+        id: paymentInformation.id,
         address: paymentInformation.street + ", " + paymentInformation.district + ", " + paymentInformation.ward + " ," + paymentInformation.city + ".",
         promotion: paymentInformation.promotion,
         option: paymentInformation.option,
-        data:paymentInformation.data
+        data: paymentInformation.data
       });
       if (rs) {
-        console.log(rs.data.data);   
-        if(rs.data.message === "Tạo hóa đơn thành công!"){
-          // const ip = await axios.get('https://api.ipify.org?format=json');
-          // console.log(rs.data.data);
-          // console.log(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*10}&vnp_BankCode=VNPAYQR&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.invoiceCode}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`)
-          // window.open(`https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${rs.data.data.total*10}&vnp_BankCode=VNPAYQR&vnp_Command=pay&vnp_CreateDate=${formatDateTimeGMT7(rs.data.data.createdAt)}&vnp_CurrCode=VND&vnp_IpAddr=${ip.data.ip}&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=DEMOV210&vnp_TxnRef=${rs.data.data.invoiceCode}&vnp_Version=2.1.0&vnp_SecureHash=3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ff`)
+        console.log(rs);
+        if (rs.data.message === "Tạo hóa đơn thành công!") {
+          if (
+            rs.data.payment.id === 1
+          ) {
+            window.open(rs.data.payment.url)
+            setTest(true)
+          } else {
+            window.open("http://localhost:3000/")
+          }
         }
-    }
-    }else{
-      console.log("No");   
+      }
+    } else {
+      console.log("No");
 
     }
-  
-    
+
+
   };
   const formatDateTimeGMT7 = (dateString) => {
     const date = new Date(dateString);
     date.setHours(date.getHours() + 7);
     return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-};
-const formatDateTimeGMT7Plus10Min = (dateString) => {
-  const date = new Date(dateString);
-  date.setHours(date.getHours() + 7);
-  date.setMinutes(date.getMinutes() + 10); // Cộng thêm 10 phút
-  return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-};
+  };
+  const formatDateTimeGMT7Plus10Min = (dateString) => {
+    const date = new Date(dateString);
+    date.setHours(date.getHours() + 7);
+    date.setMinutes(date.getMinutes() + 10); // Cộng thêm 10 phút
+    return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+  };
 
   const handleDestroyCart = async (id) => {
     try {
@@ -355,13 +370,13 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                     onClick={() => {
                       console.log(item);
                     }}
-                    style={item.status ? { position: "relative", backgroundColor:"#e0e0e0" } : { position: "relative" }}
+                    style={item.status ? { position: "relative", backgroundColor: "#e0e0e0" } : { position: "relative" }}
                   >
                     <Form.Check
                       checked={item.status}
                       onChange={() => handleChangeStatus(item.sub_productId)}
                       className="cart-check"
-                      style={{ position: "absolute", top:"12px" , right:"24px"}}
+                      style={{ position: "absolute", top: "12px", right: "24px" }}
                     />
                     <img
                       src={
@@ -369,11 +384,11 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                           .length > 0
                           ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.image}`
                           : item.sub_product.product_detail
-                              .product_detail_images.image &&
+                            .product_detail_images.image &&
                             item.sub_product.product_detail
                               .product_detail_images.length > 0
-                          ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
-                          : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
+                            ? `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.product_detail.product_detail_images[0]?.image}`
+                            : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                         // : `${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/default.webp`
                       }
                       alt={item.sub_product.name}
@@ -486,11 +501,11 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                                   VNĐ
                                 </p>
                                 {paymentInformation.promotion.status &&
-                                listProductInPromotion.find(
-                                  (i) =>
-                                    i.id ==
-                                    item.sub_product.product_detail.productId
-                                ) ? (
+                                  listProductInPromotion.find(
+                                    (i) =>
+                                      i.id ==
+                                      item.sub_product.product_detail.productId
+                                  ) ? (
                                   <>
                                     <p
                                       style={{
@@ -502,19 +517,19 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                                     </p>
                                     <p>
                                       {paymentInformation.promotion.status &&
-                                      paymentInformation.promotion.percent >
+                                        paymentInformation.promotion.percent >
                                         0 &&
-                                      paymentInformation.promotion.percent <=
+                                        paymentInformation.promotion.percent <=
                                         100
                                         ? `${(
-                                            (item.sub_product.price *
-                                              (100 -
-                                                paymentInformation.promotion
-                                                  .percent)) /
-                                            100
-                                          )
-                                            .toLocaleString("vi-VN")
-                                            .replace(/,/g, ".")} VNĐ`
+                                          (item.sub_product.price *
+                                            (100 -
+                                              paymentInformation.promotion
+                                                .percent)) /
+                                          100
+                                        )
+                                          .toLocaleString("vi-VN")
+                                          .replace(/,/g, ".")} VNĐ`
                                         : " "}
                                     </p>
                                   </>
@@ -525,27 +540,27 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
 
                               <td>
                                 {paymentInformation.promotion.status &&
-                                listProductInPromotion.find(
-                                  (i) =>
-                                    i.id ==
-                                    item.sub_product.product_detail.productId
-                                ) ? (
+                                  listProductInPromotion.find(
+                                    (i) =>
+                                      i.id ==
+                                      item.sub_product.product_detail.productId
+                                  ) ? (
                                   <>
                                     <p>
                                       {paymentInformation.promotion.percent >
                                         0 &&
-                                      paymentInformation.promotion.percent <=
+                                        paymentInformation.promotion.percent <=
                                         100
                                         ? `${(
-                                            (item.sub_product.price *
-                                              item.quantity *
-                                              (100 -
-                                                paymentInformation.promotion
-                                                  .percent)) /
-                                            100
-                                          )
-                                            .toLocaleString("vi-VN")
-                                            .replace(/,/g, ".")} VNĐ`
+                                          (item.sub_product.price *
+                                            item.quantity *
+                                            (100 -
+                                              paymentInformation.promotion
+                                                .percent)) /
+                                          100
+                                        )
+                                          .toLocaleString("vi-VN")
+                                          .replace(/,/g, ".")} VNĐ`
                                         : " "}
                                     </p>
                                   </>
@@ -566,11 +581,11 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                     Tổng cộng:{" "}
                     {paymentInformation.promotion.status
                       ? `${totalPromotion
-                          .toLocaleString("VN-vi")
-                          .replace(/,/g, ".")}`
+                        .toLocaleString("VN-vi")
+                        .replace(/,/g, ".")}`
                       : `${totalAmount
-                          .toLocaleString("VN-vi")
-                          .replace(/,/g, ".")}`}{" "}
+                        .toLocaleString("VN-vi")
+                        .replace(/,/g, ".")}`}{" "}
                     VNĐ
                   </h3>
                 </div>
@@ -650,8 +665,7 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                                         },
                                       });
                                       const dataDistrict = await axios.get(
-                                        `https://esgoo.net/api-tinhthanh/2/${
-                                          item.id ? item.id : 1
+                                        `https://esgoo.net/api-tinhthanh/2/${item.id ? item.id : 1
                                         }.htm`
                                       );
                                       setAddress({
@@ -706,8 +720,7 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                                         },
                                       });
                                       const dataWard = await axios.get(
-                                        `https://esgoo.net/api-tinhthanh/3/${
-                                          item.id ? item.id : 1
+                                        `https://esgoo.net/api-tinhthanh/3/${item.id ? item.id : 1
                                         }.htm`
                                       );
                                       setAddress({
@@ -834,21 +847,59 @@ const formatDateTimeGMT7Plus10Min = (dateString) => {
                 <Row className="mt-3">
                   <Col xs={12} className="d-flex justify-content-end">
                     <Button
-                      style={{backgroundColor:"#0d6efe",color:"#fff"}}
-                      variant="secondary"
-                      onClick={handleCreateInvoice}
+                      disabled={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? true : false}
+                      style={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? { backgroundColor: "rgb(160 158 158)", color: "#fff", padding:"12px 24px" } : { backgroundColor: "rgb(0 164 253)", color: "#fff", padding:"12px 24px" }}
+                      // onClick={handleCreateInvoice}
+                      onClick={handleCheckStock}
                     >
                       Thanh Toán
+
                     </Button>
+                    {test && <Button
+                      onClick={handleMockData}
+                    >
+                      Button Test thanh toán
+                    </Button>}
                   </Col>
                 </Row>
               </div>
+              {showModal && <div className="fileUpload"
+                onClick={() => {
+                  setShowModal(false)
+                }}
+                style={{
+                  position: "absolute",
+                  height: "1280px",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(2px)"
+                }}
+              >
+
+                <div onClick={(e) => e.stopPropagation()}>
+                  {
+                    showModalConfirm ? <ModalConfirmPay handleCreateInvoice={handleCreateInvoice} price={
+                      `${paymentInformation.promotion.status
+                        ? totalPromotion.toLocaleString("vi-VN").replace(/,/g, ".")
+                        : totalAmount.toLocaleString("vi-VN").replace(/,/g, ".")} VNĐ`
+                    } setShowModal={setShowModal} /> : <ModalOutOfStock setShowModal={setShowModal} listOutOfStock={listOutOfStock} />
+                  }
+                </div>
+              </div>
+              }
             </div>
+
+
           )}
         </div>
       </div>
     </div>
-  ) 
+  )
   // : <PacmanLoader/>
   // );
 };

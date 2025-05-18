@@ -7,6 +7,20 @@ main {
 .invoide-color {
   color: #86868a;
 }
+button {
+  background-color: #0084FF; /* Màu chính của button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #b0b0b0; /* Màu xám khi disabled */
+  cursor: not-allowed; /* Đổi con trỏ thành not-allowed */
+}
 .card-cart {
   display: flex;
   justify-content: space-around;

@@ -11,6 +11,8 @@ import { getProductByCategory } from "../../../services/product";
 const ProductRow = (props) => {
   
   const { category } = props;
+  console.log(category);
+  
   // const [dataChange, setDataChange] = useState({
   //   id: 1,
   //   page: 1,

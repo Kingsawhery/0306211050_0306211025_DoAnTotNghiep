@@ -9,6 +9,52 @@
     overflow: hidden;
     margin: 0 0 10px
   }
+  .box-specifi {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .name-classify h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    border-left: 4px solid #007bff;
+    padding-left: 10px;
+  }
+  
+  .text-specifi {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .text-specifi li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .text-specifi li:first-child {
+    border-top: none;
+  }
+  
+  .text-specifi strong {
+    color: #555;
+    font-weight: 500;
+  }
+  
+  .text-specifi span {
+    color: #222;
+    font-weight: 400;
+  }
   
   .box-specifi .text-specifi {
     display: none;

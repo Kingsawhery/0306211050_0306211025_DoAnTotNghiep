@@ -81,3 +81,8 @@ export const deleteProductById = (id,token,userId) => {
   );
 };
 
+export const checkStockData = (data) => {
+  return instance.post(
+    `${process.env.REACT_APP_API_SERVER}/check-out-stock`,{data}
+  );
+};

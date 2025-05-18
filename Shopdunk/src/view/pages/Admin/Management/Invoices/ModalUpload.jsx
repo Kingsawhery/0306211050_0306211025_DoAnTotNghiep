@@ -4,17 +4,28 @@ import { useRef, useState } from 'react';
 import ImageList from '@mui/material/ImageList';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
+import { uploadChangeStatus } from '../../../../../services/invoiceService';
 
-function ModalUpload() {
+function ModalUpload(props) {
     const uploadRef = useRef(null);
-    const [fileUpload, setFileUpload] = useState([])
     const [fileDemo, setFileDemo] = useState([])
     const [showImage, setShowImage] = useState(false)
     const [dataUpload,setDataUpload] = useState({
-        invoiceCode:"",
-        username:"",
+        invoiceCode:props.invoiceCode,
+        username:props.username,
         fileUpload:[],
     })
+    const handleUploadFile = async() =>{
+        if(dataUpload.fileUpload.length > 0 && dataUpload.invoiceCode !== "" && dataUpload.username !== "")
+        {
+            const rs = await uploadChangeStatus(dataUpload);
+            if(rs){
+                alert("Chuyển trang thái sang đã xác nhận thành công!");
+                props.handleGetAllInvoiceByStatus();
+                props.setShowFileUpload(false);
+            }
+        }
+    }
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         console.log(files[0]);
@@ -103,7 +114,7 @@ function ModalUpload() {
                                     }
                                 }
                             >Browse File</Button>
-                            {fileUpload.length > 0 ? <p onClick={() => {
+                            {dataUpload.fileUpload.length > 0 ? <p onClick={() => {
                                 setShowImage(true)
                             }}>Xem hình ảnh</p> : <></>}
                         </div>
@@ -171,7 +182,9 @@ function ModalUpload() {
                 flexDirection:"row-reverse"
             }}>
                 <Button onClick={()=>{
-                    console.log(fileUpload[2])
+                    handleUploadFile();
+                    // console.log(dataUpload);
+                    
                 }}>Next</Button>
             </div>
         </div>

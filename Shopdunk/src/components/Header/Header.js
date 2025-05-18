@@ -12,12 +12,13 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 // import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { checkToken } from "../../function/checkToken";
+import { checkAdminRole, checkToken } from "../../function/checkToken";
 const Header = () => {
   const navigate = useNavigate();
   const { totalCart } = useContext(Context);
   let user = localStorage.getItem("user");
   const [categories, setCategories] = useState([]);
+  const [admin, setAdmin] = useState(false);
   try {
     user = JSON.parse(user);
   } catch (e) {
@@ -25,8 +26,9 @@ const Header = () => {
   }
   useEffect(() => {
     try {
-
+      
       check();
+      checkAdmin();
       getListCategories();
     } catch (e) {
       if (user) {
@@ -38,12 +40,10 @@ const Header = () => {
     }
 
 
-  }, []);
+  }, [admin]);
   const check = async () => {
     const checkData = await checkToken();
     if (checkData.EC !== 1) {
-
-
     }
     else {
       if (user) {
@@ -54,6 +54,25 @@ const Header = () => {
       }
     }
     return checkData;
+  }
+  const checkAdmin = async () => {
+    try{
+      const checkData = await checkAdminRole();
+      console.log(checkData);
+    
+      if (checkData.data.EC === 1) {
+        setAdmin(true);
+      }
+      else {
+        
+      }
+      return checkData;
+    }
+    catch(e){
+      console.log(e);
+      
+    }
+   
   }
   const getListCategories = async () => {
     const results = await getAllCategories();
@@ -119,7 +138,7 @@ const Header = () => {
                 />
               </div>
             </div> */}
-            {user && user.token &&
+            {user && user.token && 
               (
                 <Link
                   onClick={() => {
@@ -173,6 +192,9 @@ const Header = () => {
                   </div></Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="/user-information">Thông tin tài khoản</Dropdown.Item>
+                  {admin && 
+                  <Dropdown.Item href="/admin">Trang quản lý thông tin người dùng</Dropdown.Item>
+                  }
                   <Dropdown.Item onClick={handleLogout}>Đăng xuất</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

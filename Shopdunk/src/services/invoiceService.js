@@ -7,6 +7,28 @@ export const createInvoice = (data) =>{
 export const getInvoiceStatus = () =>{
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-status`);
 }
-export const getInvoiceByStatus = (id,page) =>{
-    return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${id}&page=${page}`);
+export const getInvoiceByStatus = (data) =>{
+  console.log(data);
+  
+    return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
 }
+export const getInvoiceByStatusUser = (data) =>{
+  console.log(data);
+
+  return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status-user?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
+}
+export const uploadChangeStatus = (data) => {
+    const formData = new FormData();
+    for (const key in data) {
+      if (data.hasOwnProperty(key) && key !== "fileUpload") {
+        formData.append(`${key}`, data[key]);
+      }
+    }
+    data.fileUpload.forEach((file) => {
+      formData.append("fileImage", file);
+    });
+    return instance.post(
+      `${process.env.REACT_APP_API_SERVER}/change-status-ivoice`,
+      formData
+    );
+  };
