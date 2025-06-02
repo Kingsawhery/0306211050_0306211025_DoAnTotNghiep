@@ -3,11 +3,12 @@ import { Container,Table } from "react-bootstrap";
 import { getProductBySubCategory,getProductDetailById, getProduct,deleteProductById } from "../../../services/product";
 import ProductDetail from "../ProductDetail/ProductDetai";
 import Button from "react-bootstrap/Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Pagination, Stack } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalConfirmDeleteProduct from "./ModalConfirmDeleteProduct";
 import _ from "lodash";
+import { ArrowRight } from "@mui/icons-material";
 const TableProduct = (props) => {
   const user = JSON.parse(localStorage.getItem("user")).token;
   const userId = JSON.parse(localStorage.getItem("user")).id;
@@ -20,7 +21,7 @@ const TableProduct = (props) => {
     const [page, setPage] = useState(1);
     const [deleteProduct, setDeleteProduct] = useState({});
     const [open, setOpen] = useState(false);
-
+    const [openSubProdTab, setOpenSubProdTab] = useState(false);
   const [products, setProducts] = useState([])
     useEffect(()=>{
         getProducts(page);
@@ -55,7 +56,7 @@ const TableProduct = (props) => {
     </div>
     {products && products.data && products.data.length > 0 ?
     <>
-      <Table striped bordered hover>
+    <Table striped bordered hover>
         <thead>
           <tr>
             <th>STT</th>
@@ -72,12 +73,14 @@ const TableProduct = (props) => {
             return(
                 <tr key={index}
                 onClick={()=>{
-                    setTabName({ ...tabName, product: item.name });
-                    // setTab({...tab, id:item.id})
-                    setId(item.id)
-                    setDataProduct(item)
-                    localStorage.setItem("detail",JSON.stringify(item))
-                    localStorage.setItem("tabName",JSON.stringify({ ...tabName, product: item.name }))
+                  // setTab({id:item.id,tab:3})
+
+                    // setTabName({ ...tabName, product: item.name });
+                    // // setTab({...tab, id:item.id})
+                    // setId(item.id)
+                    // setDataProduct(item)
+                    // localStorage.setItem("detail",JSON.stringify(item))
+                    // localStorage.setItem("tabName",JSON.stringify({ ...tabName, product: item.name }))
                 }}>
                 <td>{index + 1 + (products.currentPage - 1) * 10}</td>
                 <td>{item.name}</td>
@@ -89,8 +92,11 @@ const TableProduct = (props) => {
                     setOpen(true);
                   }}><DeleteIcon style={{cursor:"pointer"}}/></span>
                   {/* <span><DeleteIcon/></span> */}
-
-                </td>
+                  <span>
+  <Link to={`${process.env.REACT_APP_API_CLIENT}/admin/sub-prod/${item.id}`}>
+    <ArrowRight />
+    </Link>
+</span>                </td>
 
     
           </tr>
@@ -103,6 +109,7 @@ const TableProduct = (props) => {
       <Pagination onChange={handleChange} count={products.totalPages} color="primary" />
 
     </Stack>
+      
       {open && <ModalConfirmDeleteProduct item={deleteProduct} handleDelete = {handleDelete} setOpen={setOpen}/>}
     </> : (<div className="not-found">
                   <img src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/no_result.gif`}></img>

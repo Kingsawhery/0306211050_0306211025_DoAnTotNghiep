@@ -1,7 +1,7 @@
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
-import { getInvoiceByStatus, getInvoiceStatus } from "../../../../../services/invoiceService";
+import { getInvoiceByStatus, getInvoiceStatus,getSubProd } from "../../../../../services/invoiceService";
 import { get } from "lodash";
 import UploadIcon from '@mui/icons-material/Upload';
 import ModalUpload from "./ModalUpload";
@@ -21,11 +21,13 @@ export function Invoices() {
         invoiceCode: "",
         username: ""
     })
+    const [dataSub,setDataSub] = useState([]);
     const [currentRow, setCurrentRow] = useState(0);
     useEffect(() => {
         handleGetAllInvoiceStatus();
         handleGetAllInvoiceByStatus(1)
     }, [page])
+    
     const handleGetAllInvoiceByStatus = async (id) => {
         const currentTab = id ? id : 1;
         try{
@@ -155,8 +157,12 @@ export function Invoices() {
                                             onMouseEnter={() => setShowMore(item.id)}
                                             // onMouseLeave={() => setShowMore(0)}
                                             className="invoice-row"
-                                                onClick={() => {
-                                                    setCurrentRow(item.id)
+                                                onClick={async() => {
+                                                    const res = await getSubProd(item.id)
+                                                    if(res){
+                                                        setDataSub(res.data)
+                                                    }
+                                                    setCurrentRow(item.id   )
                                                     setShowMore(0)
                                                     if(currentRow === item.id){
                                                         setCurrentRow(0)
@@ -201,9 +207,12 @@ export function Invoices() {
 
                                                     </thead>
                                                     <tbody>
-                                                        {data.map((item,index)=>{
+                                                        {dataSub.data.length > 0 ? dataSub.data.map((item,index)=>{
                                                             return(
-                                                        <tr>    
+                                                        <tr onClick={()=>{
+                                                            console.log(dataSub);
+                                                            
+                                                        }}>    
                                                         <td>{index+1}</td>
                                                         <td style={{
                                                             padding:"12px"
@@ -212,16 +221,21 @@ export function Invoices() {
                                                             style={{
                                                                 width:"60px"
                                                             }}
-                                                            src={`${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${item.image}`}></img>
+                                                            src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.image}`}></img>
                                                         </td>
-                                                        <td>{item.name}</td>
-                                                        <td>{item.price}</td>
+                                                        <td>{item.sub_product.name}</td>
+                                                        <td>{item.total}</td>
                                                         <td>{item.quantity}</td>
 
                                                         </tr>
                                                         
                                                             )
-                                                        })}
+                                                        }): <p
+                                                        onClick={()=>{
+                                                            console.log(dataSub);
+                                                            
+                                                        }}
+                                                        >Đmmmmmmmmmmmmmmmmmmmmmmmmmmmm</p>}
                                                         
                                                         
 

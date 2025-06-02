@@ -1,3 +1,4 @@
+import instance from "./customAxios";
 import axios from "./customAxios";
 import axiosFormal from "axios";
 
@@ -99,7 +100,18 @@ const verifyOtp = async (code) => {
     console.log("error");
   }
 };
+const getInfoUser = async (data)=>{
+  try{
+    const res = await instance.get(process.env.REACT_APP_API_SERVER + `/get-user?token=${data.token}&id=${data.id}`);
+
+    return res
+  }catch(e){
+    console.log(e)  ;
+    
+  }
+}
 export {
+  getInfoUser,
   userServices,
   loginServices,
   SendEmailTakeOTP,

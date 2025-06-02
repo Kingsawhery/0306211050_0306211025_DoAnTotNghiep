@@ -8,7 +8,6 @@ export const getInvoiceStatus = () =>{
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-status`);
 }
 export const getInvoiceByStatus = (data) =>{
-  console.log(data);
   
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
 }
@@ -32,3 +31,6 @@ export const uploadChangeStatus = (data) => {
       formData
     );
   };
+  export const getSubProd = (id) =>{
+    return axios.get(`${process.env.REACT_APP_API_SERVER}/get-sub-invoice?id=${id}`);
+}

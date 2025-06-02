@@ -30,6 +30,7 @@ import { apiShowCart } from "./services/cartService";
 import {  checkAdminRole, checkToken } from "./function/checkToken";
 import UserInfor from "./view/pages/User/UserInfor/UserInfor";
 import { Invoices } from "./view/pages/Admin/Management/Invoices/Invoices";
+import TableSubProduct from "./components/Table/SubProd/subproduct";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
@@ -91,6 +92,7 @@ useEffect(() => {
               <Route path="post/:slug/:id" element={<PostPage />} />
               <Route path="/category/:name" element={<CategoryPage />} />
               <Route path="/user-information" element={<UserInfor />} />
+              
               {user && tokenTrue && (
                 <>
                   <Route path="/cart" element={<Cart />} />
@@ -113,6 +115,8 @@ useEffect(() => {
                 <Route index element={<AdminPage />} />
                 <Route path="thong-ke" element={<AdminPage />} />
                 <Route path="danh-muc" element={<Category />} />
+                <Route path="sub-prod/:idSub" element={<TableSubProduct />} />
+
                 <Route path="tin-tuc" element={<Post />} />
                 <Route path="create-product" element={<CreateNewProduct />} />
                 <Route path="user" element={<User />}></Route>

@@ -5,6 +5,16 @@ export const getProductBySubCategory = (page, id) => {
   );
 };
 
+export const putPrice = (data) => {
+  return instance.put(
+    `${process.env.REACT_APP_API_SERVER}/set-price-sub-product`,data
+  );
+};
+export const getSubProdById = (page, id) => {
+  return instance.get(
+    `${process.env.REACT_APP_API_SERVER}/subprod-by-product?page=${page}&id=${id}`
+  );
+};
 export const getProductDetailById = (id) => {
   return instance.get(
     `${process.env.REACT_APP_API_SERVER}/product-detail?id=${id}`
