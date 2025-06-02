@@ -1,6 +1,6 @@
 import { paymentMoMo } from "../function/payment";
 const ngrok = require("ngrok")
-import {createInvoice,getAllInvoiceStatus,getAllInvoiceByStatus,handleConfirmPayment,changeInvoiceStatus,getAllInvoiceByStatusUser} from "../services/invoiceService"
+import {createInvoice,getSubAllInvoice,getAllInvoiceStatus,getAllInvoiceByStatus,handleConfirmPayment,changeInvoiceStatus,getAllInvoiceByStatusUser} from "../services/invoiceService"
 const handleCreateInvoice = async(req,res) => {
     try{
        const data = await req.body;       
@@ -78,6 +78,30 @@ const handleGetInvoiceByStatusUser = async(req,res) => {
     try{
         const data = req.query;
         const rs = await getAllInvoiceByStatusUser(data);
+        
+        if(rs){
+            return res.status(200).json({
+                data:rs
+            })
+        }
+        else{
+            return res.status(200).json({
+                message:"Đã có lỗi xảy ra!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+        
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+    }
+}
+const handleGetSubInvoice = async(req,res)=>{
+    try{
+        const data = req.query;
+        const rs = await getSubAllInvoice(data);
         
         if(rs){
             return res.status(200).json({
@@ -177,5 +201,6 @@ module.exports = {
     handleGetInvoiceByStatus,
     handleChangeStatus,
     handlePaymentStatus,
-    handleGetInvoiceByStatusUser
+    handleGetInvoiceByStatusUser,
+    handleGetSubInvoice
 }

@@ -11,29 +11,78 @@ import {
   createProduct,
   getProductDetailImages,
   deleteProductById,
-  handleCheckOutStock
+  handleCheckOutStock,
+  getSubProd,
+  setPriceSubProd
 } from "../services/productService";
-const checkOutStock = async (req, res)=>{
-  try{
+const checkOutStock = async (req, res) => {
+  try {
     let data = await req.body;
     console.log(data.data.length > 0);
-    if(data.data.length > 0){
+    if (data.data.length > 0) {
       const rs = await handleCheckOutStock(data);
-      
-      
+
+
       console.log(rs);
-      
-      if(rs){
+
+      if (rs) {
         return res.status(200).json({
           data: rs
         });
       }
     }
-    
-  }catch(e){
+
+  } catch (e) {
 
   }
 }
+
+const handleSetPriceSubProd = async (req, res) => {
+  try {
+    let list = req.body.list
+    let type = req.body.type
+    let number = req.body.number
+
+    let respon = await setPriceSubProd(list,type,number);
+    if (respon) {
+      return res.status(200).json({
+        message: "success"
+      });
+
+    } else {
+      return res.status(200).json({
+        message: "fail"
+      });
+    }
+
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      message: "Đã có lỗi xảy ra!",
+    });
+  }
+};
+const handleGetSubProd = async (req, res) => {
+  try {
+    let page = await req.query.page;
+    let id = await req.query.id;
+    let { count, rows } = await getSubProd(page, id);
+    return res.status(200).json({
+      data: {
+        total: count,
+        totalPages: Math.ceil(count / 10),
+        currentPage: page,
+        data: rows,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      message: "Đã có lỗi xảy ra!",
+    });
+  }
+};
+
 const getProduct = async (req, res) => {
   try {
     let page = await req.query.page;
@@ -144,7 +193,7 @@ let getProductById = async (req, res) => {
       data: data,
     });
   }
-  else{
+  else {
     return res.status(200).json({
       data: null,
     });
@@ -166,26 +215,26 @@ let getProducts = async (req, res) => {
 };
 let deleteProduct = async (req, res) => {
   let id = req.query.id;
-  if(id){
+  if (id) {
     let productDelete = await deleteProductById(id);
     console.log(productDelete);
-    
-    if(productDelete.EC === 0){
+
+    if (productDelete.EC === 0) {
       return res.status(200).json({
-        EC:0,
-        EM:"Đã xóa thành công!"
+        EC: 0,
+        EM: "Đã xóa thành công!"
       });
-    }else{
+    } else {
       return res.status(200).json({
-        EC:1,
-        EM:"Không tìm thấy sản phẩm!"
+        EC: 1,
+        EM: "Không tìm thấy sản phẩm!"
       });
     }
-    
-  ;
-  }else{
+
+    ;
+  } else {
     return res.status(200).json({
-      EM:"Không có tham số cần thiết!"
+      EM: "Không có tham số cần thiết!"
     });
   }
 };
@@ -256,5 +305,8 @@ module.exports = {
   getSubProductImage,
   createNewProduct,
   deleteProduct,
-  checkOutStock
+  checkOutStock,
+  handleGetSubProd,
+  handleSetPriceSubProd
+
 };

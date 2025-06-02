@@ -110,8 +110,27 @@ const updateUser = async (email, username, id) => {
     }
   );
 };
+const getDataUser = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(data); 
+      const dataUser = await db.User.findOne({
+        where: {
+          id: data.id,
+          token: data.token
+        },
+        attributes:["username","email","phone","birthday","address","gender"]
+      });
+      resolve(dataUser);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 
 module.exports = {
+  getDataUser,
   createUser,
   hashUserPassword,
   getUserList,

@@ -21,6 +21,8 @@ import bannerController from "../controllers/bannerController";
 // Product - 4
 import {
   getProduct,
+  handleGetSubProd,   
+  handleSetPriceSubProd,
   getProductDetail,
   getProductById,
   getListProductRandom,
@@ -42,7 +44,10 @@ import {
   getUser,
   handleUpdateUser,
 } from "../controllers/homeController";
+import {
+  handleGetDataUser,
 
+}from "../controllers/userController";
 // Post - 5
 import { getAllPosts, getPostPage } from "../controllers/postController";
 // Type Classify - 6
@@ -56,7 +61,7 @@ let storage = multer.diskStorage({
     }
     // Set the destination folder for uploaded files
     const dir = `public/productImage/${req.body.subCategoryName}`;
-    if (!fs.existsSync(dir)) {
+    if (!fs.existsSync(dir)) {  
 
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -136,6 +141,9 @@ let apiWebRoutes = (app) => {
   router.get("/banners", bannerController.getAllBanners);
 
   // Product - 4
+  router.get("/subprod-by-product", handleGetSubProd);
+  router.put("/set-price-sub-product", handleSetPriceSubProd);
+
   router.get("/product", getProduct);
   router.get("/products", getProducts);
   router.get("/product/:id", getProductById);
@@ -205,6 +213,7 @@ let apiWebRoutes = (app) => {
       res.redirect("/");
     }
   );
+  router.get("/get-user",handleGetDataUser);
   //Cart - 7
   router.get("/cart", checkToken, cartController.handleGetCart);
   router.post("/cart-add", checkToken, cartController.handleAddCart);
@@ -223,6 +232,8 @@ let apiWebRoutes = (app) => {
   //
   router.get("/promotion",getPromotion);
   //
+  router.get("/get-sub-invoice",invoiceController.handleGetSubInvoice)
+
   router.post("/create-invoice",invoiceController.handleCreateInvoice)
   router.get("/get-invoice-status",invoiceController.handleGetInvoiceStatus)
   router.get("/get-invoice-by-status",checkAdminData,invoiceController.handleGetInvoiceByStatus)

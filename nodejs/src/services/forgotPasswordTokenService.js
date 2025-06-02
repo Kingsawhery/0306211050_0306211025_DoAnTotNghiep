@@ -1,9 +1,9 @@
 import db from "../models/index";
-import password_reset_tokens from "../models/password_reset_tokens";
+import forgot_password_tokens from "../models/password_reset_tokens";
 
 async function addForgotPasswordData(email, token, expiresAt) {
   try {
-    const forgotPassword = await password_reset_tokens.create({
+    const forgotPassword = await forgot_password_tokens.create({
       email: email,
       token: token,
       expiresAt: expiresAt,
@@ -15,7 +15,7 @@ async function addForgotPasswordData(email, token, expiresAt) {
 }
 async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
   // tìm user bằng email
-  const check = await db.password_reset_tokens.findOne({
+  const check = await db.forgot_password_tokens.findOne({
     where: {
       email: email,
     },
@@ -23,7 +23,7 @@ async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
 
   if (!check) {
     // Không tìm thấy thì tạo mới
-    const data = await db.password_reset_tokens.create({
+    const data = await db.forgot_password_tokens.create({
       email: email,
       token: token,
       expires_at: expiresAt,
@@ -31,7 +31,7 @@ async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
 
     return data.dataValues;
   } else {
-    await db.password_reset_tokens.update(
+    await db.forgot_password_tokens.update(
       {
         email: email,
         token: token,
@@ -43,7 +43,7 @@ async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
         },
       }
     );
-    const dataUpdate = await db.password_reset_tokens.findOne({
+    const dataUpdate = await db.forgot_password_tokens.findOne({
       where: {
         email: email,
       },
@@ -53,7 +53,7 @@ async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
 }
 
 async function checkToken(token) {
-  const check = await db.password_reset_tokens.findOne({
+  const check = await db.forgot_password_tokens.findOne({
     where: {
       token: token,
     },

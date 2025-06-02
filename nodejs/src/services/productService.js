@@ -55,8 +55,8 @@ let handleCheckOutStock = async (data)=>{
           
           
           if(subProd.stock < dataProd[i].quantity){
-          console.log(subProd.stock + " " + dataProd[i].quantity);
-          
+            console.log(subProd.stock + " " + dataProd[i].quantity);
+            
             array.push(subProd)
           }else{
             continue;
@@ -83,7 +83,7 @@ let getProductBySubCategory = async (page, id) => {
             model: db.product_detail,
           },
         ],
-        attributes: ["id", "name", "price", "status", "promotion"],
+        // attributes: ["id", "name", "price", "status", "promotion", "d"],
         limit: 10,
         offset: (page - 1) * 10,
       });
@@ -626,7 +626,57 @@ let deleteProductById = async (id) => {
     }
   });
 };
+
+let setPriceSubProd = async (list,type,number) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+        if(type==="price"){
+          for(let i = 0; i < list.length; i++){
+            let subProd = await db.sub_product.findOne({
+              where:{id:list[i]}
+            })
+            subProd.price = number;
+            await subProd.save();
+          }   
+        }else if(type === "stock"){
+          for(let i = 0; i < list.length; i++){
+            let subProd = await db.sub_product.findOne({
+              where:{id:list[i]}
+            })
+            subProd.stock = number;
+            await subProd.save();
+          }   
+        }
+        resolve("success")
+    }catch(e){
+
+    }
+  })
+};
+let getSubProd = async (page,id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let subProd = await db.sub_product.findAndCountAll(
+        {
+          where:{
+            productDetailId:id,
+          },
+          limit:10,
+          offset:(page - 1) * 10,
+        }
+      );
+      if (subProd) {
+        resolve(subProd);
+      } else {
+        resolve();
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
+  getSubProd,
   getProductBySubCategory,
   getDataProductById,
   getProductDetailById,
@@ -638,5 +688,6 @@ module.exports = {
   getProductDetailImages,
   createProduct,
   deleteProductById,
-  handleCheckOutStock
+  handleCheckOutStock,
+  setPriceSubProd
 };
