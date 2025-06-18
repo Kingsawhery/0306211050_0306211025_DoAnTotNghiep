@@ -50,7 +50,13 @@ const OTP = async () => {
     throw e;
   }
 };
-const ResetPassword = (email, password, confirmPassword) => {
+const handleForgotPassword = (token, password) => {
+  return axios.post("api/handle-forgot-password", {
+    token,
+    password,
+  });
+};
+const handleResetPassword = (email, password, confirmPassword) => {
   axios.post("api/reset-password", {
     email,
     password,
@@ -116,7 +122,8 @@ export {
   loginServices,
   SendEmailTakeOTP,
   loginGoogle,
-  ResetPassword,
+  handleResetPassword,
+  handleForgotPassword,
   OTP,
   verifyOtp,
   getUsers,

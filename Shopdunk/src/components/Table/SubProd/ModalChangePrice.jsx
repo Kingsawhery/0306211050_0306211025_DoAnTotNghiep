@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 
-const ModalChangePrice = ({ show, onHide, onSubmit, newPrice, setNewPrice, setOpenChangePrice }) => {
+const ModalChangePrice = ({ show, onHide, onSubmit, newPrice, setNewPrice, setOpenChangePrice,onChangeStock }) => {
     const [displayPrice, setDisplayPrice] = useState("");
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const ModalChangePrice = ({ show, onHide, onSubmit, newPrice, setNewPrice, setOp
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
+                <Button variant="secondary" onClick={()=>setOpenChangePrice(false)}>
                     Hủy
                 </Button>
                 <Button
@@ -53,7 +53,18 @@ const ModalChangePrice = ({ show, onHide, onSubmit, newPrice, setNewPrice, setOp
                     }}
                     disabled={newPrice}
                 >
-                    Xác nhận
+                    Thay đổi giá
+                </Button>
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        onChangeStock()
+                        setOpenChangePrice(false);
+
+                    }}
+                    disabled={newPrice}
+                >
+                    Thay đổi tồn kho
                 </Button>
             </Modal.Footer>
         </Modal>

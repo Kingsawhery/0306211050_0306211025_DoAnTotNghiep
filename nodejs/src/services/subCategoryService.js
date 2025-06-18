@@ -62,7 +62,8 @@ let postSubCategory = async (data) => {
     try {
       await db.sub_category.create({
         name: data.name,
-        categoryId:data.categoryId
+        categoryId:data.categoryId,
+        displayName: data.name
       });
       resolve();
     } catch (e) {
@@ -77,7 +78,7 @@ const putSubCategory = async (data) => {
         where: { id: data.id },
       });
       if (sub_category) {
-        (sub_category.name = data.name),
+        (sub_category.displayName = data.name),
           (sub_category.categoryId = data.categoryId),
           await sub_category.save();
         resolve("Edit sub category successfully");

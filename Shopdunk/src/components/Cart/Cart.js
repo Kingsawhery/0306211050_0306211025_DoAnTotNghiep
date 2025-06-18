@@ -146,13 +146,9 @@ const Cart = () => {
             } else {
               newTotalPromotion += item.sub_product.price * item.quantity;
             }
-
-            // Nếu không tìm thấy sản phẩm trong khuyến mãi thì cộng giá gốc
-
-            setTotalPromotion(newTotalPromotion); // Cập nhật giá trị sau khi đã tính xong
+            setTotalPromotion(newTotalPromotion);
           });
         }
-
         setProductInPromotion(promotion.products);
       } else {
         setPaymentInformation({
@@ -227,15 +223,16 @@ const Cart = () => {
   };
   const handleCheckStock = async () => {
     const handleCheck = await checkStockData(paymentInformation.data);
-    console.log(handleCheck.length);
     if (handleCheck) {
       setListOutOfStock(handleCheck);
       setShowModal(true);
       if (handleCheck.length === 0) {
         setShowModalConfirm(true);
-        console.log("cc");
-
       } else {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
         setShowModalConfirm(false);
 
       }
@@ -271,10 +268,12 @@ const Cart = () => {
             rs.data.payment.id === 1
           ) {
             window.open(rs.data.payment.url)
-            setTest(true)
           } else {
-            window.open("http://localhost:3000/")
+            toast(rs.data.message)
+            // window.open("http://localhost:3000/")
           }
+        }else{
+          toast(rs.data.message)
         }
       }
     } else {
@@ -284,17 +283,17 @@ const Cart = () => {
 
 
   };
-  const formatDateTimeGMT7 = (dateString) => {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 7);
-    return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-  };
-  const formatDateTimeGMT7Plus10Min = (dateString) => {
-    const date = new Date(dateString);
-    date.setHours(date.getHours() + 7);
-    date.setMinutes(date.getMinutes() + 10); // Cộng thêm 10 phút
-    return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-  };
+  // const formatDateTimeGMT7 = (dateString) => {
+  //   const date = new Date(dateString);
+  //   date.setHours(date.getHours() + 7);
+  //   return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+  // };
+  // const formatDateTimeGMT7Plus10Min = (dateString) => {
+  //   const date = new Date(dateString);
+  //   date.setHours(date.getHours() + 7);
+  //   date.setMinutes(date.getMinutes() + 10); // Cộng thêm 10 phút
+  //   return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+  // };
 
   const handleDestroyCart = async (id) => {
     try {
@@ -370,7 +369,8 @@ const Cart = () => {
                     onClick={() => {
                       console.log(item);
                     }}
-                    style={item.status ? { position: "relative", backgroundColor: "#e0e0e0" } : { position: "relative" }}
+                    // style={item.status ? { position: "relative", backgroundColor: "#e0e0e0" } : { position: "relative" }}
+                    style={{position:"relative"}}
                   >
                     <Form.Check
                       checked={item.status}
@@ -592,7 +592,7 @@ const Cart = () => {
               </div>
               <div className="invoice payment-information">
                 <h2>Thông tin thanh toán</h2>
-                <Row className="mb-3">
+                <div className="mb-3">
                   <Row className="mt-3">
                     <Col xs={12}>
                       <Tooltip title={paymentInformation.name}>
@@ -814,8 +814,8 @@ const Cart = () => {
                       </Tooltip>
                     </Col>
                   </Row>
-                </Row>
-                <Row className="mt-3">
+                </div>
+                {/* <Row className="mt-3">
                   <Col xs={6}>
                     <Form.Check
                       type="radio"
@@ -843,7 +843,7 @@ const Cart = () => {
                       label={"Thanh toán online"}
                     />
                   </Col>
-                </Row>
+                </Row> */}
                 <Row className="mt-3">
                   <Col xs={12} className="d-flex justify-content-end">
                     <Button

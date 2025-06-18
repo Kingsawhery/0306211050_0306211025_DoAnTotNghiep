@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       product.belongsTo(models.category,{
         foreignKey:"categoryId"
       });
+      product.belongsTo(models.post,{
+        foreignKey: "postId"
+      })
       product.hasOne(models.product_detail)
        product.belongsTo(models.brand, {
     foreignKey: "brandId"
@@ -34,7 +37,9 @@ module.exports = (sequelize, DataTypes) => {
     categoryId:DataTypes.INTEGER,
     image:DataTypes.STRING,
     promotion:DataTypes.FLOAT,
-    brandId:DataTypes.INTEGER
+    brandId:DataTypes.INTEGER,
+    postId: DataTypes.INTEGER,
+
   }, {
     sequelize,
     modelName: 'product',

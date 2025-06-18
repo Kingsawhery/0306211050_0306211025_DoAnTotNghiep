@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getDataCategory } from "../../../../services/categoryService"
 import ProductRow from "../../../../components/Product/ProductRow/ProductRow";
 import { da } from "date-fns/locale";
+import HomePageCarousel from "../../../../components/HomePageCarousel/HomePageCarousel";
 const CategoryPage = () => {
     const { name } = useParams();
     const [dataCate, setDataCate] = useState([]);
@@ -29,8 +30,10 @@ const CategoryPage = () => {
                 <meta charSet="utf-8" />
                 <title>{name}</title>
             </Helmet>
+      <HomePageCarousel />
+
             <div className="category-page">
-                {dataCate.length > 0 ?
+                {dataCate?.length > 0 ?
                     dataCate.map((item, index) => {
                         return <ProductRow category={item} />;
                     }) : <div style={{

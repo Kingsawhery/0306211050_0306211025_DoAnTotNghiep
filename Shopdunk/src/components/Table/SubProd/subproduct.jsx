@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Table } from "react-bootstrap";
-import { getSubProdById, putPrice } from "../../../services/product";
+import { createSubProd, getSubProdById, putPrice } from "../../../services/product";
 import ProductDetail from "../ProductDetail/ProductDetai";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -11,30 +11,32 @@ import _ from "lodash";
 import { ArrowBack } from "@mui/icons-material";
 import ModalChangePrice from "./ModalChangePrice";
 import { toast } from "react-toastify";
+import ModalCreateSubProd from "./ModalCreateSubProd";
 const TableSubProduct = (props) => {
     const user = JSON.parse(localStorage.getItem("user")).token;
     const userId = JSON.parse(localStorage.getItem("user")).id;
     const [openChangePrice, setOpenChangePrice] = useState(false);
+    const [openCreateSubProd, setOpenCreateSubProd] = useState(false);
+    const [id, setId] = useState(+localStorage.getItem("detailId"));
+    const { idSub } = useParams();
+
+    const [dataSubProd,setDataSubProd] = useState({
+        name:"",
+    typeClassifyDetails:[],
+    productId: idSub
+    })
     const [newPrice, setNewPrice] = useState('');
     const { data, tabName, setTabName, setTab, tab } = props;
     //
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const handleSelectItem = (id) => {
-        setSelectedItems((prevSelected) =>
-            prevSelected.includes(id)
-                ? prevSelected.filter((itemId) => itemId !== id)
-                : [...prevSelected, id]
-        );
-    };
+
 
     const navigate = useNavigate();
-    const [id, setId] = useState(+localStorage.getItem("detailId"));
     const [dataProduct, setDataProduct] = useState(JSON.parse(localStorage.getItem("detail")) ? JSON.parse(localStorage.getItem("detail")) : [])
     const [page, setPage] = useState(1);
     const [deleteProduct, setDeleteProduct] = useState({});
     const [open, setOpen] = useState(false);
-    const { idSub } = useParams();
     const [products, setProducts] = useState([])
     useEffect(() => {
         getSubProducts(page);
@@ -46,6 +48,34 @@ const TableSubProduct = (props) => {
 
         }
     }
+    const handleSelectItem = (id) => {
+        setSelectedItems((prevSelected) =>
+            prevSelected.includes(id)
+                ? prevSelected.filter((itemId) => itemId !== id)
+                : [...prevSelected, id]
+        );
+    };
+    const handleCreateSubProd = async () => {
+        try {
+            const results = await createSubProd(dataSubProd);
+            if (results.err == "success") {
+                getSubProducts(page);
+                setOpenCreateSubProd(false)
+            }else{
+                toast(results.message)
+            }
+        } catch (e) {
+            toast.dismiss();
+            toast.error("Đã có lỗi xảy ra");
+        }
+    }
+    const handleChange = (event, value) => {
+        setPage(value);
+        getSubProducts(value)
+
+    };
+
+    
     const handleChangePrice = async () => {
         try {
             const results = await putPrice({
@@ -61,12 +91,22 @@ const TableSubProduct = (props) => {
             toast.error("Đã có lỗi xảy ra");
         }
     }
-    const handleChange = (event, value) => {
-        setPage(value);
-        getSubProducts(value)
-
-    };
-
+  
+    const handleChangeStock = async () => {
+        try {
+            const results = await putPrice({
+                list: selectedItems,
+                number: newPrice,
+                type: "stock"
+            });
+            if (results) {
+                getSubProducts(page);
+            }
+        } catch (e) {
+            toast.dismiss();
+            toast.error("Đã có lỗi xảy ra");
+        }
+    }
 
 
     return (
@@ -94,6 +134,15 @@ const TableSubProduct = (props) => {
                 >
                     Đổi giá hàng loạt
                 </Button>
+                <Button
+                style={{marginLeft:"12px"}}
+                variant="success"
+                    onClick={() => {
+                        setOpenCreateSubProd(true);
+                    }}
+                >
+                    Tạo mới
+                </Button>
             </div>
             {products && products.data && products.data.length > 0 ?
                 <>
@@ -101,7 +150,7 @@ const TableSubProduct = (props) => {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                <th></th>
+                                    <th></th>
                                 <th>STT</th>
                                 <th>Name</th>
                                 <th>Price</th>
@@ -134,7 +183,9 @@ const TableSubProduct = (props) => {
                             })}
                         </tbody>
                     </Table>
-                    {openChangePrice && <ModalChangePrice setNewPrice={setNewPrice} onSubmit={handleChangePrice} setOpenChangePrice={setOpenChangePrice} />
+                    {openChangePrice && <ModalChangePrice setNewPrice={setNewPrice} onSubmit={handleChangePrice} onChangeStock={handleChangeStock} setOpenChangePrice={setOpenChangePrice} />
+                    }
+                    {openCreateSubProd && <ModalCreateSubProd onHide={setOpenCreateSubProd} show={openCreateSubProd} data={idSub} handleCreateSubProd={handleCreateSubProd} dataSubProd={dataSubProd} setData = {setDataSubProd}  />
                     }
                     <Stack spacing={2}>
                         <Pagination onChange={handleChange} count={products.totalPages} color="primary" />

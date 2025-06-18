@@ -1,0 +1,58 @@
+.div-classify {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  
+    .div-classify-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+  
+    .d-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 100%; // bạn có thể điều chỉnh maxWidth từ JSX
+    }
+  
+    .div-classify-detail {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      min-width: 80px;
+      justify-content: center;
+  
+      &:hover {
+        background-color: #f5f5f5;
+      }
+  
+      &.selected {
+        border: 2px solid gray;
+      }
+  
+      .background-color {
+        width: 60px;
+        height: 30px;
+        border-radius: 4px;
+        color: transparent; // để dấu "." không hiện
+      }
+  
+      .name {
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 500;
+      }
+    }
+  
+    .div-classify-not-color {
+      .name {
+        color: #333;
+      }
+    }
+  }
+  

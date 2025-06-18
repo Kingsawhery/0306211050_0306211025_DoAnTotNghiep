@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
       postId:DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       rate:DataTypes.INTEGER,
-      classify:DataTypes.TEXT
+      classify:DataTypes.TEXT,
+      status:DataTypes.BOOLEAN
 
     },
     {

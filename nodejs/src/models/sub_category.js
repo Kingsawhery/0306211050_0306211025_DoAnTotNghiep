@@ -20,7 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   sub_category.init({
     name: DataTypes.STRING,
-    categoryId: DataTypes.INTEGER
+    categoryId: DataTypes.INTEGER,
+    status:DataTypes.BOOLEAN,
+    displayName:DataTypes.STRING
+
   }, {
     sequelize,
     modelName: 'sub_category',

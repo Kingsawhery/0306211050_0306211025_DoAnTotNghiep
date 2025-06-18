@@ -1,7 +1,7 @@
 import instance from "./customAxios";
-export const getProductBySubCategory = (page, id) => {
+export const getProductBySubCategory = (page, id,sort) => {
   return instance.get(
-    `${process.env.REACT_APP_API_SERVER}/product?page=${page}&id=${id}`
+    `${process.env.REACT_APP_API_SERVER}/product?page=${page}&id=${id}&sort=${sort}`
   );
 };
 
@@ -94,5 +94,25 @@ export const deleteProductById = (id,token,userId) => {
 export const checkStockData = (data) => {
   return instance.post(
     `${process.env.REACT_APP_API_SERVER}/check-out-stock`,{data}
+  );
+};
+export const editProduct = (data) => {
+  return instance.put(
+    `${process.env.REACT_APP_API_SERVER}/products`,data
+  );
+};
+export const handleRestoreProduct = (id,token,userId) => {
+  return instance.put(
+    `${process.env.REACT_APP_API_SERVER}/product-status?id=${id}&token=${token}&userId=${userId}`
+  );
+};
+export const handleGetClassify = (id,token,userId) => {
+  return instance.get(
+    `${process.env.REACT_APP_API_SERVER}/type-classifies-detail-sub-prod?id=${id}`
+  );
+};
+export const createSubProd = (data) => {
+  return instance.post(
+    `${process.env.REACT_APP_API_SERVER}/create-sub-prod`,data
   );
 };

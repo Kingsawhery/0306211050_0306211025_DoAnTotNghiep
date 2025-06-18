@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     sold: DataTypes.INTEGER,
     stock: DataTypes.INTEGER,
     image:DataTypes.STRING,
+    status:DataTypes.BOOLEAN
     
   }, {
     sequelize,

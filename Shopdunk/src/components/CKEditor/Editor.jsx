@@ -62,7 +62,6 @@ const Editor = ({ value, setValue }) => {
         formats={formats}
         onChange={(delta) => {
           setValue(delta);
-          console.log(delta); 
         }}
       />
     </>

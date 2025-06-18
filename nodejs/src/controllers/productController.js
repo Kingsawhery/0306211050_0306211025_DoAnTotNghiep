@@ -13,8 +13,63 @@ import {
   deleteProductById,
   handleCheckOutStock,
   getSubProd,
-  setPriceSubProd
+  setPriceSubProd,
+  setProduct,
+  restoreProductById,
+  createSubProduct
 } from "../services/productService";
+const handleCreateSubProduct = async (req, res) => {
+  try{
+    let data = await req.body;
+    if(!data.name || data.typeClassifyDetails?.length <=0 || !data.productId){
+      return res.status(200).json({
+        err:"fail"
+      })
+    }
+    else{
+      const rs = await createSubProduct(data);
+      if(rs){
+        return res.status(200).json({
+          err:"success",
+          data:rs
+        });
+      }
+      else{
+        return res.status(200).json({
+          err:"fail",
+          message:"Không thể tạo mới do dữ liệu sai hoặc thiếu thông tin bắt buộc!"
+        });
+      }
+    }
+  }catch(e){
+
+  }
+}
+const handleSetProduct = async (req, res) => {
+  try{
+    let data = await req.body;
+    if(!data.name || !data.price || !data.id){
+      return res.status(200).json({
+        err:"fail"
+      })
+    }
+    else{
+      const rs = await setProduct(data);
+      if(rs){
+        return res.status(200).json({
+          err:"success"
+        });
+      }
+      else{
+        return res.status(200).json({
+          err:"fail"
+        });
+      }
+    }
+  }catch(e){
+
+  }
+}
 const checkOutStock = async (req, res) => {
   try {
     let data = await req.body;
@@ -86,8 +141,12 @@ const handleGetSubProd = async (req, res) => {
 const getProduct = async (req, res) => {
   try {
     let page = await req.query.page;
+    let sort = await req.query.sort;
+
     let id = await req.query.id;
-    let { count, rows } = await getProductBySubCategory(page, id);
+    console.log(sort);
+    
+    let { count, rows } = await getProductBySubCategory(page, id,sort);
     return res.status(200).json({
       data: {
         total: count,
@@ -213,6 +272,30 @@ let getProducts = async (req, res) => {
     },
   });
 };
+
+let restoreProduct = async (req, res) => {
+  let id = req.query.id;
+  if (id) {
+    let productDelete = await restoreProductById(id);
+    if (productDelete.EC === 0) {
+      return res.status(200).json({
+        EC: 0,
+        EM: "Đã khôi phục thành công!"
+      });
+    } else {
+      return res.status(200).json({
+        EC: 1,
+        EM: "Không tìm thấy sản phẩm!"
+      });
+    }
+
+    ;
+  } else {
+    return res.status(200).json({
+      EM: "Không có tham số cần thiết!"
+    });
+  }
+};
 let deleteProduct = async (req, res) => {
   let id = req.query.id;
   if (id) {
@@ -238,7 +321,6 @@ let deleteProduct = async (req, res) => {
     });
   }
 };
-deleteProductById
 const getSubProductImage = async (req, res) => {
   try {
     console.log(req.query);
@@ -307,6 +389,8 @@ module.exports = {
   deleteProduct,
   checkOutStock,
   handleGetSubProd,
-  handleSetPriceSubProd
-
+  handleSetPriceSubProd,
+  handleSetProduct,
+  restoreProduct,
+  handleCreateSubProduct
 };

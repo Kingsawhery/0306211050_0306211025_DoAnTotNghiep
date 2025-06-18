@@ -12,9 +12,8 @@ export const getInvoiceByStatus = (data) =>{
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
 }
 export const getInvoiceByStatusUser = (data) =>{
-  console.log(data);
 
-  return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status-user?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
+  return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status-user?id=${data.currentTab}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
 }
 export const uploadChangeStatus = (data) => {
     const formData = new FormData();
@@ -31,6 +30,9 @@ export const uploadChangeStatus = (data) => {
       formData
     );
   };
+  export const cancelInvoice = (data) =>{
+    return axios.put(`${process.env.REACT_APP_API_SERVER}/cancel-invoice`, {invoiceCode:data});
+  }
   export const getSubProd = (id) =>{
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-sub-invoice?id=${id}`);
 }

@@ -8,13 +8,14 @@ let getProductsRandom = async (id) => {
     try {
       let products = await db.product.findAll({
         // order: Sequelize.literal("rand()"),
-        include:[{
+        include: [{
           model: db.sub_category
         }],
-        where:[
-        {
-        subCategoryId:id
-        }],
+        where: [
+          {
+            status:true,
+            subCategoryId: id
+          }],
         attributes: [
           "id",
           "name",
@@ -36,44 +37,54 @@ let getProductsRandom = async (id) => {
     }
   });
 };
-let handleCheckOutStock = async (data)=>{
-  return new Promise(async (resolve,reject)=>{
-    try{
+let   handleCheckOutStock = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
       let array = [];
       let dataProd = data.data;
-      console.log(dataProd.length);
-            
-      if(dataProd.length > 0){
+
+      if (dataProd.length > 0) {
         console.log("có");
-        
-        for(let i = 0; i < dataProd.length; i++){
+
+        for (let i = 0; i < dataProd.length; i++) {
           const subProd = await db.sub_product.findOne({
-            where:{
+            where: {
               id: dataProd[i].sub_productId
             }
           })
-          
-          
-          if(subProd.stock < dataProd[i].quantity){
+
+
+          if (subProd.stock < dataProd[i].quantity) {
             console.log(subProd.stock + " " + dataProd[i].quantity);
-            
+
             array.push(subProd)
-          }else{
+          } else {
             continue;
           }
         }
         resolve(array);
-      }else{
+      } else {
         resolve(array);
       }
-    }catch(e){
+    } catch (e) {
 
     }
   })
 }
-let getProductBySubCategory = async (page, id) => {
+let getProductBySubCategory = async (page, id,sort) => {
   return new Promise(async (resolve, reject) => {
     try {
+      let orderOption = [];
+
+      if (sort == 0) {
+        
+        orderOption.push(['status', 'ASC']);
+      } else {
+        
+        orderOption.push(['status', 'DESC']);
+      }
+      console.log(orderOption);
+      
       let products = await db.product.findAndCountAll({
         where: {
           subCategoryId: id,
@@ -83,10 +94,11 @@ let getProductBySubCategory = async (page, id) => {
             model: db.product_detail,
           },
         ],
-        // attributes: ["id", "name", "price", "status", "promotion", "d"],
         limit: 10,
         offset: (page - 1) * 10,
+        order: orderOption,
       });
+
       if (products) {
         resolve(products);
       } else {
@@ -106,9 +118,6 @@ let getProductDetailById = async (id) => {
         },
         include: [
           {
-            model:db.post
-          },
-          {
             model: db.type_classify,
             include: [
               {
@@ -125,10 +134,14 @@ let getProductDetailById = async (id) => {
             ],
           },
           {
-            model:db.product,
-            include:{
-              model:db.sub_category
-            }
+            model: db.product,
+            include: [
+              {
+                model: db.post
+              },
+              {
+                model: db.sub_category
+              }]
           }
         ],
 
@@ -150,7 +163,7 @@ let getDataProductById = async (id) => {
         where: {
           id: id,
         },
-        attributes: ["id", "name", "price", "status", "promotion","subCategoryId"],
+        attributes: ["id", "name", "price", "status", "promotion", "subCategoryId"],
         include: [
           {
             model: db.product_detail,
@@ -201,6 +214,7 @@ let getSubProductByTypeClassify = async (listTypeClassifyDetail) => {
           productDetailId: id,
         },
       });
+      
       subProduct = await handleData(subProducts, list);
       if (subProduct) {
         resolve(subProduct);
@@ -239,7 +253,6 @@ let getSubProductByProduct = async (id) => {
 const handleData = async (subProducts, list) => {
   let countTrue = 0;
   let subProduct;
-  console.log(subProducts, "iii");
 
   for (let i = 0; i < subProducts.length; i++) {
     let arr = [];
@@ -333,7 +346,7 @@ let getProductByCategory = async (page, id) => {
 const createProduct = async (data, files) => {
   return new Promise(async (resolve, reject) => {
     try {
-      
+
       const newProduct = await db.product.create({
         name: data.name ? data.name : "New device",
         subCategoryId: data.subCategory,
@@ -354,75 +367,75 @@ const createProduct = async (data, files) => {
       const typeClassifyDetail = data.typeClassifyDetail.split(",");
 
       let nameTypeClassify = "";
-      if(typeClassifies && typeClassifies.length > 0){
-        for(let i = 0; i < typeClassifies.length; i++){
-          
-          
+      if (typeClassifies && typeClassifies.length > 0) {
+        for (let i = 0; i < typeClassifies.length; i++) {
+
+
           const checkTypeClassifiesExist = await db.type_classify.findOne({
-            where:{
-              id:typeClassifies[i]
+            where: {
+              id: typeClassifies[i]
             }
-            
+
           })
           const checkTypeClassifyDetailExist = await db.type_classify_detail.findOne({
-            where:{
-              typeClassifyId:typeClassifies[i]
+            where: {
+              typeClassifyId: typeClassifies[i]
             }
-            
+
           })
           nameTypeClassify += checkTypeClassifyDetailExist.name + " ";
-          if(checkTypeClassifiesExist){
-            
+          if (checkTypeClassifiesExist) {
+
             const createProductDetailTypeClassify = await db.product_detail_type_classify.create({
               productDetailId: newProductDetail.id,
               typeClassifyId: Number(typeClassifies[i])
             })
-            
-            
+
+
           }
-          
+
 
         }
-    }
-    if(typeClassifyDetail && typeClassifyDetail.length > 0){
-      for(let i = 0; i < typeClassifyDetail.length; i++){
-        
-        const checkTypeClassifyDetailExist = await db.type_classify_detail.findOne({
-          where:{
-            id:typeClassifyDetail[i]
-          }
-        })
-        if(checkTypeClassifyDetailExist){
-          const checkProductDetailExistClassify = await db.product_detail_type_classify.findOne({
-            where:{
-              [Op.and]:{
-                productDetailId: newProductDetail.id,
-                typeClassifyId: checkTypeClassifyDetailExist.typeClassifyId
-              }
+      }
+      if (typeClassifyDetail && typeClassifyDetail.length > 0) {
+        for (let i = 0; i < typeClassifyDetail.length; i++) {
+
+          const checkTypeClassifyDetailExist = await db.type_classify_detail.findOne({
+            where: {
+              id: typeClassifyDetail[i]
             }
           })
-          if(checkProductDetailExistClassify){
-            const createProductDetailTypeClassify = await db.product_detail_type_classify_detail.create({
-              productDetailId: newProductDetail.id,
-              typeClassifyDetailId: typeClassifyDetail[i]
+          if (checkTypeClassifyDetailExist) {
+            const checkProductDetailExistClassify = await db.product_detail_type_classify.findOne({
+              where: {
+                [Op.and]: {
+                  productDetailId: newProductDetail.id,
+                  typeClassifyId: checkTypeClassifyDetailExist.typeClassifyId
+                }
+              }
             })
-          }
-     
-          if(createProduct){
-            resolve();
-          }
-          else{
-            
-          }
+            if (checkProductDetailExistClassify) {
+              const createProductDetailTypeClassify = await db.product_detail_type_classify_detail.create({
+                productDetailId: newProductDetail.id,
+                typeClassifyDetailId: typeClassifyDetail[i]
+              })
+            }
+
+            if (createProduct) {
+              resolve();
+            }
+            else {
+
+            }
           }
         }
-       
-        
 
-    }
-    handleDataDetail(typeClassifies, typeClassifyDetail, data, newProductDetail.id)
-  // }
-    
+
+
+      }
+      handleDataDetail(typeClassifies, typeClassifyDetail, data, newProductDetail.id)
+      // }
+
       await saveImage(files, newProductDetail.id);
       resolve(newProduct);
     } catch (e) {
@@ -430,96 +443,92 @@ const createProduct = async (data, files) => {
     }
   });
 };
-const handleDataDetail = async (type, typeDetail,data , detail) =>{
-  try{
-    console.log(detail.id);
-    
+const handleDataDetail = async (type, typeDetail, data, detail) => {
+  try {
     let arr = [];
-    for(let i = 0; i < typeDetail.length; i++){
+    for (let i = 0; i < typeDetail.length; i++) {
       const check = await db.type_classify_detail.findOne({
-        where:{
-          id:typeDetail[i]
+        where: {
+          id: typeDetail[i]
         }
       })
-      arr.push({id:check.typeClassifyId, data:typeDetail[i]})
+      arr.push({ id: check.typeClassifyId, data: typeDetail[i] })
     }
 
-  const grouped = arr.reduce((acc, current) => {
-    // Kiểm tra xem id đã tồn tại trong accumulator hay chưa
-    const existingGroup = acc.find(group => group.id === current.id);
-  
-    if (existingGroup) {
-      // Nếu tồn tại, thêm type vào mảng types
-      existingGroup.types.push(current.data);
-    } else {
-      // Nếu chưa tồn tại, tạo nhóm mới
-      acc.push({
-        id: current.id,
-        types: [current.data]
-      });
-    }
-  
-    return acc;
-  }, []);
-  const result = grouped.map(item => item.types);
-  function createNumber(arr, index = 0, number = [], result = []) {
-    if (index === arr.length) {
+    const grouped = arr.reduce((acc, current) => {
+      // Kiểm tra xem id đã tồn tại trong accumulator hay chưa
+      const existingGroup = acc.find(group => group.id === current.id);
+
+      if (existingGroup) {
+        // Nếu tồn tại, thêm type vào mảng types
+        existingGroup.types.push(current.data);
+      } else {
+        // Nếu chưa tồn tại, tạo nhóm mới
+        acc.push({
+          id: current.id,
+          types: [current.data]
+        });
+      }
+
+      return acc;
+    }, []);
+    const result = grouped.map(item => item.types);
+    function createNumber(arr, index = 0, number = [], result = []) {
+      if (index === arr.length) {
         result.push([...number]); // Đẩy bản sao của mảng vào kết quả
         return;
-    }
-    
-    for (let i = 0; i < arr[index].length; i++) {
-        if (!number.includes(arr[index][i])) { // Kiểm tra nếu phần tử chưa tồn tại trong mảng `number`
-            number.push(arr[index][i]); // Thêm phần tử vào mảng `number`
-            createNumber(arr, index + 1, number, result); // Đệ quy với mảng mới
-            number.pop(); // Xóa phần tử cuối cùng để thử giá trị khác
-        }
-    }
-    return result; // Trả về mảng kết quả
-}
-const dataSubProduct = createNumber(result);
-for(let i = 0; i < dataSubProduct.length; i++){
-  console.log(detail.id)
-  console.log(detail.name)
+      }
 
-  
-  const creatSubProduct = await db.sub_product.create({
-    name:  data.name,
-    price: data.price,
-    productDetailId: detail,
-    sold:0,
-    stock:0,
-    image: data.image
-})
-  for(let y = 0; y < dataSubProduct[i].length; y++){
-    const subProduct = await db.sub_product.findOne({
-      where:{
-        id: creatSubProduct.id
+      for (let i = 0; i < arr[index].length; i++) {
+        if (!number.includes(arr[index][i])) { // Kiểm tra nếu phần tử chưa tồn tại trong mảng `number`
+          number.push(arr[index][i]); // Thêm phần tử vào mảng `number`
+          createNumber(arr, index + 1, number, result); // Đệ quy với mảng mới
+          number.pop(); // Xóa phần tử cuối cùng để thử giá trị khác
+        }
       }
-    })
-    const typeName = await db.type_classify_detail.findOne({
-      where:{
-        id: dataSubProduct[i][y]
-      }
-    })
-    if(subProduct){
-      subProduct.name = subProduct.name + " " + typeName.name;
-      await subProduct.save();
+      return result; // Trả về mảng kết quả
     }
-    const creatSubProductDetail = await db.sub_product_type_classify_detail.create({
-      subProductId:creatSubProduct.id,
-      typeClassifyDetailId:dataSubProduct[i][y]
-    })
-  }
-}
-  
-      
-    
-  }catch(e){
+    const dataSubProduct = createNumber(result);
+    for (let i = 0; i < dataSubProduct.length; i++) {
+
+
+      const creatSubProduct = await db.sub_product.create({
+        name: data.name,
+        price: data.price,
+        productDetailId: detail,
+        sold: 0,
+        stock: 0,
+        image: data.image
+      })
+      for (let y = 0; y < dataSubProduct[i].length; y++) {
+        const subProduct = await db.sub_product.findOne({
+          where: {
+            id: creatSubProduct.id
+          }
+        })
+        const typeName = await db.type_classify_detail.findOne({
+          where: {
+            id: dataSubProduct[i][y]
+          }
+        })
+        if (subProduct) {
+          subProduct.name = subProduct.name + " " + typeName.name;
+          await subProduct.save();
+        }
+        const creatSubProductDetail = await db.sub_product_type_classify_detail.create({
+          subProductId: creatSubProduct.id,
+          typeClassifyDetailId: dataSubProduct[i][y]
+        })
+      }
+    }
+
+
+
+  } catch (e) {
     console.log(e);
-    
+
   }
-  
+
 }
 const saveImage = async (files, productDetailId) => {
   for (let i = 0; i < files.length; i++) {
@@ -530,95 +539,105 @@ const saveImage = async (files, productDetailId) => {
     });
   }
 };
-let deleteProductById = async (id) => {
+
+let restoreProductById = async (id) => {
   return new Promise(async (resolve, reject) => {
-    try {      
+    try {
       let product = await db.product.findOne({
         where: {
           id: id,
         },
-        
+
       });
 
-      if(product){
+      if (product) {
         let productDetail = await db.product_detail.findOne({
           where: {
             productId: id,
           }
         })
-      if(productDetail){
-        // console.log(productDetail.id);
+        if (productDetail) {
+          // console.log(productDetail.id);
 
-        let subProduct = await db.sub_product.findAll(
-          {
-          where:{
-            productDetailId:productDetail.id
-          }
-      });
-        
-        if(subProduct && subProduct.length > 0){
-          for(let i = 0; i < subProduct.length; i++){
-            const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
-              where:{
-                subProductId: subProduct[i].id
+          let subProduct = await db.sub_product.findAll(
+            {
+              where: {
+                productDetailId: productDetail.id
               }
-            })
-            if(sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0){
-              for(let y = 0; y < sub_product_type_classify_detail.length; y++){
-                await sub_product_type_classify_detail[y].destroy();
-              }
-              const cart = await db.Cart.findAll({
-                where:{
-                  sub_productId:subProduct[i].id
+            });
+
+          if (subProduct && subProduct.length > 0) {
+            for (let i = 0; i < subProduct.length; i++) {
+              const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
+                where: {
+                  subProductId: subProduct[i].id
                 }
               })
-              if(cart && cart.length>0){
-                for(let k = 0; k < cart.length; k++){
-                  await cart[k].destroy();
+              if (sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0) {
+                for (let y = 0; y < sub_product_type_classify_detail.length; y++) {
+                  sub_product_type_classify_detail[y].status = true;
+                  await sub_product_type_classify_detail[y].save();
+                }
+                const cart = await db.Cart.findAll({
+                  where: {
+                    sub_productId: subProduct[i].id
+                  }
+                })
+                if (cart && cart.length > 0) {
+                  for (let k = 0; k < cart.length; k++) {
+                    await cart[k].destroy();
+                  }
                 }
               }
+
+              subProduct[i].status = true;
+              await subProduct[i].save();
+
             }
-            
-            await subProduct[i].destroy();
-           
+            const productDetailTypeClassifyDetails = await db.product_detail_type_classify_detail.findAll({
+              where: {
+                productDetailId: productDetail.id
+              } 
+            })
+            if (productDetailTypeClassifyDetails && productDetailTypeClassifyDetails.length > 0) {
+              for (let x = 0; x < productDetailTypeClassifyDetails.length; x++) {
+                productDetailTypeClassifyDetails[x].status = true;
+                await productDetailTypeClassifyDetails[x].save();
+              }
+            }
+            const productDetailTypeClassify = await db.product_detail_type_classify.findAll({
+              where: {
+                productDetailId: productDetail.id
+              }
+            })
+            if (productDetailTypeClassify && productDetailTypeClassify.length > 0) {
+              for (let z = 0; z < productDetailTypeClassify.length; z++) {
+                productDetailTypeClassify[z].status = true;
+                await productDetailTypeClassify[z].save();
+              }
+            }
+            const productDetailImage = await db.product_detail_image.findAll({
+              where: {
+                productDetailId: productDetail.id
+              }
+            })
+            if (productDetailImage && productDetailImage.length > 0) {
+              for (let o = 0; o < productDetailImage.length; o++) {
+                productDetailImage[o].status = true;
+                await productDetailImage[o].save();
+              }
+            }
+            productDetail.status = true;
+            product.status = true;
+          
+
+            await productDetail.save();
+            await product.save();
           }
-          const productDetailTypeClassifyDetails = await db.product_detail_type_classify_detail.findAll({
-            where:{
-              productDetailId:productDetail.id
-            }
-          })
-          if(productDetailTypeClassifyDetails && productDetailTypeClassifyDetails.length > 0){
-            for(let x = 0; x < productDetailTypeClassifyDetails.length; x++){
-              await productDetailTypeClassifyDetails[x].destroy();
-            }
-          }
-          const productDetailTypeClassify = await db.product_detail_type_classify.findAll({
-            where:{
-              productDetailId:productDetail.id
-            }
-          })
-          if(productDetailTypeClassify && productDetailTypeClassify.length > 0){
-            for(let z = 0; z < productDetailTypeClassify.length; z++){
-              await productDetailTypeClassify[z].destroy();
-            }
-          }
-          const productDetailImage = await db.product_detail_image.findAll({
-            where:{
-              productDetailId:productDetail.id
-            }
-          })
-          if(productDetailImage && productDetailImage.length > 0){
-            for(let o = 0; o < productDetailImage.length; o++){
-              await productDetailImage[o].destroy();
-            }
-          }
-          await productDetail.destroy();
-          await product.destroy();
         }
-      }
-      resolve({
-        EC:0
-      })
+        resolve({
+          EC: 0
+        })
 
       }
     } catch (e) {
@@ -626,43 +645,148 @@ let deleteProductById = async (id) => {
     }
   });
 };
-
-let setPriceSubProd = async (list,type,number) => {
+let deleteProductById = async (id) => {
   return new Promise(async (resolve, reject) => {
-    try{
-        if(type==="price"){
-          for(let i = 0; i < list.length; i++){
-            let subProd = await db.sub_product.findOne({
-              where:{id:list[i]}
+    try {
+      let product = await db.product.findOne({
+        where: {
+          id: id,
+        },
+
+      });
+
+      if (product) {
+        let productDetail = await db.product_detail.findOne({
+          where: {
+            productId: id,
+          }
+        })
+        if (productDetail) {
+          // console.log(productDetail.id);
+
+          let subProduct = await db.sub_product.findAll(
+            {
+              where: {
+                productDetailId: productDetail.id
+              }
+            });
+
+          if (subProduct && subProduct.length > 0) {
+            for (let i = 0; i < subProduct.length; i++) {
+              const sub_product_type_classify_detail = await db.sub_product_type_classify_detail.findAll({
+                where: {
+                  subProductId: subProduct[i].id
+                }
+              })
+              if (sub_product_type_classify_detail && sub_product_type_classify_detail.length > 0) {
+                for (let y = 0; y < sub_product_type_classify_detail.length; y++) {
+                  sub_product_type_classify_detail[y].status = false;
+                  await sub_product_type_classify_detail[y].save();
+                }
+                const cart = await db.Cart.findAll({
+                  where: {
+                    sub_productId: subProduct[i].id
+                  }
+                })
+                if (cart && cart.length > 0) {
+                  for (let k = 0; k < cart.length; k++) {
+                    await cart[k].destroy();
+                  }
+                }
+              }
+
+              subProduct[i].status = false;
+              await subProduct[i].save();
+
+            }
+            const productDetailTypeClassifyDetails = await db.product_detail_type_classify_detail.findAll({
+              where: {
+                productDetailId: productDetail.id
+              }
             })
-            subProd.price = number;
-            await subProd.save();
-          }   
-        }else if(type === "stock"){
-          for(let i = 0; i < list.length; i++){
-            let subProd = await db.sub_product.findOne({
-              where:{id:list[i]}
+            if (productDetailTypeClassifyDetails && productDetailTypeClassifyDetails.length > 0) {
+              for (let x = 0; x < productDetailTypeClassifyDetails.length; x++) {
+                productDetailTypeClassifyDetails[x].status = false;
+                await productDetailTypeClassifyDetails[x].save();
+              }
+            }
+            const productDetailTypeClassify = await db.product_detail_type_classify.findAll({
+              where: {
+                productDetailId: productDetail.id
+              }
             })
-            subProd.stock = number;
-            await subProd.save();
-          }   
+            if (productDetailTypeClassify && productDetailTypeClassify.length > 0) {
+              for (let z = 0; z < productDetailTypeClassify.length; z++) {
+                productDetailTypeClassify[z].status = false;
+                await productDetailTypeClassify[z].save();
+              }
+            }
+            const productDetailImage = await db.product_detail_image.findAll({
+              where: {
+                productDetailId: productDetail.id
+              }
+            })
+            if (productDetailImage && productDetailImage.length > 0) {
+              for (let o = 0; o < productDetailImage.length; o++) {
+                productDetailImage[o].status = false;
+                await productDetailImage[o].save();
+              }
+            }
+            productDetail.status = false;
+            product.status = false;
+          
+
+            await productDetail.save();
+            await product.save();
+          }
         }
-        resolve("success")
-    }catch(e){
+        resolve({
+          EC: 0
+        })
+
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let setPriceSubProd = async (list, type, number) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (type === "price") {
+        for (let i = 0; i < list.length; i++) {
+          let subProd = await db.sub_product.findOne({
+            where: { id: list[i] }
+          })
+          subProd.price = number;
+          await subProd.save();
+        }
+      } else if (type === "stock") {
+        for (let i = 0; i < list.length; i++) {
+          let subProd = await db.sub_product.findOne({
+            where: { id: list[i] }
+          })
+          subProd.stock = number;
+          await subProd.save();
+        }
+      }
+      resolve("success")
+    } catch (e) {
 
     }
   })
 };
-let getSubProd = async (page,id) => {
+let getSubProd = async (page, id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let subProd = await db.sub_product.findAndCountAll(
         {
-          where:{
-            productDetailId:id,
+          where: {
+            productDetailId: id,
           },
-          limit:10,
-          offset:(page - 1) * 10,
+          limit: 10,
+          offset: (page - 1) * 10,
+          order: [["createdAt", "DESC"]]
         }
       );
       if (subProd) {
@@ -675,6 +799,140 @@ let getSubProd = async (page,id) => {
     }
   });
 };
+function isNumeric(value) {
+  return !isNaN(parseFloat(value)) && isFinite(value);
+}
+let setProduct = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if(isNumeric(data.price)){
+         const rs = await db.product.findOne({
+          where:{
+            id:data.id
+          }
+         })
+         if(rs){
+          rs.name = data.name;
+          rs.price = data.price;
+          await rs.save();
+          resolve("Ok")
+         }else{
+          resolve()
+         }
+      }
+     else{
+      console.error(data.price);
+
+     }
+
+
+    } catch (e) {
+      console.error("Lỗi trong setProduct:", e);
+      reject(e); // Trả lỗi về Promise
+    }
+  });
+};
+let createSubProduct = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let subProducts = await db.sub_product.findAll({
+        include: [
+          {
+            model: db.type_classify_detail,
+          },
+        ],
+        where: {
+          productDetailId: data.productId,
+        },
+      });
+     const product = await db.sub_product.findAll({
+      where:{
+        productDetailId:data.productId,
+      },
+      include:[{
+          model:db.type_classify_detail
+      }]
+     })
+     let arr = [];
+     for(let i = 0; i < data.typeClassifyDetails.length; i++){
+      
+      
+      let dataRs = await db.type_classify_detail.findOne({
+        where:{
+          id:data.typeClassifyDetails[i].data[0]
+        },
+        include:{
+          model:db.type_classify
+        }
+      
+      })
+      
+      if(dataRs && (dataRs?.type_classify.id == data.typeClassifyDetails[i].id)){
+        
+        arr.push(data.typeClassifyDetails[i].data[0])
+      }else{
+        resolve();
+      }
+      
+     }
+     const result = hasNoMatchingSubProduct(subProducts,arr);
+     
+     if(result){
+      const newSubProd = await db.sub_product.create({
+        name:data.name,
+        price:0,
+        productDetailId:data.productId,
+        sold:0,
+        stock:0,
+        status:1,
+        image: subProducts[0].image ? subProducts[0].image : null
+      })
+      arr.map(async(item,index)=>{
+        const rs = await db.product_detail_type_classify_detail.findOne({
+          where: {
+            productDetailId: data.productId,
+            typeClassifyDetailId: item
+          }
+        });
+        console.log(rs);
+        
+        if(!rs){
+          db.product_detail_type_classify_detail.create({
+            productDetailId: data.productId,
+            typeClassifyDetailId:item
+          })
+        }
+        db.sub_product_type_classify_detail.create({
+          subProductId:newSubProd.id,
+          typeClassifyDetailId:item
+        })
+      })
+
+      resolve("newSubProd")
+     }
+     resolve();
+
+
+     
+    } catch (e) {
+      console.log(e);
+      
+    }
+  });
+};
+function hasNoMatchingSubProduct(data, typeClassifyDetails) {
+  if (!data || data.length === 0) return false;
+
+  return !data.some(subProduct => {
+    const detailIds = (subProduct.type_classify_details || []).map(detail => detail.id);
+    return (
+      detailIds.length === typeClassifyDetails.length &&
+      typeClassifyDetails.every(id => detailIds.includes(id))
+    );
+  });
+}
+
+
 module.exports = {
   getSubProd,
   getProductBySubCategory,
@@ -689,5 +947,8 @@ module.exports = {
   createProduct,
   deleteProductById,
   handleCheckOutStock,
-  setPriceSubProd
+  setPriceSubProd,
+  setProduct,
+  restoreProductById,
+  createSubProduct
 };

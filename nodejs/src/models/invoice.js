@@ -42,7 +42,8 @@ module.exports = (sequelize, DataTypes) => {
       statusInvoiceId:DataTypes.INTEGER,
       paymentMethodId:DataTypes.INTEGER,
       userId:DataTypes.INTEGER,
-      paymentStatus:DataTypes.STRING
+      paymentStatus:DataTypes.STRING,
+      urlPayment:DataTypes.STRING
     },
     {
       sequelize,

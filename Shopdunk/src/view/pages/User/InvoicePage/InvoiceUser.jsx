@@ -1,13 +1,14 @@
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
-import { getInvoiceByStatusUser, getInvoiceStatus } from "../../../../services/invoiceService";
+import { cancelInvoice, getInvoiceByStatusUser, getInvoiceStatus } from "../../../../services/invoiceService";
 import { get } from "lodash";
 import UploadIcon from '@mui/icons-material/Upload';
 import ModalUpload from "../../Admin/Management/Invoices/ModalUpload";
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 // import "./Invoice.scss"
-import { KeyboardArrowDownOutlined, KeyboardArrowUpOutlined } from "@mui/icons-material";
+import { CancelOutlined, CancelPresentation, KeyboardArrowDownOutlined, KeyboardArrowUpOutlined, Payment } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 export function InvoiceUser() {
     const [isLoading, setIsLoading] = useState(false)
     const [page, setPage] = useState(1)
@@ -21,20 +22,28 @@ export function InvoiceUser() {
         invoiceCode: "",
         username: ""
     })
+    const handleCancelInvoice = async (id) =>{
+        let rs = await cancelInvoice(id);
+        console.log(rs);
+        
+        if(rs.data.message == "Thành công!"){
+            handleGetAllInvoiceByStatus(1);
+        }
+    }
     const [currentRow, setCurrentRow] = useState(0);
     useEffect(() => {
         handleGetAllInvoiceStatus();
-        handleGetAllInvoiceByStatus(1)
+        handleGetAllInvoiceByStatus(currentTab)
     }, [page])
     const handleGetAllInvoiceByStatus = async (id) => {
-        const currentTab = id ? id : 1;
-        try{
+        
+        try {
             let token = JSON.parse(user).token;
             let userId = JSON.parse(user).id;
             const dataInvoice = {
                 token,
                 userId,
-                currentTab,
+                currentTab:id,
                 page
             }
             const data = await getInvoiceByStatusUser(dataInvoice);
@@ -43,12 +52,12 @@ export function InvoiceUser() {
             } else {
                 return;
             }
-        }catch(e){
-        alert("Đã hết phiên đăng nhập vui lòng đăng nhập lại");
-        localStorage.clear();
-        window.location.reload();
+        } catch (e) {
+            alert("Đã hết phiên đăng nhập vui lòng đăng nhập lại");
+            localStorage.clear();
+            window.location.reload();
         }
-        
+
     }
     const handlePageClick = (e) => {
         setPage(e.selected + 1)
@@ -64,21 +73,21 @@ export function InvoiceUser() {
     const data = [
         {
             image: "avatar-default.jpg",
-            name:"Iphone 16 Pro Max",
-            price:"29000000",
-            quantity:"12"
+            name: "Iphone 16 Pro Max",
+            price: "29000000",
+            quantity: "12"
         },
         {
             image: "avatar-default.jpg",
-            name:"Iphone 15 Pro",
-            price:"29000000",
-            quantity:"12"
+            name: "Iphone 15 Pro",
+            price: "29000000",
+            quantity: "12"
         },
         {
             image: "avatar-default.jpg",
-            name:"Ipad Air 10",
-            price:"29000000",
-            quantity:"12"
+            name: "Ipad Air 10",
+            price: "29000000",
+            quantity: "12"
         },
     ]
     return (
@@ -95,6 +104,7 @@ export function InvoiceUser() {
                                 <div
                                     onClick={() => {
                                         setCurrentTab(item.id)
+                                        setPage(1)
                                         handleGetAllInvoiceByStatus(item.id)
                                     }
                                     }
@@ -121,7 +131,7 @@ export function InvoiceUser() {
 
                     </div>
                     <table class="table table-striped"
-                    onMouseLeave={() => setShowMore(0)}
+                        onMouseLeave={() => setShowMore(0)}
                     >
                         <thead>
                             <tr>
@@ -130,8 +140,6 @@ export function InvoiceUser() {
                                 <th scope="col">Email</th>
                                 <th scope="col">Số điện thoại</th>
                                 <th scope="col">Tổng tiền</th>
-                                {/* <th scope="col">Tổng tiền khuyến mãi</th>    */}
-                                {/* <th scope="col">Phương thức thanh toán</th> */}
                                 <th scope="col">Trạng thái thanh toán</th>
                                 <th scope="col">Hành động</th>
 
@@ -144,86 +152,87 @@ export function InvoiceUser() {
 
                                     return (
                                         <>
-                                            <tr style={{ height: "43.15px" }}
-                                            onMouseEnter={() => setShowMore(item.id)}
-                                            // onMouseLeave={() => setShowMore(0)}
-                                            className="invoice-row"
-                                                onClick={() => {
-                                                    setCurrentRow(item.id)
-                                                    setShowMore(0)
-                                                    if(currentRow === item.id){
-                                                        setCurrentRow(0)
-                                                    }
-                                                }}>
-                                                <th style={{ height: "43.15px" }} scope="row">{currentRow === item.id ? <KeyboardArrowDownOutlined/> : showMore === item.id ? <KeyboardArrowUpOutlined/> : index + 1 + (page - 1) * 10 }</th>
+                                            <tr
+                                                style={{ height: "43.15px" }}
+                                                onMouseEnter={() => setShowMore(item.id)}
+                                                className="invoice-row"
+                                               
+                                            >
+                                                <th style={{ height: "43.15px" }} 
+                                                 onClick={() => {
+                                                    setCurrentRow(currentRow === item.id ? 0 : item.id);
+                                                }}
+                                                scope="row">{currentRow === item.id ? <KeyboardArrowDownOutlined /> : showMore === item.id ? <KeyboardArrowUpOutlined /> : index + 1 + (page - 1) * 10}</th>
                                                 <td style={{ height: "43.15px" }}>{item.invoiceCode}</td>
                                                 <td style={{ height: "43.15px" }}>{item.email}</td>
                                                 <td style={{ height: "43.15px" }}>{item.phone}</td>
                                                 <td style={{ height: "43.15px" }}>{item.total.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
                                                 {/* <td style={{ height: "43.15px" }}>{item.totalNotIncludePro.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td> */}
-                                                <td style={{ height: "43.15px" }}>{item.paymentMethod.name}</td>
+                                                {/* <td style={{ height: "43.15px" }}>{item.paymentMethod.name}</td> */}
                                                 <td>{item.paymentStatus}</td>
-                                                <td style={{ height: "43.15px" }}>{currentTab === 1 ? <UploadIcon onClick={() => {
-                                                    setShowFileUpload(true);
-                                                    setDataUpload({
-                                                        invoiceCode: item.invoiceCode,
-                                                        username: item.name.split("khách hàng ")[1].split(" ")[0]
-                                                    })
-                                                }} /> : "Chuyển trạng thái"}</td>
-
-
-                                            </tr>
-                                            
-                                            
-                                            {currentRow === item.id &&
-                                            <tr colSpan={8}>
-                                                 <td colspan="8">
-                                                <table colSpan={8} 
-                                                style={{
-                                                    width:"100%",
-                                                    paddingBottom:"0"
-                                                }}
-
+                                                <td style={{ height: "43.15px" }}
+                                                    onClick={(e) => e.stopPropagation()}
                                                 >
-                                                    <thead>
-                                                        <th>STT</th>
-                                                        <th>Hình ảnh</th>
-                                                        <th>Sản phẩm</th>
-                                                        <th>Giá</th>
-                                                        <th>Số lượng</th>
 
-                                                    </thead>
-                                                    <tbody>
-                                                        {data.map((item,index)=>{
-                                                            return(
-                                                        <tr>    
-                                                        <td>{index+1}</td>
-                                                        <td style={{
-                                                            padding:"12px"
-                                                        }} >
-                                                            <img
-                                                            style={{
-                                                                width:"60px"
-                                                            }}
-                                                            src={`${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${item.image}`}></img>
-                                                        </td>
-                                                        <td>{item.name}</td>
-                                                        <td>{item.price}</td>
-                                                        <td>{item.quantity}</td>
-
-                                                        </tr>
-                                                        
-                                                            )
-                                                        })}
-                                                        
-                                                        
-
-                                                    </tbody>
-                                                </table>
+                                                    {item.paymentStatus == "Chưa thanh toán" &&  item.statusInvoice?.id == 1 ?
+                                                    <>
+                                                     <Link to={item.urlPayment}><Payment /></Link>
+                                                        <CancelPresentation onClick={()=>{
+                                                            handleCancelInvoice(item.id);
+                                                        }}/>
+                                                    </>
+                                                        : ""}
+                                                
                                                 </td>
                                             </tr>
-                                                
-                                                
+                                            {currentRow === item.id &&
+                                                <tr colSpan={8}>
+                                                    <td colspan="8">
+                                                        <table colSpan={8}
+                                                            style={{
+                                                                width: "100%",
+                                                                paddingBottom: "0"
+                                                            }}
+                                                        >
+                                                            <thead>
+                                                                <th>STT</th>
+                                                                <th>Hình ảnh</th>
+                                                                <th>Sản phẩm</th>
+                                                                <th>Giá</th>
+                                                                <th>Số lượng</th>
+
+                                                            </thead>
+                                                            <tbody>
+                                                                {data.map((item, index) => {
+                                                                    return (
+                                                                        <tr>
+                                                                            <td>{index + 1}</td>
+                                                                            <td style={{
+                                                                                padding: "12px"
+                                                                            }} >
+                                                                                <img
+                                                                                    style={{
+                                                                                        width: "60px"
+                                                                                    }}
+                                                                                    src={`${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${item.image}`}></img>
+                                                                            </td>
+                                                                            <td>{item.name}</td>
+                                                                            <td>{item.price}</td>
+                                                                            <td>{item.quantity}</td>
+
+                                                                        </tr>
+
+                                                                    )
+                                                                })}
+
+
+
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+
+
                                             }
                                             {showFileUpload && <div className="fileUpload"
                                                 onClick={() => {

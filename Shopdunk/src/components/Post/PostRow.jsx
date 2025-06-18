@@ -25,13 +25,13 @@ const PostRow = () =>{
             <img src={`${process.env.REACT_APP_LOCALHOST_SERVER}/bannerImage/banner-post.jpeg`}/>
         </div>
         <h1 className="title-post">Tin tức mới</h1>
-            <div className="container post-row-container">
-            {posts && posts.length > 0 && posts.map((post,index)=>{
-                return(
-                    <PostCard post={post}/>
-                )
-            })}
-            </div>
+        <div className="container post-row-container d-flex flex-wrap">
+  {posts && posts.length > 0 && posts.map((post, index) => (
+    <div className="post-item-wrapper" key={index}>
+      <PostCard post={post} />
+    </div>
+  ))}
+</div>
         </div>
     )
 }

@@ -32,7 +32,7 @@ const ProductRow = (props) => {
   if (category.products.length > 0) {
     return (
       <div className="sub-category-row">
-        <h1 className="sub-category-row-name">{category.name}</h1>
+        <h1 className="sub-category-row-name">{category.displayName ? category.displayName : category.name}</h1>
           <div className="product-row container">
             <div
               className="product-row-list"

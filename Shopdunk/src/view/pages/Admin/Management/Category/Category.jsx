@@ -7,6 +7,7 @@ import TableCategory from "../../../../../components/Table/Category/TableCategor
 import TableProduct from "../../../../../components/Table/Product/TableProduct";
 import TableSubCategory from "../../../../../components/Table/SubCategory/TableSubCategory";
 import axios from "axios";
+import { ArrowBack } from "@mui/icons-material";
 const Category = () => {
   const [categories, setCategories] = useState([]);
   const tabNameLocal = JSON.parse(localStorage.getItem("tabName"));
@@ -60,15 +61,8 @@ const Category = () => {
   return (
     <>
 <h3 className="title">
-        {tab.tab === 0
-          ? "Quản lý danh mục"
-          : tab.tab === 1
-          ? "Quản lý danh mục con"
-          : "Quản lý sản phẩm"}
-      </h3>
-      <h5 className="list">Danh sách</h5>
-      <span
-        className={tab.tab === 0 ? "d-none" : "previous"}
+<span
+        className={tab.tab === 0 ? "d-none" : "previous p-2"}
         onClick={() => {
           switch (tab.tab) {
             case 0:
@@ -107,8 +101,16 @@ const Category = () => {
           console.log(tab.tab);
         }}
       >
-        Trở về
+        <ArrowBack/>
       </span>
+        {tab.tab === 0
+          ? "Quản lý danh mục"
+          : tab.tab === 1
+          ? "Quản lý danh mục con"
+          : "Quản lý sản phẩm"}
+      </h3>
+      <h5 className="list">Danh sách</h5>
+    
       {tab.tab === 0 ? (
         ""
       ) : (

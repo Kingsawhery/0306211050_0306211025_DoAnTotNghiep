@@ -33,9 +33,14 @@ import {
   getSubProductImage,
   createNewProduct,
   deleteProduct,
-  checkOutStock
+  checkOutStock,
+  handleSetProduct,
+  restoreProduct,
+  handleCreateSubProduct
 } from "../controllers/productController";
-
+import {getAllBrands, postNewBrand, putNewBrand, handlePutDisplay, getAllBrandDisplay,
+  getAllProductBrands
+} from "../controllers/brandController"
 import {
   getHomePage,
   handlePostUser,
@@ -48,11 +53,14 @@ import {
   handleGetDataUser,
 
 }from "../controllers/userController";
+import postController from "../controllers/postController"
 // Post - 5
-import { getAllPosts, getPostPage } from "../controllers/postController";
+import { getAllPosts, getPostPage , handleGetListPost} from "../controllers/postController";
 // Type Classify - 6
-import {getAllTypeClassify,getAllTypeClassifyDetailById} from "../controllers/classifyController"
+import {getAllTypeClassify,getAllTypeClassifyDetailById,getAllTypeClassifyDetailProductId} from "../controllers/classifyController"
 import {getPromotion} from "../controllers/promotionController"
+import path from "path";
+import { toVietnameseSlug, xuLyTenFile } from "../function/generalFunction";
 
 let router = express.Router();
 let storage = multer.diskStorage({
@@ -71,6 +79,23 @@ let storage = multer.diskStorage({
     // Set the filename to be used for uploaded files
     cb(null, file.originalname);
   },
+});
+let storagePost = multer.diskStorage({
+  destination: async function (req, file, cb) {
+    if (req.body.fileImage) {
+    }
+    // Set the destination folder for uploaded files
+    const dir = `public/postImage/`;
+    if (!fs.existsSync(dir)) {  
+
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const namefile = xuLyTenFile(req.body.image)
+    cb(null,namefile);
+  }
 });
 let storageUser = multer.diskStorage({
   destination: async function (req, file, cb) {
@@ -107,6 +132,7 @@ let storageInvoiceImage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+const uploadPost = multer({ storage: storagePost });
 const uploadUserImage = multer({ storage: storageUser });
 const uploadInvoiceImage = multer({ storage: storageInvoiceImage});
 
@@ -116,6 +142,10 @@ let apiWebRoutes = (app) => {
   //Danh mục - Category 1
   router.get("/categories", categoryController.getListNameCategory); //
   router.get("/categories-name", categoryController.getListNameCategory); //
+  router.get("/categories-name-admin", categoryController.getListNameCategoryAdmin); //
+  router.put("/put-display-categories", categoryController.handlePutDisplay);
+
+  
   router.get("/sub-product-category", categoryController.getProductByCategoryId); //
   router.get("/categories", categoryController.getAllCategoriesInList); //
   router.get("/categories-name", categoryController.getListNameCategory); //
@@ -139,15 +169,31 @@ let apiWebRoutes = (app) => {
 
   // Banner - 3
   router.get("/banners", bannerController.getAllBanners);
+  router.get("/brands", getAllBrands);
+  router.get("/product-by-brand", getAllProductBrands);
+
+  router.post("/create-brand", postNewBrand);
+  router.put("/put-brand", putNewBrand);
+  router.put("/put-display-brand", handlePutDisplay);
+  router.get("/brand-display", getAllBrandDisplay);
+
+
 
   // Product - 4
   router.get("/subprod-by-product", handleGetSubProd);
   router.put("/set-price-sub-product", handleSetPriceSubProd);
+  router.put("/products", handleSetProduct);
 
+  
+
+  
   router.get("/product", getProduct);
   router.get("/products", getProducts);
   router.get("/product/:id", getProductById);
   router.get("/products-random", getListProductRandom);
+  
+  router.post("/create-sub-prod", handleCreateSubProduct);
+
   router.get("/sub-product", getSubProduct);
   router.get("/product-detail", getProductDetail);
   router.get("/product-detail-image", getProductsImage);
@@ -160,9 +206,17 @@ let apiWebRoutes = (app) => {
   );
   router.post("/check-out-stock",checkOutStock)
   router.delete("/product",checkToken,deleteProduct)
+  router.put("/product-status",checkToken,restoreProduct)
+
+  
   // Post - 5
   router.get("/posts", getAllPosts);
+  router.get("/list-posts", handleGetListPost);
+
   router.get("/post/:id", getPostPage);
+  router.post("/create-post", uploadPost.single("fileUpload"),postController.createPost);
+  router.post("/put-post", uploadPost.single("fileUpload"),postController.putPost);
+
 
   // User - 6
   router.get("/", getHomePage);
@@ -192,7 +246,11 @@ let apiWebRoutes = (app) => {
 
   router.get("/otp", apiController.handleOTP);
   router.post("/check-otp", apiController.handleVerify);
-
+  
+  router.post(
+    "/handle-forgot-password",
+    forgotPasswordToken.handleForgetPasswordWithToken
+  );
   router.post("/forgot-password", forgotPasswordToken.handleSendTokenToMail);
   router.post(
     "/reset-password",
@@ -219,6 +277,7 @@ let apiWebRoutes = (app) => {
   router.post("/cart-add", checkToken, cartController.handleAddCart);
   router.delete("/cart-delete", checkToken, cartController.handleDestroyCart);
   router.patch("/cart-change-status", checkToken, cartController.handleChangeStatus);
+  
 
   
   router.get("/check",checkUser)
@@ -228,6 +287,9 @@ let apiWebRoutes = (app) => {
   // Type Classify - 8 
   router.get("/type-classifies",getAllTypeClassify);
   router.get("/type-classifies-detail",getAllTypeClassifyDetailById);
+  router.get("/type-classifies-detail-sub-prod",getAllTypeClassifyDetailProductId);
+
+  
 
   //
   router.get("/promotion",getPromotion);
@@ -239,8 +301,8 @@ let apiWebRoutes = (app) => {
   router.get("/get-invoice-by-status",checkAdminData,invoiceController.handleGetInvoiceByStatus)
   router.get("/get-invoice-by-status-user",invoiceController.handleGetInvoiceByStatusUser)
   router.post("/change-status-ivoice", uploadInvoiceImage.array("fileImage",10),invoiceController.handleChangeStatus);
+  router.put("/cancel-invoice",  invoiceController.cancelInvoice);
   router.post("/callback",invoiceController.handlePaymentStatus)
-
   return app.use("/api", router);
 };
 module.exports = apiWebRoutes;

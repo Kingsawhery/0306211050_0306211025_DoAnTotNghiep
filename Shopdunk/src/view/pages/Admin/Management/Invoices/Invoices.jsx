@@ -142,7 +142,8 @@ export function Invoices() {
                                 <th scope="col">Tổng tiền khuyến mãi</th>
                                 <th scope="col">Phương thức thanh toán</th>
                                 <th scope="col">Trạng thái thanh toán</th>
-                                <th scope="col">THành động</th>
+                                <th style={{ height: "43.15px" }}>{currentTab === 1 || currentTab === 2 || currentTab === 3 ? 
+                                "Hành động" : ""}</th>
 
                             </tr>
                         </thead>
@@ -176,13 +177,13 @@ export function Invoices() {
                                                 <td style={{ height: "43.15px" }}>{item.totalNotIncludePro.toLocaleString("VN-vi").replace(/,/g, '.')} VNĐ</td>
                                                 <td style={{ height: "43.15px" }}>{item.paymentMethod.name}</td>
                                                 <td>{item.paymentStatus}</td>
-                                                <td style={{ height: "43.15px" }}>{currentTab === 1 ? <UploadIcon onClick={() => {
+                                                <td style={{ height: "43.15px" }}>{currentTab === 1 || currentTab === 2 || currentTab === 3 ? <UploadIcon onClick={() => {
                                                     setShowFileUpload(true);
                                                     setDataUpload({
                                                         invoiceCode: item.invoiceCode,
                                                         username: item.name.split("khách hàng ")[1].split(" ")[0]
                                                     })
-                                                }} /> : "Chuyển trạng thái"}</td>
+                                                }} /> : ""}</td>
 
 
                                             </tr>
@@ -235,7 +236,7 @@ export function Invoices() {
                                                             console.log(dataSub);
                                                             
                                                         }}
-                                                        >Đmmmmmmmmmmmmmmmmmmmmmmmmmmmm</p>}
+                                                        >Not Found Data</p>}
                                                         
                                                         
 

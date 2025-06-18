@@ -31,6 +31,10 @@ import {  checkAdminRole, checkToken } from "./function/checkToken";
 import UserInfor from "./view/pages/User/UserInfor/UserInfor";
 import { Invoices } from "./view/pages/Admin/Management/Invoices/Invoices";
 import TableSubProduct from "./components/Table/SubProd/subproduct";
+import ResetPassword from "./components/forgotpassword/resetpassword";
+import ListPost from "./view/pages/Admin/Management/Post/ListPost";
+import EditPost from "./view/pages/Admin/Management/Post/EditPost";
+import Brand from "./view/pages/Admin/Management/Brand/Brand";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
@@ -104,6 +108,10 @@ useEffect(() => {
                   <Route path="/login" element={<Login />}></Route>
                   <Route path="/register" element={<Register />}></Route>
                   <Route
+                    path="/reset-password"
+                    element={<ResetPassword />}
+                  ></Route>
+                  <Route
                     path="/forgot-password"
                     element={<ForgotPassword />}
                   ></Route>
@@ -117,9 +125,14 @@ useEffect(() => {
                 <Route path="danh-muc" element={<Category />} />
                 <Route path="sub-prod/:idSub" element={<TableSubProduct />} />
 
-                <Route path="tin-tuc" element={<Post />} />
+                <Route path="tin-tuc" element={<ListPost />} />
+                <Route path="tin-tuc/:id" element={<EditPost />} />
+                <Route path="tin-tuc/tao-moi" element={<Post />} />
+
                 <Route path="create-product" element={<CreateNewProduct />} />
                 <Route path="user" element={<User />}></Route>
+                <Route path="brands" element={<Brand />}></Route>
+
                 <Route path="invoice" element={<Invoices />}></Route>
               </Route>
             

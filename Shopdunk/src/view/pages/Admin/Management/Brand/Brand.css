@@ -1,0 +1,21 @@
+.edit-icon {
+    visibility: hidden;
+    opacity: 0;
+    font-size: 20px;
+    transition: opacity 0.2s ease;
+    margin-left: 4px;
+  }
+  
+.edit-name:hover .edit-icon {
+    visibility: visible;
+    opacity: 1;
+    cursor: pointer;
+}
+.edit-icon {
+    transition: transform 0.2s ease;
+  }
+  
+  .edit-icon:active {
+    transform: scale(1.4);
+    opacity: 0.5!important;
+  }

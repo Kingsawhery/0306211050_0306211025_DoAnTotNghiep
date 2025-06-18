@@ -17,10 +17,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   brand.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    brandCode: DataTypes.STRING,
+    display: DataTypes.BOOLEAN,
+
+    
   }, {
     sequelize,
     modelName: 'brand',
+    
   });
   return brand;
 };

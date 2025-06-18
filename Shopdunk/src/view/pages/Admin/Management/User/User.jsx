@@ -10,6 +10,8 @@ import Spinner from "../../../../../components/Spinner/Spinner";
 export default function User() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(1);
+
   const [isLoading, setIsLoading] = useState(true);
   const [dataUser, setDataUser] = useState({
     email:"",
@@ -27,6 +29,8 @@ export default function User() {
         console.log(results.data);
         
         setUsers(results.data);
+        setPageSize(results.totalPages);
+
         setIsLoading(false);
       }
     } catch (e) {
@@ -87,7 +91,7 @@ export default function User() {
             nextLabel=">"
             onPageChange={handlePageClick}
             pageRangeDisplayed={10}
-            pageCount={5}
+            pageCount={pageSize}
             previousLabel="<"
             renderOnZeroPageCount={2}
             pageClassName="page-item"

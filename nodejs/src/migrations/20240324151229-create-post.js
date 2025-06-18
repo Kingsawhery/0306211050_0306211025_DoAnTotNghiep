@@ -23,13 +23,6 @@ module.exports = {
       slug: {
         type: Sequelize.STRING,
       },
-      productId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "products",
-          key: "id",
-        },
-      },
       softDelete: Sequelize.DATE,
       createdAt: {
         allowNull: false,

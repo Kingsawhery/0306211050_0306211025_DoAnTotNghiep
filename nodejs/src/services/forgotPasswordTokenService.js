@@ -22,7 +22,6 @@ async function updateOrCreateForgotPasswordData(email, token, expiresAt) {
   });
 
   if (!check) {
-    // Không tìm thấy thì tạo mới
     const data = await db.forgot_password_tokens.create({
       email: email,
       token: token,
@@ -59,8 +58,7 @@ async function checkToken(token) {
     },
   });
   if (!check) return false;
-  console.log(check);
-  return check.dataValues;
+  return check;
 }
 
 module.exports = {

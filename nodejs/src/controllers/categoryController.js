@@ -7,9 +7,24 @@ import {
   destroyCategory,
   findCategories,
   getAllNameCategory,
-  getProductByCategory
+  getProductByCategory,
+  getAllNameCategoryAdmin,
+  putDisplay
 } from "../services/categoryService";
 // Xem tất cả danh mục
+let handlePutDisplay = async (req, res) => {
+  const data = await req.body.id;
+  let errCode = await putDisplay(data);
+  if(errCode.errCode == 1){
+    return res.status(200).json({
+      errCode:errCode.errCode,
+      message:"change success!"});
+  }else{
+    return res.status(200).json({
+      errCode:errCode.errCode,
+      message:"change fail!"    });
+  }
+};
 let getAllCategories = async (req, res) => {
   let categories = await readCategoriesHomepage();
   return res.status(200).json({
@@ -43,6 +58,13 @@ let getListNameCategory = async (req, res)=>{
     data:categories
   })
 }
+let getListNameCategoryAdmin = async (req, res)=>{
+  let categories = await getAllNameCategoryAdmin();
+  return res.status(200).json({
+    data:categories
+  })
+}
+
 let getCategories = async (req, res) => {
   let page = req.params.page;
   let { count, rows } = await readCategories(page);
@@ -73,8 +95,7 @@ let searchCategories = async (req, res) => {
 let postNewCategory = async (req, res) => {
   try {
     const data = await req.body;
-    console.log(req.body.name);
-    if (req.body.name == undefined || req.body.slug == undefined) {
+    if (req.body.name == undefined ) {
       return res.status(400).json({
         message: "Add new category failed",
         status: 400,
@@ -98,7 +119,8 @@ let postNewCategory = async (req, res) => {
 let editCategory = async (req, res) => {
   try {
     let data = await req.body;
-    let message = await putCategory(data);
+    if(data.name){
+      let message = await putCategory(data);
     if (message) {
       return res.status(200).json({
         message: message,
@@ -106,6 +128,13 @@ let editCategory = async (req, res) => {
     } else {
       return res.status(400).json({
         message: "Edit category failed",
+      });
+    }
+    
+    }
+    else{
+      return res.status(200).json({
+        message: "Missing required data",
       });
     }
   } catch (e) {
@@ -175,5 +204,7 @@ module.exports = {
   getAllCategoriesInList,
   getListNameCategory,
   getProductByCategoryId,
-  handleGetProductByCategory
+  handleGetProductByCategory,
+  getListNameCategoryAdmin,
+  handlePutDisplay
 };

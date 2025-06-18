@@ -4,8 +4,9 @@ import { Modal,Button } from "react-bootstrap";
 const ModalConfirmPay = (props) => {
   const navigate = useNavigate();
 const handleCreate = () =>{
+  props.setShowModal(false);
   props.handleCreateInvoice();
-  navigate("/");
+  // navigate("/");
 }
   return (
     <div

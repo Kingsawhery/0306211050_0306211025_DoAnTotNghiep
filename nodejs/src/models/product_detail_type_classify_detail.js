@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   product_detail_type_classify_detail.init({
     productDetailId: DataTypes.INTEGER,
-    typeClassifyDetailId: DataTypes.INTEGER
+    typeClassifyDetailId: DataTypes.INTEGER,
+    status:DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'product_detail_type_classify_detail',

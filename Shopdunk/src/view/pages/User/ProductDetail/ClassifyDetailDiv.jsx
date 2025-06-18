@@ -1,8 +1,6 @@
 import "../ProductDetail/ClassifyDetailDiv.scss"
 const ClassifyDetailDiv = (props) =>{
-    const {data} = props;
-    console.log(data);
-    
+    const {data} = props;    
     return(
 <div className="div-specification-item" style={{width:"420px"}}>
         {data && data.length > 0 && data.map((item)=>{

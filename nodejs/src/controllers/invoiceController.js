@@ -1,32 +1,27 @@
 import { paymentMoMo } from "../function/payment";
 const ngrok = require("ngrok")
-import {createInvoice,getSubAllInvoice,getAllInvoiceStatus,getAllInvoiceByStatus,handleConfirmPayment,changeInvoiceStatus,getAllInvoiceByStatusUser} from "../services/invoiceService"
+import {handleCancelInvoice,createInvoice,getSubAllInvoice,getAllInvoiceStatus,getAllInvoiceByStatus,handleConfirmPayment,changeInvoiceStatus,getAllInvoiceByStatusUser} from "../services/invoiceService"
 const handleCreateInvoice = async(req,res) => {
     try{
        const data = await req.body;       
         if(data.data && data.data.length > 0 && data.phone && data.phone !== "" && data.address && data.address !== ""){
            
-            const rs = await createInvoice(data);            
+            const rs = await createInvoice(data);   
+              
             if(rs){
-                if(rs.paymentMethodId === 1){
-                    const paymentUrl = await paymentMoMo(rs);
+                if(rs.EC === 1){
 
                     res.status(200).json({
                         message:"Tạo hóa đơn thành công!",
-                        data:rs,
                         payment:{
                             id:1,
-                            url:paymentUrl
+                            url:rs.urlPayment
                         }
                     })
                 }else{
                     res.status(200).json({
-                        message:"Tạo hóa đơn thành công!",
-                        data:rs,
-                        payment:{
-                            id:2,
-                            url:"http://localhost:3000/"
-                        }
+                        message:rs.EM,
+                        err:rs.EC
                     })
                 }
                
@@ -146,6 +141,30 @@ const handleGetInvoiceByStatus = async(req,res) => {
         })
     }
 }
+const cancelInvoice = async(req,res) => {
+    try{
+        const data = req.body;
+        const rs = await handleCancelInvoice(data);
+        if(rs){
+            return res.status(200).json({
+                message:"Thành công!",
+                data:rs
+            })
+        }
+        else{
+            return res.status(200).json({
+                message:"Đã có lỗi xảy ra!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+        
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+    }
+}
 const handleChangeStatus = async(req,res) => {
     try{
         const data = req.body;
@@ -202,5 +221,6 @@ module.exports = {
     handleChangeStatus,
     handlePaymentStatus,
     handleGetInvoiceByStatusUser,
-    handleGetSubInvoice
+    handleGetSubInvoice,
+    cancelInvoice
 }

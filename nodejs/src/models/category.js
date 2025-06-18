@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   category.init({
     name: DataTypes.STRING,
-    slug: DataTypes.STRING
+    slug: DataTypes.STRING,
+    status:DataTypes.BOOLEAN,
+    display:DataTypes.BOOLEAN
+
   }, {
     sequelize,
     paranoid:true,

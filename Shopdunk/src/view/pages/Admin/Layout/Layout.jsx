@@ -49,6 +49,11 @@ const Layout = ({ admin }) => {
           name: "Quản lý đơn hàng",
           link: "/admin/invoice",
         },
+        {
+          icon: faList,
+          name: "Quản lý thương hiệu",
+          link: "/admin/brands",
+        },
       ],
     },
   ];

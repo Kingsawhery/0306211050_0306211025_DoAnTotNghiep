@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+import { paymentMoMo } from "../function/payment";
 import { generateRandomString } from "../function/randomString";
 import db from "../models";
 import product from "../models/product";
@@ -8,6 +10,24 @@ let createInvoice = async (data) => {
       const code = await findCodeInvoiceFunction();
       let total = 0;
       let totalNotIncludePro = 0
+      const invoices = await db.invoice.findAll({
+        where: {
+          userId: data.id,
+          paymentStatus: "Chưa thanh toán",
+          statusInvoiceId: {
+            [Op.ne]: 5
+          }
+        }
+      })
+      if(invoices.length > 0){
+        console.log(invoices);
+        
+        resolve({
+          EC: 0,
+          EM: "Có hóa đơn bạn chưa thanh toán, hãy thanh toán hoặc hủy trước khi tạo hóa đơn khác!"
+        })
+        return;
+      }
       if (data.promotion.status) {
         if (data.data && data.data.length > 0) {
           const findPromotion = await db.promotion.findOne({
@@ -73,7 +93,8 @@ let createInvoice = async (data) => {
         else {
           resolve({
             EC: 0,
-            EM: "Không có sản phẩm được tìm thấy!"
+            EM: "Không có sản phẩm được tìm thấy!",
+            urlPayment:""
           })
         }
       }
@@ -121,7 +142,14 @@ let createInvoice = async (data) => {
               await subProduct.save();
 
             }
-            resolve(invoice);
+            const urlPayment = await paymentMoMo(invoice);
+            invoice.urlPayment = urlPayment;
+            await invoice.save();
+            resolve({
+              EC: 1,
+              EM: "Thành công!",
+              urlPayment:urlPayment
+            })
           }
 
           // const invoice = await db.invoice.create({
@@ -166,7 +194,14 @@ let createInvoice = async (data) => {
             subProduct.stock -= data.data[i].quantity
             await subProduct.save();
           }
-          resolve(invoice);
+          const urlPayment = await paymentMoMo(invoice);
+          invoice.urlPayment = urlPayment;
+          await invoice.save();
+          resolve({
+            EC: 1,
+            EM: "Thành công!",
+            urlPayment:urlPayment
+          })
         }
       }
       else {
@@ -236,7 +271,8 @@ let getAllInvoiceByStatusUser = async (data) => {
             "statusInvoiceId",
             "total",
             "totalNotIncludePro",
-            "paymentStatus"
+            "paymentStatus",
+            "urlPayment"
           ],
           limit: 10,
           offset: (data.page - 1) * 10,
@@ -354,6 +390,17 @@ let changeInvoiceStatus = async (data) => {
       });
       if (rs.statusInvoiceId === 1) {
         rs.statusInvoiceId = 2;
+        rs.note = data.note
+        await rs.save();
+      }
+      else if (rs.statusInvoiceId === 2) {
+        rs.statusInvoiceId = 3;
+        rs.note = data.note;
+        await rs.save();
+      }
+      else if (rs.statusInvoiceId === 3) {
+        rs.statusInvoiceId = 4;
+        rs.note = data.note;
         await rs.save();
       }
       resolve(rs)
@@ -423,6 +470,27 @@ let handleConfirmPayment = async (data) => {
     // })
   })
 }
+let handleCancelInvoice = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const rs = await db.invoice.findOne({
+        where: {
+          id: data.invoiceCode
+        }
+      });
+      if (rs.statusInvoiceId === 1) {
+        rs.statusInvoiceId = 5;
+        await rs.save();
+        resolve(rs)
+      }else{
+        resolve();
+      }
+    }
+    catch (e) {
+      reject(e);
+    }
+  })
+}
 module.exports = {
   createInvoice,
   getAllInvoiceStatus,
@@ -430,7 +498,8 @@ module.exports = {
   changeInvoiceStatus,
   handleConfirmPayment,
   getAllInvoiceByStatusUser,
-  getSubAllInvoice
+  getSubAllInvoice,
+  handleCancelInvoice
 }
 const findCodeInvoiceFunction = async () => {
   const string = generateRandomString("I");
@@ -446,3 +515,4 @@ const findCodeInvoiceFunction = async () => {
     return findCodeInvoiceFunction();
   }
 };
+

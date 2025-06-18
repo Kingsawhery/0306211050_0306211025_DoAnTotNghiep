@@ -66,6 +66,7 @@ const ProductDetailPage = () => {
   //   setListTypeClassifyDetail({});
   //   window.scrollTo({ top: "0", behavior: "instant" });
   // }, []);
+  
   useEffect(() => {
     getProduct();
     getProductDetail();
@@ -86,8 +87,8 @@ const ProductDetailPage = () => {
     }
   }, [listTypeClassifyDetail]);
   useEffect(() => {
-    if (posts) {
-      postPageRef.current.innerHTML = posts.content;
+    if (productDetail.product?.post?.content) {
+      postPageRef.current.innerHTML = productDetail.product?.post?.content;
     }
   });
   const getProductByPropety = async () => {
@@ -257,24 +258,30 @@ const ProductDetailPage = () => {
             <div className="assess">
               <div className="title">
                 {" "}
-                {subProduct && subProduct.length !== 0
-                  ? subProduct.name
-                  : product.name}
+                {!subProduct && subProduct?.length == 0
+                  ? product?.name : subProduct?.name ? subProduct?.name : product?.name}
               </div>
-              <div>
+              {/* <div>
                 <i id="fas-1" className="fas fa-star" />
                 <i id="fas-1" className="fas fa-star" />
                 <i id="fas-1" className="fas fa-star" />
                 <i id="fas-1" className="fas fa-star" />
                 <i id="fas-1" className="fas fa-star" />
                 {productDetail.rate}
-              </div>
+              </div> */}
             </div>
             {/*crossbar*/}
             <div className="crossbar" />
             {/*Price*/}
             <div className="price d-flex">
-              <div>
+            <div>
+                <span className="no-promotion">
+                {!subProduct && subProduct?.length == 0
+                  ? `${product?.price?.toLocaleString("VN-vi").replace(/,/g, '.')}` : subProduct?.price ? `${subProduct?.price?.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ` : `${product?.price?.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ`}
+                  
+                </span>
+              </div>
+              {/* <div>
                 <span className="no-promotion">
                   {subProduct && subProduct.length !== 0
                     ? `${(
@@ -300,7 +307,7 @@ const ProductDetailPage = () => {
               </div>
               <div>
                 <span className="promotion-percent">-{product.promotion}%</span>
-              </div>
+              </div> */}
             </div>
             {/*-Property color*/}
             <div className="property">
@@ -399,7 +406,7 @@ const ProductDetailPage = () => {
                   setOpen(true)
                 }}
                 variant="contained"
-                endIcon={<AddIcon color="success" />}
+                endIcon={<AddIcon sx={{ color: 'white' }} />}
                 disabled={
                   !outOfStock &&  productDetail && productDetail.type_classifies &&  Object.keys(listTypeClassifyDetail).length - productDetail.type_classifies.length === 1
                     ? false
@@ -409,15 +416,31 @@ const ProductDetailPage = () => {
                 Add
               </Button>
             </Stack>
-            <div className="d-flex justify-content-end p-4">
-        {productDetail.classify && JSON.parse(productDetail.classify) && <ClassifyDetailDiv data = {JSON.parse(productDetail.classify)}/>}
+            <div className="div-classify-detail">
+{(() => {
+  try {
+    const parsed = JSON.parse(productDetail.classify);
+    const isValid =
+      Array.isArray(parsed) &&
+      parsed.length > 0 &&
+      parsed.some(
+        (item) =>
+          item.label?.trim() ||
+          (Array.isArray(item.data) &&
+            item.data.some((child) => child.labelData?.trim() || child.data?.trim()))
+      );
 
+    return isValid && <ClassifyDetailDiv data={parsed} />;
+  } catch (e) {
+    return null;
+  }
+})()}
         </div>
           </div>
         </div>
         
         
-        {posts && (
+        {productDetail.product?.post?.content && (
           <>
             <div className="post-page container">
               <div className="content" ref={postPageRef} />

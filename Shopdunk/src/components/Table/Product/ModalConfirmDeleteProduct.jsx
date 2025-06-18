@@ -34,13 +34,13 @@ const {item,handleDelete, setOpen} = props;
           <Button autoFocus onClick={()=>{
             setOpen(false)
           }}>
-            Disagree
+            Hủy
           </Button>
           <Button  autoFocus onClick={()=>{
             handleDelete();
             setOpen(false);
           }}>
-            Agree
+            Đồng ý
           </Button>
         </DialogActions>
       </Dialog>

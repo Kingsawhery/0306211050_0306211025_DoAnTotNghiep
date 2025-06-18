@@ -15,6 +15,32 @@ let getTypeClassify = async () => {
       }
     });
   };
+  let getTypeClassifyDetailByProduct = async (id) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let type_classifies = await db.product.findOne({
+            where:{
+                id: id,
+                
+            },include:{
+              model:db.product_detail,
+              include:{model:db.type_classify,
+                include:{model:db.type_classify_detail}
+              }
+            }
+        });
+        console.log(type_classifies.product_detail.type_classifies);
+        
+        if (type_classifies) {
+          resolve(type_classifies.product_detail.type_classifies);
+        } else {
+          resolve();
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  };
   let getTypeClassifyDetail = async (id) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -35,5 +61,6 @@ let getTypeClassify = async () => {
   };
   module.exports = {
     getTypeClassify,
-    getTypeClassifyDetail
+    getTypeClassifyDetail,
+    getTypeClassifyDetailByProduct
 }
