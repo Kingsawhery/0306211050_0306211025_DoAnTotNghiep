@@ -10,12 +10,18 @@ import ProductCard from "../../../../components/Product/ProductCard/ProductCard"
 import PostRow from "../../../../components/Post/PostRow";
 
 import "./Homepage.scss";
+import { Form } from "react-bootstrap";
+import _ from "lodash";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [switchList, setSwitchList] = useState(false);
   const [listBrands, setListBrands] = useState([]);
-  const [currentTab,setCurrentTab] = useState(0);
+  const [currentTab,setCurrentTab] = useState({
+    name:"",
+    id:0,
+
+  });
   const [listProd, setListProd] = useState({
     name: "",
     products: [],
@@ -58,7 +64,16 @@ const HomePage = () => {
       console.log("Error fetching products", e);
     }
   };
-
+  const getProductSearchList = async (name, id,keyword) => {
+    try {
+      const products = await getAllProductByBrand(1, id, null,keyword);
+      if (products) {
+        setListProd({ name: name, products: products.data });
+      }
+    } catch (e) {
+      console.log("Error fetching products", e);
+    }
+  };
   return (
     <>
       <Helmet>
@@ -70,13 +85,18 @@ const HomePage = () => {
 
       {/* Brand filter section */}
       <div className="brands">
+        <div className="search">
+          <Form.Control onChange={_.debounce((e)=>{
+            getProductSearchList(currentTab.name, currentTab.id, e.target.value)
+          },1000)}/>
+        </div>
         <span
           className="div-brand"
-          style={currentTab === 0 ? {backgroundColor:"#c1c1c1"} : {}}
+          style={currentTab.id === 0 ? {backgroundColor:"#c1c1c1"} : {}}
           key="0"
           onClick={() => {
             setCurrentTab(0);
-
+            setCurrentTab({...currentTab,name:"",id:0})
             setSwitchList(false);
           }}
          
@@ -86,11 +106,11 @@ const HomePage = () => {
         {listBrands.map((item, index) => (
           <span
             className="div-brand"
-          style={currentTab === index + 1 ? {backgroundColor:"#c1c1c1"} : {}}
+          style={currentTab.id === index + 1 ? {backgroundColor:"#c1c1c1"} : {}}
             key={index + 1}
             onClick={() => {
               setSwitchList(true);
-              setCurrentTab(index + 1)
+              setCurrentTab({...currentTab,name:item.name,id:item.id})
               getProductList(item.name, item.id);
             }}
           >

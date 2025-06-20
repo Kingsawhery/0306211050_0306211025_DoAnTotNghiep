@@ -43,9 +43,22 @@ li.nav {
   }
 
   .dropdown-menu {
-    transform: translate3d(100.2px, 60.4px, 0px) !important
+    // transform: translate3d(100.2px, 60.4px, 0px) !important
+    top: 14% !important;
+    position: relative;
   }
-
+.dropdown-menu::after{
+  content: "";
+  position: absolute;
+  top: -8px; // nằm trên dropdown
+  left: 20px; // chỉnh vị trí ngang
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid rgb(255, 255, 255); // nhọn hướng lên
+  // transform: rotate(180deg); 
+}
   li.nav:hover {
     background: #9999;
     cursor: pointer;

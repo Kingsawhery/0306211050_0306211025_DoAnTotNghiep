@@ -11,7 +11,6 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (item) => {
     const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
-
     if (isItemInCart) {
       setCartItems(
         cartItems.map((cartItem) =>

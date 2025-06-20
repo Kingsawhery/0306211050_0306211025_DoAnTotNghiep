@@ -222,6 +222,7 @@ const Cart = () => {
     }
   };
   const handleCheckStock = async () => {
+    
     const handleCheck = await checkStockData(paymentInformation.data);
     if (handleCheck) {
       setListOutOfStock(handleCheck);
@@ -240,46 +241,64 @@ const Cart = () => {
 
   }
   const handleCreateInvoice = async () => {
-    if (paymentInformation.name !== "" &&
-      paymentInformation.phone !== "" &&
-      paymentInformation.email !== "" &&
-      paymentInformation.token !== "" &&
-      paymentInformation.id !== "" &&
-      paymentInformation.city !== "" &&
-      paymentInformation.ward !== "" &&
-      paymentInformation.district !== "" &&
-      paymentInformation.street !== ""
-    ) {
-      const rs = await createInvoice({
-        name: paymentInformation.name,
-        phone: paymentInformation.phone,
-        email: paymentInformation.email,
-        token: paymentInformation.token,
-        id: paymentInformation.id,
-        address: paymentInformation.street + ", " + paymentInformation.district + ", " + paymentInformation.ward + " ," + paymentInformation.city + ".",
-        promotion: paymentInformation.promotion,
-        option: paymentInformation.option,
-        data: paymentInformation.data
-      });
-      if (rs) {
-        console.log(rs);
-        if (rs.data.message === "Tạo hóa đơn thành công!") {
-          if (
-            rs.data.payment.id === 1
+    try{
+      const handleCheck = await checkStockData(paymentInformation.data);
+      if (handleCheck) {
+        setListOutOfStock(handleCheck);
+        setShowModal(true);
+        if (handleCheck.length === 0) {
+          if (paymentInformation.name !== "" &&
+            paymentInformation.phone !== "" &&
+            paymentInformation.email !== "" &&
+            paymentInformation.token !== "" &&
+            paymentInformation.id !== "" &&
+            paymentInformation.city !== "" &&
+            paymentInformation.ward !== "" &&
+            paymentInformation.district !== "" &&
+            paymentInformation.street !== ""
           ) {
-            window.open(rs.data.payment.url)
+            const rs = await createInvoice({
+              name: paymentInformation.name,
+              phone: paymentInformation.phone,
+              email: paymentInformation.email,
+              token: paymentInformation.token,
+              id: paymentInformation.id,
+              address: paymentInformation.street + ", " + paymentInformation.district + ", " + paymentInformation.ward + " ," + paymentInformation.city + ".",
+              promotion: paymentInformation.promotion,
+              option: paymentInformation.option,
+              data: paymentInformation.data
+            });
+            if (rs) {
+              if (rs.data.message === "Tạo hóa đơn thành công!") {
+                if (
+                  rs.data.payment.id === 1
+                ) {
+                  window.open(rs.data.payment.url)
+                } else {
+                  toast(rs.data.message)
+                  // window.open("http://localhost:3000/")
+                }
+              }else{
+                toast(rs.data.message)
+              }
+            }
           } else {
-            toast(rs.data.message)
-            // window.open("http://localhost:3000/")
+            console.log("Đã có lỗi xảy ra vui lòng thử lại!");
           }
-        }else{
-          toast(rs.data.message)
+        } else {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+          setShowModalConfirm(false);
+  
         }
       }
-    } else {
-      console.log("No");
+      
+    }catch{
 
     }
+    
 
 
   };
@@ -847,7 +866,9 @@ const Cart = () => {
                 <Row className="mt-3">
                   <Col xs={12} className="d-flex justify-content-end">
                     <Button
-                      disabled={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? true : false}
+                    
+                      // disabled={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? true : false}
+                      
                       style={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? { backgroundColor: "rgb(160 158 158)", color: "#fff", padding:"12px 24px" } : { backgroundColor: "rgb(0 164 253)", color: "#fff", padding:"12px 24px" }}
                       // onClick={handleCreateInvoice}
                       onClick={handleCheckStock}

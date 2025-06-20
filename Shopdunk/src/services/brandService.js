@@ -16,6 +16,6 @@ export const editBrand = (data) =>{
 export const putDisplay = (data) =>{
     return instance.put(process.env.REACT_APP_API_SERVER + `/put-display-brand`, data);
 }
-export const getAllProductByBrand = (page, id,categoryId) =>{
-    return instance.get(process.env.REACT_APP_API_SERVER + `/product-by-brand?page=${page}&brandId=${id}&categoryId=${categoryId ? categoryId : null}`);
+export const getAllProductByBrand = (page, id,categoryId,keyword) =>{
+    return instance.get(process.env.REACT_APP_API_SERVER + `/product-by-brand?page=${page}&brandId=${id ? id : null}&categoryId=${categoryId ? categoryId : null}&keyword=${keyword ? keyword : null}`);
 }
