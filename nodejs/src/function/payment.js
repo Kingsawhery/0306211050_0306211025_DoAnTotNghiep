@@ -74,23 +74,51 @@ export const paymentMoMo = (data) => {
                 'Content-Length': Buffer.byteLength(requestBody)
             }
         };
-
         const momoReq = https.request(options, momoRes => {
             let data = '';
+        
             momoRes.on('data', chunk => data += chunk);
+        
             momoRes.on('end', () => {
+                console.log("📦 Raw response from MoMo:", data); // ✅ log raw response để kiểm tra
                 try {
                     const result = JSON.parse(data);
+                    console.log("✅ Parsed MoMo response:", result); // ✅ log JSON đã parse
+        
                     if (result && result.payUrl) {
-                        resolve(result.payUrl); // ✅ trả về URL MoMo
+                        resolve(result.payUrl);
                     } else {
-                        reject(new Error('Failed to get payUrl'));
+                        reject(new Error('❌ Failed to get payUrl – ' + JSON.stringify(result)));
                     }
                 } catch (err) {
+                    console.error("❌ JSON Parse Error:", err.message); // log lỗi JSON
                     reject(err);
                 }
             });
         });
+        
+        // ✅ Thêm bắt lỗi nếu request thất bại (không kết nối, lỗi mạng, DNS...)
+        momoReq.on('error', (e) => {
+            console.error('❌ Request Error:', e.message);
+            reject(e);
+        });
+        
+        // const momoReq = https.request(options, momoRes => {
+        //     let data = '';
+        //     momoRes.on('data', chunk => data += chunk);
+        //     momoRes.on('end', () => {
+        //         try {
+        //             const result = JSON.parse(data);
+        //             if (result && result.payUrl) {
+        //                 resolve(result.payUrl); // ✅ trả về URL MoMo
+        //             } else {
+        //                 reject(new Error('Failed to get payUrl'));
+        //             }
+        //         } catch (err) {
+        //             reject(err);
+        //         }
+        //     });
+        // });
 
         momoReq.on('error', err => {
             reject(err);

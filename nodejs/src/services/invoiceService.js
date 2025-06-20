@@ -142,14 +142,88 @@ let createInvoice = async (data) => {
               await subProduct.save();
 
             }
-            const urlPayment = await paymentMoMo(invoice);
-            invoice.urlPayment = urlPayment;
-            await invoice.save();
-            resolve({
-              EC: 1,
-              EM: "Thành công!",
-              urlPayment:urlPayment
-            })
+            // const urlPayment = await paymentMoMo(invoice);
+            // if(urlPayment && urlPayment?.urlPayment){
+            //   invoice.urlPayment = urlPayment;
+            //   await invoice.save();
+            //   resolve({
+            //     EC: 1,
+            //     EM: "Thành công!",
+            //     urlPayment:urlPayment
+            //   })
+            // }else{
+            //   resolve({
+            //     EC: -1,
+            //     EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+            //   })
+            // }
+            let urlPayment = "";
+try {
+  urlPayment = await paymentMoMo(invoice);
+} catch (e) {
+  console.error("❌ Lỗi gọi MoMo:", e.message || e);
+  const subprods = await db.sub_product_invoices.findAll({
+    where:{
+      invoiceId: invoice.id
+    }
+  })
+  for (const item of subprods) {
+    const subprod = await db.sub_product.findOne({
+      where: {
+        id: item.subProductId
+      }
+    });
+  
+    if (subprod) {
+      subprod.stock += item.quantity;
+      await subprod.save();
+    }
+  
+    await item.destroy();
+  }
+  await invoice.destroy();
+
+  resolve({
+    EC: -1,
+    EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+  });
+  return;
+}
+
+if (urlPayment !== "") {
+  invoice.urlPayment = urlPayment;
+  await invoice.save();
+  resolve({
+    EC: 1,
+    EM: "Thành công!",
+    urlPayment: urlPayment
+  });
+} else {
+  const subprods = await db.sub_product_invoices.findAll({
+    where:{
+      invoiceId: invoice.id
+    }
+  })
+  for (const item of subprods) {
+    const subprod = await db.sub_product.findOne({
+      where: {
+        id: item.subProductId
+      }
+    });
+  
+    if (subprod) {
+      subprod.stock += item.quantity;
+      await subprod.save();
+    }
+  
+    await item.destroy();
+  }
+  await invoice.destroy();
+  resolve({
+    EC: -1,
+    EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+  });
+}
           }
 
           // const invoice = await db.invoice.create({
@@ -194,14 +268,87 @@ let createInvoice = async (data) => {
             subProduct.stock -= data.data[i].quantity
             await subProduct.save();
           }
-          const urlPayment = await paymentMoMo(invoice);
-          invoice.urlPayment = urlPayment;
-          await invoice.save();
-          resolve({
-            EC: 1,
-            EM: "Thành công!",
-            urlPayment:urlPayment
-          })
+          // const urlPayment = await paymentMoMo(invoice);
+          // if(urlPayment && urlPayment?.urlPayment){
+          //   invoice.urlPayment = urlPayment;
+          //   await invoice.save();
+          //   resolve({
+          //     EC: 1,
+          //     EM: "Thành công!",
+          //     urlPayment:urlPayment
+          //   })
+          // }else{
+          //   resolve({
+          //     EC: -1,
+          //     EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+          //   })
+          // }
+          let urlPayment = "";
+try {
+  urlPayment = await paymentMoMo(invoice);
+} catch (e) {
+  console.error("❌ Lỗi gọi MoMo:", e.message || e);
+  const subprods = await db.sub_product_invoices.findAll({
+    where:{
+      invoiceId: invoice.id
+    }
+  })
+  for (const item of subprods) {
+    const subprod = await db.sub_product.findOne({
+      where: {
+        id: item.subProductId
+      }
+    });
+  
+    if (subprod) {
+      subprod.stock += item.quantity;
+      await subprod.save();
+    }
+  
+    await item.destroy();
+  }
+  await invoice.destroy();
+  resolve({
+    EC: -1,
+    EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+  });
+  return;
+}
+
+if (urlPayment !== "") {
+  invoice.urlPayment = urlPayment;
+  await invoice.save();
+  resolve({
+    EC: 1,
+    EM: "Thành công!",
+    urlPayment: urlPayment
+  });
+} else {
+  const subprods = await db.sub_product_invoices.findAll({
+    where:{
+      invoiceId: invoice.id
+    }
+  })
+  for (const item of subprods) {
+    const subprod = await db.sub_product.findOne({
+      where: {
+        id: item.subProductId
+      }
+    });
+  
+    if (subprod) {
+      subprod.stock += item.quantity;
+      await subprod.save();
+    }
+  
+    await item.destroy();
+  }
+  await invoice.destroy();
+  resolve({
+    EC: -1,
+    EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
+  });
+}
         }
       }
       else {
@@ -478,7 +625,22 @@ let handleCancelInvoice = async (data) => {
           id: data.invoiceCode
         }
       });
+      
       if (rs.statusInvoiceId === 1) {
+        const subprods = await db.sub_product_invoices.findAll({
+          where:{
+            invoiceId: rs.id
+          }
+        })
+        subprods.map(async(item,index)=>{
+          let subprod = await db.sub_product.findOne({
+            where:{
+              id:item.subProductId
+            }
+          })
+          subprod.stock += item.quantity;
+          await subprod.save();
+        })
         rs.statusInvoiceId = 5;
         await rs.save();
         resolve(rs)

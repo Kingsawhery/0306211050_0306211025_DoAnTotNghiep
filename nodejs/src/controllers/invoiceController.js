@@ -39,8 +39,7 @@ const handleCreateInvoice = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
-        return res.status(400).json({
+        return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
     }

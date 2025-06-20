@@ -43,43 +43,83 @@ let getBrandDisplay = async (data) => {
         }
     });
 };
+const { Op } = require("sequelize");
+
 let getProductBrands = async (data) => {
     return new Promise(async (resolve, reject) => {
-        console.log(data);
-        
         try {
             let whereCondition = {};
 
-            if (data.categoryId !== "null") {
-                whereCondition = {
-                    categoryId: data.categoryId,
-                    brandId: data.brandId,
-                };
-            } else {
-                whereCondition = {
-                    brandId: data.brandId,
+            // Nếu có brandId thì lọc theo brand
+            if (data.brandId && data.brandId !== "null") {
+                whereCondition.brandId = data.brandId;
+            }
+
+            // Nếu có categoryId hợp lệ thì lọc theo category
+            if (data.categoryId && data.categoryId !== "null") {
+                whereCondition.categoryId = data.categoryId;
+            }
+
+            // Nếu có keyword thì lọc theo tên
+            if (data.keyword && data.keyword.trim() !== "" && data.keyword.trim() !== "null") {
+                whereCondition.name = {
+                    [Op.like]: `%${data.keyword.trim()}%`
                 };
             }
 
             let products = await db.product.findAndCountAll({
                 where: whereCondition,
-                include:{
-                    model:db.sub_category
+                include: {
+                    model: db.sub_category
                 },
                 limit: 10,
                 offset: (data.page - 1) * 10,
             });
 
-            if (products) {
-                resolve(products);
-            } else {
-                resolve();
-            }
+            resolve(products);
         } catch (e) {
             reject(e);
         }
     });
 };
+
+// let getProductBrands = async (data) => {
+//     return new Promise(async (resolve, reject) => {
+//         console.log(data);
+        
+//         try {
+//             let whereCondition = {};
+
+//             if (data.categoryId !== "null") {
+//                 whereCondition = {
+//                     categoryId: data.categoryId,
+//                     brandId: data.brandId,
+//                 };
+//             } else {
+//                 whereCondition = {
+//                     brandId: data.brandId,
+//                 };
+//             }
+
+//             let products = await db.product.findAndCountAll({
+//                 where: whereCondition,
+//                 include:{
+//                     model:db.sub_category
+//                 },
+//                 limit: 10,
+//                 offset: (data.page - 1) * 10,
+//             });
+
+//             if (products) {
+//                 resolve(products);
+//             } else {
+//                 resolve();
+//             }
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
 let getBrands = async (page) => {
     return new Promise(async (resolve, reject) => {
         try {
