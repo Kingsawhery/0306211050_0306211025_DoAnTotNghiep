@@ -52,8 +52,8 @@ const Register = (props) => {
           toast(rsRegister.EM);
         } else {
           toast.dismiss();
-          toast(rsRegister.EM);
-          // navigate("/login");
+          toast("Tạo tài khoản thành công!");
+          navigate("/login");
         }
       }
     } else {

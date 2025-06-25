@@ -2,6 +2,21 @@ import instance from "./customAxios";
 import axios from "./customAxios";
 import axiosFormal from "axios";
 
+const changeUser = async(data) => {  
+  try{
+    const formData = new FormData();
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      formData.append(`${key}`, data[key]);
+    }
+  }
+  const rs = await axios.put("/api/change-data-user", formData);
+  return rs;
+}
+  catch(e){
+    console.log("Lỗi ở change data user: " , e);
+  }
+};
 const userServices = async(data) => {
   console.log(data);
   
@@ -21,8 +36,11 @@ const userServices = async(data) => {
   }
 
 };
-const getUsers = (page) => {
-  return axios.get(`/api/users?page=${page}`);
+const getUsers = (page, keyword) => {
+  return instance.get(`${process.env.REACT_APP_API_SERVER}/users?page=${page}&keyword=${keyword ? keyword : null}`);
+};
+const lockUser = (id) => {
+  return instance.put(`${process.env.REACT_APP_API_SERVER}/lock-user`,{id:id});
 };
 const postUser = () => {
   return axios.post(`/api/users/create-user`);
@@ -116,6 +134,7 @@ const getInfoUser = async (data)=>{
     
   }
 }
+
 export {
   getInfoUser,
   userServices,
@@ -128,4 +147,6 @@ export {
   verifyOtp,
   getUsers,
   postUser,
+  changeUser,
+  lockUser
 };

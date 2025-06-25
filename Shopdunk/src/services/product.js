@@ -116,3 +116,10 @@ export const createSubProd = (data) => {
     `${process.env.REACT_APP_API_SERVER}/create-sub-prod`,data
   );
 };
+
+
+export const putPostOrBrand = (data) => {
+  return instance.put(
+    `${process.env.REACT_APP_API_SERVER}/brand-post`,data
+  );
+};

@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import {
   getUsers,
+  lockUser,
   postUser,
   userServices,
 } from "../../../../../services/userServices";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../../components/Spinner/Spinner";
+import { Form } from "react-bootstrap";
+import { Label, LockClockOutlined, LockOpen, LockOpenOutlined, LockOutline, LockPersonOutlined, OpenInFull, OpenWithOutlined } from "@mui/icons-material";
 export default function User() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState("");
+
   const [pageSize, setPageSize] = useState(1);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -22,9 +27,9 @@ export default function User() {
   useEffect(() => {
     getListUsers();
   }, [page]);
-  const getListUsers = async () => {
+  const getListUsers = async (keyword) => {
     try {
-      const results = await getUsers(page);
+      const results = await getUsers(page,keyword);
       if (results) {
         console.log(results.data);
         
@@ -40,12 +45,21 @@ export default function User() {
   };
   const handlePageClick = (e) => {
     console.log(e);
-    if (page !== 0) {
+    
+    if (e !== undefined) {
       setPage(e.selected + 1);
     }
   };
-  const handleAdd = async () => {
-    await postUser();
+  
+  const handleLockUser = async (id) => {
+    const rs  = await lockUser(id);
+    if(rs.errCode == 0){
+      toast("Thay đổi trạng thái thành công!")
+      getListUsers(keyword);
+    }else{
+      toast("Thay đổi trạng thái thất bại!")
+      getListUsers(keyword);
+    }
   };
   return (
     <>
@@ -58,6 +72,23 @@ export default function User() {
           <h1 className="d-flex justify-content-start my-4">
             Danh sách tài khoản
           </h1>
+          <div className="d-flex justify-content-end align-items-center">
+            <Form.Label className="m-2">Tìm kiếm: </Form.Label>
+            <Form.Control
+            style={{
+              width:"30%"
+            }}
+            value={keyword}
+            onChange={(e)=>{    
+              try{
+                setKeyword(e.target.value)
+                getListUsers(e.target.value)
+              } catch(e){
+                getListUsers();
+                setKeyword("")
+              }         
+            }}/>
+          </div>
           <table class="table table-striped">
             <thead>
               <tr>
@@ -75,11 +106,15 @@ export default function User() {
                   
                     return (
                       <tr>
-                        <th scope="row">{user.id + (1 - 1) * 10}</th>
+                        <th scope="row">{index+1 + (page-1) *10}</th>
                         <td>{user.email}</td>
                         <td>{user.phone}</td>
                         <td>{user.username}</td>
-                        <td>{user.role.name}</td>
+                        {user.status != 1 ? <td><LockPersonOutlined onClick={()=>{
+                          handleLockUser(user.id)
+                        }}/></td> : <td><LockOpenOutlined onClick={()=>{
+                          handleLockUser(user.id)
+                        }}/></td>}
                       </tr>
                     );
                   })
@@ -91,7 +126,7 @@ export default function User() {
             nextLabel=">"
             onPageChange={handlePageClick}
             pageRangeDisplayed={10}
-            pageCount={pageSize}
+            pageCount={pageSize > 1 ? page : 1}
             previousLabel="<"
             renderOnZeroPageCount={2}
             pageClassName="page-item"

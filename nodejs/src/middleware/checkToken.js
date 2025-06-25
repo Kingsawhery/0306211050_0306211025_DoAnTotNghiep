@@ -54,6 +54,12 @@ async function checkUser(req, res, next) {
         EM: "Xác thực thất bại",
       });
     }
+    else if(user.status == 0){
+      return res.status(200).json({
+        EC: 1,
+        EM: "Tài khoản đã bị khóa",
+      });
+    }
     req.user = user.dataValues;
     return res.status(200).json({
       EC: 2,

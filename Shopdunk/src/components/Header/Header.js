@@ -24,8 +24,12 @@ const Header = () => {
 
   useEffect(() => {
     try {
-      check();
-      checkAdmin();
+      if(user){
+        console.log("Sao z");
+        
+        check();
+        checkAdmin();
+      }
       getListCategories();
     } catch (e) {
       if (user) {
@@ -37,12 +41,12 @@ const Header = () => {
 
   const check = async () => {
     const checkData = await checkToken();
-    if (checkData.EC !== 1) {
+    if (checkData.data.EC != 1) {
+      
     } else {
-      if (user) {
         localStorage.clear();
         window.location.reload();
-      }
+        navigate("/login");
     }
     return checkData;
   };
@@ -142,7 +146,7 @@ const Header = () => {
                         className="avatar-header"
                         src={
                           user.image && user.name
-                            ? `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${user.name}/${user.image}`
+                            ? `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${user.image}`
                             : `${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/avatar-default.jpg`
                         }
                         alt="avatar"

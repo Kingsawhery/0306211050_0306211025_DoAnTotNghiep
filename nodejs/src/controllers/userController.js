@@ -1,6 +1,6 @@
 import { log } from "console";
 import db from "../models/index"
-import {getUserById, getDataUser} from "../services/userService"
+import {getUserById, getDataUser, lockUser} from "../services/userService"
 let getUser = async (req,res)=>{
     const id = await req.body.id;
     let sub_categories = await getUserById();
@@ -16,6 +16,24 @@ let handleGetDataUser = async (req,res)=>{
         data
     })
 }
+let handleLockUser = async (req,res)=>{
+    const id = await req.body.id;
+    let data = await lockUser(id);
+    if(data.errCode === 0){
+        return res.status(200).json({
+            errCode: 0,
+            message:"success"
+        })
+    }else{
+        return res.status(200).json({
+            errCode: 1,
+            message:"fail"
+        })
+    }
+    
+}
+
 module.exports = {
-    handleGetDataUser
+    handleGetDataUser,
+    handleLockUser
 }

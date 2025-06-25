@@ -8,7 +8,44 @@ const hashUserPassword = (userPassword) => {
   return hashPassword;
 };
 
-
+const changeUser = async (rawUser) => {
+  try {
+    //check email and phone
+   const accountExist =  await db.User.findOne({
+    where:{
+      id:rawUser.id,
+      token:rawUser.token
+    }
+    })
+    if (!accountExist) {
+      return {
+        EM: "Account do not exist",
+        EC: 1,
+      };
+    } else {
+      //create user
+      accountExist.email = rawUser.email;
+      accountExist.username = rawUser.username;
+      accountExist.phone = rawUser.phone;
+      accountExist.image = rawUser.image;
+      accountExist.birthday = rawUser.birthday;
+      accountExist.address = rawUser.address;
+      accountExist.gender = rawUser.gender;
+      await accountExist.save();    
+      return {
+        EM: "Change data user successfuly!",
+        EC: 0,
+      };
+    }
+    //hash password
+  } catch (e) {
+    console.log(e);
+    return {
+      EM: "Code err",
+      EC: 2,
+    };
+  }
+};
 const createRegisterUser = async (rawUser) => {
   try {
     //check email and phone
@@ -58,8 +95,13 @@ const handleLoginUser = async (rawUser) => {
        email: rawUser.value,
       },
     });
-    
-    
+    if(user?.status == 0){
+      return {
+        EM: "Tài khoản đã bị khóa, vui lòng liên hệ admin để mở khóa",
+        EC: 1,
+        DT: "",
+      };
+    }
     if (user) {
       let passwordSuccess = await checkPassword(
         rawUser.password,
@@ -83,6 +125,12 @@ const handleLoginUser = async (rawUser) => {
           },
         };
       }
+    }else{
+      return {
+        EM: "Tài khoản không tồn tại",
+        EC: 1,
+        DT: "",
+      };
     }
     return {
       EM: "Your email/phone or paassword is incorrect",
@@ -154,5 +202,6 @@ module.exports = {
   handleLoginUser,
   updateUserOTP,
   resetUserPassword,
+  changeUser
   // upsertUserGG,
 };

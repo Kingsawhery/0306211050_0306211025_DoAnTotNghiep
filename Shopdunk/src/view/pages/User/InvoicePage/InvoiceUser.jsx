@@ -1,7 +1,7 @@
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
-import { cancelInvoice, getInvoiceByStatusUser, getInvoiceStatus } from "../../../../services/invoiceService";
+import { cancelInvoice, getInvoiceByStatusUser, getInvoiceStatus, getSubProd } from "../../../../services/invoiceService";
 import { get } from "lodash";
 import UploadIcon from '@mui/icons-material/Upload';
 import ModalUpload from "../../Admin/Management/Invoices/ModalUpload";
@@ -15,6 +15,8 @@ export function InvoiceUser() {
     const [currentTab, setCurrentTab] = useState(1)
     const [invoiceList, setInvoiceList] = useState([])
     const [invoiceStatus, setInvoiceStatus] = useState([])
+    const [dataSub, setDataSub] = useState([]);
+
     const [showFileUpload, setShowFileUpload] = useState(false);
     const [showMore, setShowMore] = useState(0);
     const user = localStorage.getItem("user");
@@ -22,11 +24,11 @@ export function InvoiceUser() {
         invoiceCode: "",
         username: ""
     })
-    const handleCancelInvoice = async (id) =>{
+    const handleCancelInvoice = async (id) => {
         let rs = await cancelInvoice(id);
         console.log(rs);
-        
-        if(rs.data.message == "Thành công!"){
+
+        if (rs.data.message == "Thành công!") {
             handleGetAllInvoiceByStatus(1);
         }
     }
@@ -36,14 +38,14 @@ export function InvoiceUser() {
         handleGetAllInvoiceByStatus(currentTab)
     }, [page])
     const handleGetAllInvoiceByStatus = async (id) => {
-        
+
         try {
             let token = JSON.parse(user).token;
             let userId = JSON.parse(user).id;
             const dataInvoice = {
                 token,
                 userId,
-                currentTab:id,
+                currentTab: id,
                 page
             }
             const data = await getInvoiceByStatusUser(dataInvoice);
@@ -130,7 +132,7 @@ export function InvoiceUser() {
 
 
                     </div>
-                    <table class="table table-striped"
+                    <table class="table table-striped "
                         onMouseLeave={() => setShowMore(0)}
                     >
                         <thead>
@@ -156,13 +158,25 @@ export function InvoiceUser() {
                                                 style={{ height: "43.15px" }}
                                                 onMouseEnter={() => setShowMore(item.id)}
                                                 className="invoice-row"
-                                               
-                                            >
-                                                <th style={{ height: "43.15px" }} 
-                                                 onClick={() => {
-                                                    setCurrentRow(currentRow === item.id ? 0 : item.id);
+                                                onClick={async () => {
+                                                    const res = await getSubProd(item.id)
+                                                    if (res) {
+                                                        setDataSub(res.data.data)
+                                                        console.log(res.data);
+
+                                                    }
+                                                    setCurrentRow(item.id)
+                                                    setShowMore(0)
+                                                    if (currentRow === item.id) {
+                                                        setCurrentRow(0)
+                                                    }
                                                 }}
-                                                scope="row">{currentRow === item.id ? <KeyboardArrowDownOutlined /> : showMore === item.id ? <KeyboardArrowUpOutlined /> : index + 1 + (page - 1) * 10}</th>
+                                            >
+                                                <th style={{ height: "43.15px" }}
+                                                    onClick={() => {
+                                                        setCurrentRow(currentRow === item.id ? 0 : item.id);
+                                                    }}
+                                                    scope="row">{currentRow === item.id ? <KeyboardArrowDownOutlined /> : showMore === item.id ? <KeyboardArrowUpOutlined /> : index + 1 + (page - 1) * 10}</th>
                                                 <td style={{ height: "43.15px" }}>{item.invoiceCode}</td>
                                                 <td style={{ height: "43.15px" }}>{item.email}</td>
                                                 <td style={{ height: "43.15px" }}>{item.phone}</td>
@@ -174,15 +188,15 @@ export function InvoiceUser() {
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
 
-                                                    {item.paymentStatus == "Chưa thanh toán" &&  item.statusInvoice?.id == 1 ?
-                                                    <>
-                                                     <Link to={item.urlPayment}><Payment /></Link>
-                                                        <CancelPresentation onClick={()=>{
-                                                            handleCancelInvoice(item.id);
-                                                        }}/>
-                                                    </>
+                                                    {item.paymentStatus == "Chưa thanh toán" && item.statusInvoice?.id == 1 ?
+                                                        <>
+                                                            <Link to={item.urlPayment}><Payment /></Link>
+                                                            <CancelPresentation onClick={() => {
+                                                                handleCancelInvoice(item.id);
+                                                            }} />
+                                                        </>
                                                         : ""}
-                                                
+
                                                 </td>
                                             </tr>
                                             {currentRow === item.id &&
@@ -193,7 +207,7 @@ export function InvoiceUser() {
                                                                 width: "100%",
                                                                 paddingBottom: "0"
                                                             }}
-                                                        >
+                                                        >   
                                                             <thead>
                                                                 <th>STT</th>
                                                                 <th>Hình ảnh</th>
@@ -203,7 +217,7 @@ export function InvoiceUser() {
 
                                                             </thead>
                                                             <tbody>
-                                                                {data.map((item, index) => {
+                                                                {dataSub?.length > 0 ? dataSub?.map((item, index) => {
                                                                     return (
                                                                         <tr>
                                                                             <td>{index + 1}</td>
@@ -214,16 +228,16 @@ export function InvoiceUser() {
                                                                                     style={{
                                                                                         width: "60px"
                                                                                     }}
-                                                                                    src={`${process.env.REACT_APP_LOCALHOST_SERVER}/userImage/${item.image}`}></img>
+                                                                                    src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/${item.sub_product.product_detail.product.sub_category.name}/${item.sub_product.image}`}></img>
                                                                             </td>
-                                                                            <td>{item.name}</td>
-                                                                            <td>{item.price}</td>
+                                                                            <td>{item.sub_product?.name}</td>
+                                                                            <td>{item.sub_product?.price.toLocaleString("VN-vi").replace(/,/g, '.')}VNĐ</td>
                                                                             <td>{item.quantity}</td>
 
                                                                         </tr>
 
                                                                     )
-                                                                })}
+                                                                }): <>Không tìm thấy kết quả</>}
 
 
 
@@ -262,10 +276,12 @@ export function InvoiceUser() {
                                 : "Không có kết quả!"}
                         </tbody>
                     </table>
+                    <div className="d-flex justify-content-end m-4">
                     <ReactPaginate
                         style={{
                             position: "absolute",
-                            zIndex: "-1"
+                            zIndex: "-1",
+                            
                         }}
                         breakLabel="..."
                         nextLabel=">"
@@ -285,6 +301,8 @@ export function InvoiceUser() {
                         containerClassName="pagination"
                         activeClassName="active"
                     />
+                    </div>
+                    
                 </>
             )}
         </>

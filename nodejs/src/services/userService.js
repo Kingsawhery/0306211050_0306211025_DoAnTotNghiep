@@ -47,25 +47,95 @@ const createUser = async (email, password, username, type_ = "LOCAL") => {
     console.log(err);
   }
 };
-
-const getUserList = async (page) => {
+const lockUser = async (id) => {
   return new Promise(async (resolve, reject) => {
-    console.log(page);
     try {
-      let users = await db.User.findAndCountAll({
-        limit: 10,
-        offset: (page - 1) * 10,
-        attributes: ["id", "email", "username", "phone", "createdAt"],
-        include:{
-          model:db.role
+      let user = await db.User.findOne({
+        where:{
+          id:id
         }
       });
 
-      if (users) {
-        resolve(users);
+      if (user) {
+        user.status = !user.status;
+        user.save();
+        resolve({
+          errCode:0
+        });
       } else {
-        resolve();
+        resolve({
+          errCode:1
+        });
       }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+// const getUserList = async (page) => {
+//   return new Promise(async (resolve, reject) => {
+//     console.log(page);
+//     try {
+//       let users = await db.User.findAndCountAll({
+//         limit: 10,
+//         offset: (page - 1) * 10,
+//         attributes: ["id", "email", "username", "phone", "createdAt"],
+//         include:{
+//           model:db.role,
+//           where: {
+//             name: {
+//               [db.Sequelize.Op.ne]: "admin", // khác 'admin'
+//             },
+//           },
+//         }
+//       });
+
+//       if (users) {
+//         resolve(users);
+//       } else {
+//         resolve();
+//       }
+//     } catch (e) {
+//       reject(e);
+//     }
+//   });
+// };
+const getUserList = async (page, keyword) => {
+  return new Promise(async (resolve, reject) => {
+    console.log("Page:", page, "Keyword:", keyword);
+
+    try {
+      let whereCondition = {};
+      
+      if (keyword !== "null") {
+        console.log(keyword !== "null");
+        console.log(keyword);
+
+        
+        whereCondition[db.Sequelize.Op.or] = [
+          { username: { [db.Sequelize.Op.like]: `%${keyword}%` } },
+          { email: { [db.Sequelize.Op.like]: `%${keyword}%` } },
+          { phone: { [db.Sequelize.Op.like]: `%${keyword}%` } },
+        ];
+      }
+
+      let users = await db.User.findAndCountAll({
+        where: whereCondition,
+        limit: 10,
+        offset: (page - 1) * 10,
+        attributes: ["id", "email", "username", "phone","address","gender","status", "createdAt"],
+        include: {
+          model: db.role,
+          where: {
+            name: {
+              [db.Sequelize.Op.ne]: "admin",
+            },
+          },
+          attributes: []
+        },
+      });
+
+      resolve(users || []);
     } catch (e) {
       reject(e);
     }
@@ -119,7 +189,7 @@ const getDataUser = async (data) => {
           id: data.id,
           token: data.token
         },
-        attributes:["username","email","phone","birthday","address","gender"]
+        attributes:["username","email","phone","birthday","address","gender","image"]
       });
       resolve(dataUser);
     } catch (err) {
@@ -138,4 +208,5 @@ module.exports = {
   getUserById,
   updateUser,
   random,
+  lockUser
 };

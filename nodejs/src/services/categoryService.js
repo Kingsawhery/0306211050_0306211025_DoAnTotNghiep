@@ -1,6 +1,7 @@
 import db from "../models/index";
 import { Op, where } from "sequelize";
 import product_detail from "../models/product_detail";
+import { log } from "console";
 let readCategoriesHomepage = async () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -30,29 +31,36 @@ let readCategoriesHomepage = async () => {
 };
 
 
-let readCategories = async (page) => {
+let readCategories = async (page, keyword, display) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let categories = await db.category.findAndCountAll(
-        {
-         
-          limit:10,
-          offset:(page - 1) * 10,
-          attributes:["id","name","slug","display","status"],
-          order: [["createdAt", "DESC"]]
+      let query = {
+        where:display == 1 ? {status: 1} : {},
+        limit: 10,
+        offset: (page - 1) * 10,
+        attributes: ["id", "name", "slug", "display", "status"],
+        order: [["createdAt", "DESC"]],
+      };
 
-        }
-      );
-      if (categories) {
-        resolve(categories);
-      } else {
-        resolve();
+      if (keyword && keyword !== "null") {
+        console.log(keyword);
+        
+        query.where = {
+          name: {
+            [Op.like]: `%${keyword}%`
+          }
+        };
       }
+
+      let categories = await db.category.findAndCountAll(query);
+
+      resolve(categories || null);
     } catch (e) {
       reject(e);
     }
   });
 };
+ 
 let findCategories = async(data)=>{
   return new Promise(async (resolve, reject) => {
     console.log(data);
@@ -125,8 +133,12 @@ const putDisplay = async (data) => {
       });
       if(count > 5 || count < 0){
         if(category.display){
+          console.log("t nè 1");
           category.display = false;
           await category.save();
+          resolve({
+            errCode:1
+          })
         }else{
           resolve({
             errCode:0
@@ -135,18 +147,26 @@ const putDisplay = async (data) => {
           
       }else{
         
-        if(category.display){
+        if(category.display == true){
+          console.log("t nè 2");
           category.display = false;
           await category.save();
+          resolve({
+            errCode:1
+          })
         }else{
-          category.display = true
+          console.log("t nè 3");
+          category.display = true;
           await category.save();
+          resolve({
+            errCode:1
+          })
         }
-        resolve({
-          errCode:1
-        })
+        
       }
     } catch (e) {
+      console.log(e);
+      
       reject(e);
     }
   });
@@ -190,10 +210,18 @@ const destroyCategory = async (id) => {
         where: { id: id },
       });
       if (category) {
-        await category.destroy();
-        resolve("Delete category successfully")
+        if(!category.display){
+          category.status = !category.status;
+          await  category.save();
+  
+          resolve("Change status success!")
+        }
+        else{
+          resolve("Can not change category is displaying on system!")
+
+        }
       }else{
-        resolve("Category not found")
+        resolve("Category not found!")
       }
     } catch (e) {
       reject();

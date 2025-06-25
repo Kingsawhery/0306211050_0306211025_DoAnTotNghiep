@@ -66,7 +66,7 @@ const Login = (props) => {
       window.location.reload();
       navigate("/");
     } else {
-      toast.error("Account is not define");
+      toast.error(response.data.EM);
     }
   };
 

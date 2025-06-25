@@ -25,13 +25,16 @@ export const validateEmail = (email) => {
   }
   return true;
 };
+
 export const validatePhone = (phone) => {
   let validPhone = /^(84|0)(3|5|7|8|9)([0-9]{8})$/;
-  console.log(validPhone.test(phone));
   if (validPhone.test(phone) && phone) {
     console.log(validPhone.test(phone));
     return true;
-  }return false;
+  }
+  toast.dismiss();
+  toast.error("Please enter a valid phone address");
+  return false;
 };
 export const validatePassword = (password, comfirmPassword) => {
   if (!password) {

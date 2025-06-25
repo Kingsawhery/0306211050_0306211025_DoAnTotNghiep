@@ -54,6 +54,11 @@ const Layout = ({ admin }) => {
           name: "Quản lý thương hiệu",
           link: "/admin/brands",
         },
+        {
+          icon: faList,
+          name: "Quản lý mã khuyến mãi",
+          link: "/admin/promotions",
+        },
       ],
     },
   ];

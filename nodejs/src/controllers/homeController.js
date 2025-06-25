@@ -6,8 +6,11 @@ let getHomePage = (req, res) => {
 
 const handleUserPage = async (req, res) => {
   const page = await req.query.page;
+  const keyword = await req.query.keyword;
+  console.log(page,keyword);
+  
   if (page > 0) {
-    let { count, rows } = await userServices.getUserList(page);
+    let { count, rows } = await userServices.getUserList(page,keyword);
     return res.status(200).json({
       data: {
         total: count,

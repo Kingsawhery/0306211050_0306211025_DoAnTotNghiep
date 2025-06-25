@@ -2,7 +2,7 @@ import express from "express";
 import passport from "passport";
 import cartController from "../controllers/cartController";
 import apiController from "../controllers/apiController";
-import invoiceController from "../controllers/invoiceController"
+import invoiceController from "../controllers/invoiceController";
 import forgotPasswordToken from "../controllers/forgotPasswordToken";
 import { verify } from "../function/verify";
 import { checkAdmin, checkToken, checkUser, checkAdminData } from "../middleware/checkToken";
@@ -36,7 +36,8 @@ import {
   checkOutStock,
   handleSetProduct,
   restoreProduct,
-  handleCreateSubProduct
+  handleCreateSubProduct,
+  putBrandOrPost
 } from "../controllers/productController";
 import {getAllBrands, postNewBrand, putNewBrand, handlePutDisplay, getAllBrandDisplay,
   getAllProductBrands
@@ -51,6 +52,7 @@ import {
 } from "../controllers/homeController";
 import {
   handleGetDataUser,
+  handleLockUser
 
 }from "../controllers/userController";
 import postController from "../controllers/postController"
@@ -58,7 +60,7 @@ import postController from "../controllers/postController"
 import { getAllPosts, getPostPage , handleGetListPost} from "../controllers/postController";
 // Type Classify - 6
 import {getAllTypeClassify,getAllTypeClassifyDetailById,getAllTypeClassifyDetailProductId} from "../controllers/classifyController"
-import {getPromotion} from "../controllers/promotionController"
+import {getPromotion, getAllPromotions,handleCreatePromotions} from "../controllers/promotionController"
 import path from "path";
 import { toVietnameseSlug, xuLyTenFile } from "../function/generalFunction";
 
@@ -102,7 +104,7 @@ let storageUser = multer.diskStorage({
     if (req.body.fileImage) {
     }
     // Set the destination folder for uploaded files
-    const dir = `public/userImage/${req.body.username}`;
+    const dir = `public/userImage/`;
     if (!fs.existsSync(dir)) {
 
       fs.mkdirSync(dir, { recursive: true });
@@ -151,11 +153,11 @@ let apiWebRoutes = (app) => {
   router.get("/categories-name", categoryController.getListNameCategory); //
   router.get("/sub-product-category", categoryController.getProductByCategoryId); //
   router.get("/categories-homepage", categoryController.getAllCategories);
-  router.get("/categories/page=:page", categoryController.getCategories);
+  router.get("/categories-admin", categoryController.getCategories);
   router.get("/categories/search", categoryController.searchCategories);
   router.post("/categories", categoryController.postNewCategory);
   router.put("/categories", categoryController.editCategory);
-  router.delete("/categories/:id", categoryController.deleteCategory);
+  router.put("/change-categories", categoryController.deleteCategory);
   router.get("/categories-page", categoryController.handleGetProductByCategory);
 
   //Danh mục con - Sub Category 2
@@ -169,6 +171,7 @@ let apiWebRoutes = (app) => {
 
   // Banner - 3
   router.get("/banners", bannerController.getAllBanners);
+  router.get("/brand-post", putBrandOrPost)
   router.get("/brands", getAllBrands);
   router.get("/product-by-brand", getAllProductBrands);
 
@@ -222,6 +225,7 @@ let apiWebRoutes = (app) => {
   router.get("/", getHomePage);
   // router.get("/user", handleCreatUser);
   router.get("/users", handleUserPage);
+  router.put("/lock-user", handleLockUser)
   router.post(
     "/users/create-user",
     async (req, res, next) => {
@@ -242,6 +246,7 @@ let apiWebRoutes = (app) => {
   router.put("/user/user-update", handleUpdateUser);
 
   router.post("/register", uploadUserImage.single("fileImage"),apiController.handleRegister);
+  router.put("/change-data-user", uploadUserImage.single("fileImage"),apiController.changeDataUser);
   router.post("/login", apiController.handleLogin);
 
   router.get("/otp", apiController.handleOTP);
@@ -293,6 +298,8 @@ let apiWebRoutes = (app) => {
 
   //
   router.get("/promotion",getPromotion);
+  router.get("/promotions", getAllPromotions);
+  router.post("/create-promotion", handleCreatePromotions);
   //
   router.get("/get-sub-invoice",invoiceController.handleGetSubInvoice)
 

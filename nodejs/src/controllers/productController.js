@@ -16,8 +16,36 @@ import {
   setPriceSubProd,
   setProduct,
   restoreProductById,
-  createSubProduct
+  createSubProduct,
+  setBrandorPost
 } from "../services/productService";
+const putBrandOrPost = async (req, res) => {
+  try{
+    let data = await req.body;
+    if(!data.code || data.listProd?.length <=0 || !data.type){
+      return res.status(200).json({
+        err:"fail"
+      })
+    }
+    else{
+      const rs = await setBrandorPost(data);
+      if(rs){
+        return res.status(200).json({
+          err:"success",
+          data:rs
+        });
+      }
+      else{
+        return res.status(200).json({
+          err:"fail",
+          message:"Không thể tạo mới do dữ liệu sai hoặc thiếu thông tin bắt buộc!"
+        });
+      }
+    }
+  }catch(e){
+
+  }
+}
 const handleCreateSubProduct = async (req, res) => {
   try{
     let data = await req.body;
@@ -392,5 +420,6 @@ module.exports = {
   handleSetPriceSubProd,
   handleSetProduct,
   restoreProduct,
-  handleCreateSubProduct
+  handleCreateSubProduct,
+  putBrandOrPost
 };

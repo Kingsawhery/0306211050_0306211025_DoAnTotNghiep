@@ -1,4 +1,4 @@
-import { Container, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import "./Category.scss";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -15,8 +15,9 @@ const Category = () => {
     category: tabNameLocal ? tabNameLocal.category : "",
     subCategory: tabNameLocal ? tabNameLocal.subCategory : "",
     product: tabNameLocal ? tabNameLocal.product : "",
-    
   });
+  const [display, setDisplay] = useState(true);
+  const [page,setPage] = useState(1);
   const [previous, setPrevious] = useState(+localStorage.getItem("previousId"));
   const [tab, setTab] = useState({
     tab: +localStorage.getItem("tab"),
@@ -38,7 +39,7 @@ const Category = () => {
         })
         setPrevious(0);
     }
-  }, []);
+  }, [page]);
   useEffect(() => {
     localStorage.setItem("tab", +tab.tab);
     localStorage.setItem("id", +tab.id);
@@ -46,10 +47,9 @@ const Category = () => {
     localStorage.setItem("tabName", JSON.stringify(tabName));
     localStorage.setItem("previousId", +previous);
   }, [tab]);
-  const showCategories = async () => {
+  const showCategories = async (keyword) => {
     try {
-      const results = await getCategories(1);
-      console.log(results);
+      const results = await getCategories(page,keyword, display);
       if (results) {
         setCategories(results);
       }
@@ -110,7 +110,17 @@ const Category = () => {
           : "Quản lý sản phẩm"}
       </h3>
       <h5 className="list">Danh sách</h5>
-    
+      {tab.tab === 0 && (
+  <Button
+    onClick={() => {
+      setDisplay(!display);
+      showCategories("");
+    }}
+  >
+    {display ? "Ẩn" : "Xem tất cả"}
+  </Button>
+)}
+
       {tab.tab === 0 ? (
         ""
       ) : (
@@ -124,33 +134,45 @@ const Category = () => {
           </div>
         </>
       )}
-      {categories.data &&
-        categories.data.length > 0 &&
-        (tab.tab === 0 ? (
-          <TableCategory
-            tabName={tabName}
-            setTabName={setTabName}
-            setTab={setTab}
-            tab={tab}
-            data={categories}
-          />
-        ) : tab.tab === 1 ? (
-          <TableSubCategory
-            tabName={tabName}
-            setTabName={setTabName}
-            tab={tab}
-            setTab={setTab}
-            data={tab.id}
-          />
-        ) : (
-          <TableProduct
-            tabName={tabName}
-            setTabName={setTabName}
-            tab={tab}
-            setTab={setTab}
-            data={tab.id}
-          />
-        ))}
+  
+  {(() => {
+  switch (tab.tab) {
+    case 0:
+      return (
+        <TableCategory
+          tabName={tabName}
+          setTabName={setTabName}
+          setTab={setTab}
+          tab={tab}
+          data={categories}
+          page={page}
+          setPage={setPage}
+          showCategories={showCategories}
+        />
+      );
+    case 1:
+      return (
+        <TableSubCategory
+          tabName={tabName}
+          setTabName={setTabName}
+          setTab={setTab}
+          tab={tab}
+          data={tab.id}
+        />
+      );
+    default:
+      return (
+        <TableProduct
+          tabName={tabName}
+          setTabName={setTabName}
+          setTab={setTab}
+          tab={tab}
+          data={tab.id}
+        />
+      );
+  }
+})()}
+
     </>
   );
 };

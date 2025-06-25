@@ -37,7 +37,7 @@ let getProductsRandom = async (id) => {
     }
   });
 };
-let   handleCheckOutStock = async (data) => {
+let handleCheckOutStock = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let array = [];
@@ -93,6 +93,9 @@ let getProductBySubCategory = async (page, id,sort) => {
           {
             model: db.product_detail,
           },
+          {
+            model:db.brand
+          }
         ],
         limit: 10,
         offset: (page - 1) * 10,
@@ -180,7 +183,6 @@ let getDataProductById = async (id) => {
     }
   });
 };
-
 let getSubProductByTypeClassify = async (listTypeClassifyDetail) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -539,7 +541,6 @@ const saveImage = async (files, productDetailId) => {
     });
   }
 };
-
 let restoreProductById = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -931,9 +932,66 @@ function hasNoMatchingSubProduct(data, typeClassifyDetails) {
     );
   });
 }
+let setBrandorPost = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if(data.type == "brand"){
+         const rs = await db.brand.findOne({
+          where:{
+            brandCode:data.code
+          }
+         }) 
+         if(rs){
+          for(let i = 0; i < data.listProd.length; i++){
+            console.log(prod);
+            
+            let prod = await db.product.findOne({
+              where:{
+                id:data.listProd[i]
+              }
+            })
+            prod.brandId = rs.id;
+            await prod.save();
+          }
+          await rs.save();
+          resolve("Ok")
+         }else{
+          resolve()
+         }
+      }
+     else{
+      const rs = await db.post.findOne({
+        where:{
+          id:data.code
+        }
+       })
+       if(rs){
+        for(let i = 0; i < data.listProd.length; i++){
+          let prod = await db.product.findOne({
+            where:{
+              id:data.listProd[i]
+            }
+          })
+          prod.postId = rs.id;
+          await prod.save();
+        }
+        await rs.save();
+        resolve("Ok")
+       }else{
+        resolve()
+       }
 
+     }
+
+
+    } catch (e) {
+      resolve();
+    }
+  });
+};
 
 module.exports = {
+  setBrandorPost,
   getSubProd,
   getProductBySubCategory,
   getDataProductById,

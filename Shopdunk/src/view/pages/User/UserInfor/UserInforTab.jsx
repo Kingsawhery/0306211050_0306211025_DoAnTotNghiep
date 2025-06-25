@@ -3,22 +3,47 @@ import { TextField, FormControl, InputLabel, MenuItem, Select } from '@mui/mater
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { getInfoUser } from '../../../../services/userServices'; // Tuỳ bạn import API ở đâu
+import { getInfoUser, changeUser } from '../../../../services/userServices'; // Tuỳ bạn import API ở đâu
+import { validateEmail, validatePhone, validateUserName } from '../../../../function/validate';
+import { toast } from 'react-toastify';
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-const UserInfoForm = () => {
-  const [data, setData] = useState({
-    username: '',
-    email: '',
-    phone: '',
-    birthday: '',
-    address: '',
-    gender: '',
-  });
-  const [birthdate, setBirthdate] = useState('');
+const UserInfoForm = ({ data, setData }) => {
+  const navigate = useNavigate();
   useEffect(() => {
     handleGetDataUser();
   }, []);
+  const handleChangeData = async () => {
+    console.log(data);
 
+    if (
+      validateEmail(data.email) &&
+      validatePhone(data.phone)
+    ) {
+      const rs = await changeUser(data);
+      console.log(rs);
+      if (rs.EC === 0) {
+        localStorage.clear();
+        window.location.reload();
+        navigate("/login");
+      } else {
+        toast("Thay đổi thông tin thất bại vui lòng thử lại!")
+      }
+
+      // const rsRegister = await userServices(data);
+      // if () {
+      //   toast.dismiss();
+      //   toast(rsRegister.EM);
+      // } else {
+      //   toast.dismiss();
+      //   toast("Tạo tài khoản thành công!");
+      //   navigate("/login");
+      // }
+    } else {
+
+    }
+  }
   const handleGetDataUser = async () => {
     try {
       const raw = localStorage.getItem('user');
@@ -29,12 +54,14 @@ const UserInfoForm = () => {
 
       if (userData) {
         setData({
+          ...data,
           username: userData.username || '',
           email: userData.email || '',
           phone: userData.phone || '',
           birthday: userData.birthday || '',
           address: userData.address || '',
           gender: userData.gender,
+          image: userData.image || ''
         });
       }
     } catch (e) {
@@ -112,34 +139,35 @@ const UserInfoForm = () => {
         <div className="col-12 d-flex justify-content-between mb-3">
           <div className="col-6 pe-2">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-  label="Birthday"
-  value={data.birthday ? dayjs(data.birthday) : null}
-  onChange={(e) => {
-    setBirthdate(
-      `${e.$y}-${e.$M + 1 > 9 ? e.$M + 1 : `0${e.$M + 1}`}-${e.$D > 9 ? e.$D : `0${e.$D}`} 00:00:00`
-    );
-  }}
-  sx={{
-    '& .MuiOutlinedInput-root': {
-      borderBottom: '1px solid gray',
-      borderRadius: 0,
-      paddingBottom: '2px',
-      paddingTop: '2px',
-      height: '58px',
-      fontSize: '12px',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-  }}
-/>
+              <DateTimePicker
+                label="Birthday"
+                value={data.birthday ? dayjs(data.birthday) : null}
+                onChange={(e) => {
+                  setData({ ...data, birthday: `${e.$y}-${e.$M + 1 > 9 ? e.$M + 1 : `0${e.$M + 1}`}-${e.$D > 9 ? e.$D : `0${e.$D}`} 00:00:00` })
+                  // setBirthdate(
+                  //    `${e.$y}-${e.$M + 1 > 9 ? e.$M + 1 : `0${e.$M + 1}`}-${e.$D > 9 ? e.$D : `0${e.$D}`} 00:00:00`
+                  // );
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderBottom: '1px solid gray',
+                    borderRadius: 0,
+                    paddingBottom: '2px',
+                    paddingTop: '2px',
+                    height: '58px',
+                    fontSize: '12px',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: 'none',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    border: 'none',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    border: 'none',
+                  },
+                }}
+              />
 
             </LocalizationProvider>
           </div>
@@ -149,7 +177,7 @@ const UserInfoForm = () => {
               <InputLabel shrink>Giới tính</InputLabel>
               <Select
                 value={data.gender === true ? 1 : data.gender === false ? 0 : ''}
-                onChange={(e) => setData({ ...data, gender: e.target.value === 1 })}
+                onChange={(e) => setData({ ...data, gender: e.target.value == 1 ? true : false })}
                 style={{ height: '42px' }}
               >
                 <MenuItem value="">
@@ -161,6 +189,9 @@ const UserInfoForm = () => {
             </FormControl>
           </div>
         </div>
+      </div>
+      <div className='d-flex justify-content-end mt-5'>
+        <Button variant='warning' onClick={handleChangeData}>Save Changes</Button>
       </div>
     </div>
   );

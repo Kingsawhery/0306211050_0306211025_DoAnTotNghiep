@@ -35,6 +35,7 @@ import ResetPassword from "./components/forgotpassword/resetpassword";
 import ListPost from "./view/pages/Admin/Management/Post/ListPost";
 import EditPost from "./view/pages/Admin/Management/Post/EditPost";
 import Brand from "./view/pages/Admin/Management/Brand/Brand";
+import Promotion from "./view/pages/Admin/Management/Promotion/Promotion";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
@@ -128,6 +129,7 @@ useEffect(() => {
                 <Route path="tin-tuc" element={<ListPost />} />
                 <Route path="tin-tuc/:id" element={<EditPost />} />
                 <Route path="tin-tuc/tao-moi" element={<Post />} />
+                <Route path="promotions" element={<Promotion />} />
 
                 <Route path="create-product" element={<CreateNewProduct />} />
                 <Route path="user" element={<User />}></Route>

@@ -44,11 +44,8 @@ export default function Brand() {
         try {
             const results = await getAllBrands(page);
             if (results) {
-                console.log(results);
-
                 setBrands(results.data);
                 setPageSize(results.totalPages);
-
                 setIsLoading(false);
             }
         } catch (e) {

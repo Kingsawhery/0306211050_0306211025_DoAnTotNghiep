@@ -9,6 +9,28 @@ import { jwtDecode } from "jwt-decode";
 require("dotenv").config();
 const path = require("path");
 
+const changeDataUser = async (req, res) => {
+  try {
+    if (!req.body.email || !req.body.phone || !req.body.id || !req.body.token) {
+      return res.status(200).json({
+        EM: "Missing required parameter",
+        EC: "1",
+        DT: "",
+      });
+    } 
+    let data = await loginRegisterService.changeUser(req.body);
+    return res.status(200).json({
+      data: {
+        EM: data.EM,
+        EC: data.EC,
+      },
+    });
+  } catch (e) {
+    return res.status(200).json({ EM: "err from services", EC: "-1", DT: "" });
+  }
+  console.log("<<<check call me", req.body);
+};
+
 const handleRegister = async (req, res) => {
   try {
     console.log(req.body);
@@ -45,8 +67,8 @@ const handleLogin = async (req, res) => {
     let data = await loginRegisterService.handleLoginUser(a);
     if (data.EC == "1") {
       return res.status(200).json({
-        EM: "Account is not define",
-        EC: "400",
+        EM: data.EM,
+        EC: data.EC,
       });
     }
     const token = userService.random(200);
@@ -325,4 +347,5 @@ module.exports = {
   handleResetPassword,
   handleOTP,
   handleVerify,
+  changeDataUser
 };

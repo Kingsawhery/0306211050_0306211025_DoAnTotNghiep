@@ -17,9 +17,9 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [switchList, setSwitchList] = useState(false);
   const [listBrands, setListBrands] = useState([]);
-  const [currentTab,setCurrentTab] = useState({
-    name:"",
-    id:0,
+  const [currentTab, setCurrentTab] = useState({
+    name: "",
+    id: 0,
 
   });
   const [listProd, setListProd] = useState({
@@ -64,9 +64,9 @@ const HomePage = () => {
       console.log("Error fetching products", e);
     }
   };
-  const getProductSearchList = async (name, id,keyword) => {
+  const getProductSearchList = async (name, id, keyword) => {
     try {
-      const products = await getAllProductByBrand(1, id, null,keyword);
+      const products = await getAllProductByBrand(1, id, null, keyword);
       if (products) {
         setListProd({ name: name, products: products.data });
       }
@@ -85,32 +85,42 @@ const HomePage = () => {
 
       {/* Brand filter section */}
       <div className="brands">
-        <div className="search">
-          <Form.Control onChange={_.debounce((e)=>{
+        {currentTab.id !== 0 && <div className="search d-flex justify-content-end">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight:"12px"}}>
+  <Form.Label style={{ margin: 0 }}>
+    Tìm kiếm:
+  </Form.Label>
+</div>
+          <Form.Control style={{
+            width: "20%",
+            marginRight:"20px"
+          }} onChange={_.debounce((e) => {
             getProductSearchList(currentTab.name, currentTab.id, e.target.value)
-          },1000)}/>
-        </div>
+            
+          }, 1000)} />
+        </div> }
+        
         <span
           className="div-brand"
-          style={currentTab.id === 0 ? {backgroundColor:"#c1c1c1"} : {}}
+          style={currentTab.id === 0 ? { backgroundColor: "#c1c1c1" } : {}}
           key="0"
           onClick={() => {
             setCurrentTab(0);
-            setCurrentTab({...currentTab,name:"",id:0})
+            setCurrentTab({ ...currentTab, name: "", id: 0 })
             setSwitchList(false);
           }}
-         
+
         >
           All
         </span>
         {listBrands.map((item, index) => (
           <span
             className="div-brand"
-          style={currentTab.id === index + 1 ? {backgroundColor:"#c1c1c1"} : {}}
+            style={currentTab.id === index + 1 ? { backgroundColor: "#c1c1c1" } : {}}
             key={index + 1}
             onClick={() => {
               setSwitchList(true);
-              setCurrentTab({...currentTab,name:item.name,id:item.id})
+              setCurrentTab({ ...currentTab, name: item.name, id: item.id })
               getProductList(item.name, item.id);
             }}
           >
@@ -143,9 +153,9 @@ const HomePage = () => {
         <div className="not-found-product d-flex justify-content-center" style={{
         }}>
           <img
-          style={{
-            width:"50%"
-          }}
+            style={{
+              width: "50%"
+            }}
             src={`${process.env.REACT_APP_LOCALHOST_SERVER}/no-product-found.png`}
             alt="Không tìm thấy sản phẩm"
           />

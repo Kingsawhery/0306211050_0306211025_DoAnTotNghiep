@@ -25,18 +25,17 @@ export function Invoices() {
     const [currentRow, setCurrentRow] = useState(0);
     useEffect(() => {
         handleGetAllInvoiceStatus();
-        handleGetAllInvoiceByStatus(1)
+        handleGetAllInvoiceByStatus(currentTab)
     }, [page])
     
     const handleGetAllInvoiceByStatus = async (id) => {
-        const currentTab = id ? id : 1;
         try{
             let token = JSON.parse(user).token;
             let userId = JSON.parse(user).id;
             const dataInvoice = {
                 token,
                 userId,
-                currentTab,
+                currentTab: id,
                 page
             }
             const data = await getInvoiceByStatus(dataInvoice);
@@ -104,6 +103,7 @@ export function Invoices() {
                                 <div
                                     onClick={() => {
                                         setCurrentTab(item.id)
+                                        setPage(1)
                                         handleGetAllInvoiceByStatus(item.id)
                                     }
                                     }

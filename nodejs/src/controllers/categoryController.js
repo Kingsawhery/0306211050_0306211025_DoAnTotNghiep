@@ -66,8 +66,11 @@ let getListNameCategoryAdmin = async (req, res)=>{
 }
 
 let getCategories = async (req, res) => {
-  let page = req.params.page;
-  let { count, rows } = await readCategories(page);
+  let page = req.query.page;
+  let keyword = req.query.keyword;
+  let display = req.query.display;
+
+  let { count, rows } = await readCategories(page,keyword, display);
   return res.status(200).json({
     data: {
       total: count,
@@ -148,10 +151,9 @@ let editCategory = async (req, res) => {
 //Xóa danh mục
 let deleteCategory = async (req, res) => {
   try {
-    let id = await req.params.id;
-    console.log(id);
+    let id = await req.body.id;
     let message = await destroyCategory(id);
-    return res.status(204).json({
+    return res.status(200).json({
       message: message,
       status: 204,
     });
