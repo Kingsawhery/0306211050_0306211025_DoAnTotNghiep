@@ -218,7 +218,7 @@ const CreateNewProduct = () => {
           )}
 
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridProductName">
+            <Form.Group className="mb-4 col-6" controlId="formGridProductName">
               <Form.Label onClick={()=>{
                 console.log(data.fileImage)
               }}>Tên sản phẩm</Form.Label>
@@ -229,6 +229,27 @@ const CreateNewProduct = () => {
                 type="ProductName"
                 placeholder="Enter Product Name"
               />
+            </Form.Group>
+            <Form.Group className="mb-4 col-6" controlId="formGridPrice1">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                onChange={handleData}
+                value={data.price}
+                defaultValue={1000}
+                name="price"
+                placeholder="Enter price..."
+                type="number"
+                style={{ width: "100%" }}
+                pattern="[0-9]*"
+                min={1000}
+              />
+              {!data.price && !validateNumber(data.price) ? (
+                <p className="text-danger error-message">
+                  Vui lòng chỉ nhập số!
+                </p>
+              ) : (
+                <></>
+              )}
             </Form.Group>
           </Row>
 
@@ -284,61 +305,11 @@ const CreateNewProduct = () => {
             </Form.Group>
           </Row>
           <Row className="mb-2">
-            <Form.Group className="mb-4 col-6" controlId="formGridPrice1">
-              <Form.Label>Price</Form.Label>
-              <Form.Control
-                onChange={handleData}
-                value={data.price}
-                defaultValue={1000}
-                name="price"
-                placeholder="Enter price..."
-                type="number"
-                style={{ width: "100%" }}
-                pattern="[0-9]*"
-                min={1000}
-              />
-              {!data.price && !validateNumber(data.price) ? (
-                <p className="text-danger error-message">
-                  Vui lòng chỉ nhập số!
-                </p>
-              ) : (
-                <></>
-              )}
-            </Form.Group>
+            
 
-            <Form.Group className="mb-2 col-6" controlId="formGridPromotion1">
-              <Form.Label>Promotion</Form.Label>
-              <Form.Control
-                onChange={handleData}
-                name="promotion"
-                placeholder="Enter promotion..."
-                type="number"
-                pattern="[0-9]*"
-                style={{ width: "100%" }}
-                min={0}
-                max={100}
-              />
-              {!data.promotion && !validateNumber(data.promotion) ? (
-                <p className="text-danger error-message">
-                  Vui lòng chỉ nhập số!
-                </p>
-              ) : (
-                <></>
-              )}
-            </Form.Group>
+            
           </Row>
-          <Row>
-            <Form.Group>
-              <Form.Label>Tồn kho</Form.Label>
-              <Form.Control
-                style={{ width: "100%" }}
-                name="stock"
-                type="number"
-                min={0}
-                onChange={handleData}
-                defaultValue={0}
-              />
-            </Form.Group>
+          <Row> 
             <Form.Group>
               <Form.Label>Phân loại</Form.Label>
               {/* <Form.Select

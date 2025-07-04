@@ -122,32 +122,27 @@ const Cart = () => {
         setPromotionInfor(promotion);
         if (promotion) {
           let newTotalPromotion = 0;
-          listProductInCart.map((item) => {
-            if (promotion.products.length > 0) {
-              for (let i = 0; i < promotion.products.length; i++) {
-                if (item.status) {
-                  if (
-                    promotion.products.length > 0 &&
-                    item.sub_product.product_detail.productId ===
-                    promotion.products[i].id
-                  ) {
-                    newTotalPromotion +=
-                      (item.sub_product.price *
-                        item.quantity *
-                        (100 - promotion.percent)) /
-                      100;
-                  } else {
-                    newTotalPromotion +=
-                      (item.sub_product.price *
-                        item.quantity)
-                  }
-                }
-              }
+
+          listProductInCart.forEach((item) => {
+            if (!item.status) return; // skip item ko active
+            console.log(listProductInCart);
+            
+            const isDiscounted = promotion.products.some(
+              (p) => p.promotionProduct.productId === item.sub_product.product_detail.productId
+            );
+          
+            if (isDiscounted) {
+              newTotalPromotion +=
+                (item.sub_product.price * item.quantity * (100 - promotion.percent)) / 100;
             } else {
               newTotalPromotion += item.sub_product.price * item.quantity;
             }
-            setTotalPromotion(newTotalPromotion);
           });
+          
+          setTotalPromotion(newTotalPromotion);
+          
+          console.log(newTotalPromotion);
+          
         }
         setProductInPromotion(promotion.products);
       } else {
@@ -542,10 +537,10 @@ const Cart = () => {
                                         100
                                         ? `${(
                                           (item.sub_product.price *
-                                            (100 -
+                                            ((100 -
                                               paymentInformation.promotion
                                                 .percent)) /
-                                          100
+                                          100)
                                         )
                                           .toLocaleString("vi-VN")
                                           .replace(/,/g, ".")} VNĐ`

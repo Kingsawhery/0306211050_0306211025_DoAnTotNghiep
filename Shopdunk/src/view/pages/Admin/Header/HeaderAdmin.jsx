@@ -13,13 +13,11 @@ const HeaderAdmin = () => {
       <div className="admin-container">
         <div className="admin-logo">
           <img
-            src="https://shopdunk.com/images/thumbs/0012445_Logo_ShopDunk.png"
+            src={`${process.env.REACT_APP_LOCALHOST_SERVER}/bannerImage/avatar_preview_rev_1.png`}
             alt="Admin Logo"
           />
         </div>
         <div className="admin-actions">
-          <FontAwesomeIcon icon={faBell} className="admin-icon" title="Thông báo" />
-          <FontAwesomeIcon icon={faUser} className="admin-icon" title="Tài khoản" />
           <FontAwesomeIcon
             icon={faSignOut}
             className="admin-icon"

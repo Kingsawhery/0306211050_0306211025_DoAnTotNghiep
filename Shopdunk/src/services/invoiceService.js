@@ -7,9 +7,9 @@ export const createInvoice = (data) =>{
 export const getInvoiceStatus = () =>{
     return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-status`);
 }
-export const getInvoiceByStatus = (data) =>{
+export const getInvoiceByStatus = (data, keyword) =>{
   
-    return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}`);
+    return axios.get(`${process.env.REACT_APP_API_SERVER}/get-invoice-by-status?id=${data.currentTab ? data.currentTab : data.id}&page=${data.page}&userId=${data.userId}&token=${data.token}&keyword=${keyword !== "" ? keyword : null}`);
 }
 export const getInvoiceByStatusUser = (data) =>{
 

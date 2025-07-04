@@ -11,6 +11,8 @@ import _ from "lodash";
 import { ArrowRight, Check, DeleteOutline, EditDocument, ReplayOutlined } from "@mui/icons-material";
 import ProductEdit from "./ProductEdit";
 import RestoreProduct from "./RestoreProduct";
+import ModalAddProductPromotion from "./ModalAddProductPromotion";
+import { toast } from "react-toastify";
 const TableProduct = (props) => {
   const user = JSON.parse(localStorage.getItem("user")).token;
   const userId = JSON.parse(localStorage.getItem("user")).id;
@@ -26,6 +28,7 @@ const TableProduct = (props) => {
   const [post, setPost] = useState(false);
 
   const [open, setOpen] = useState(false);
+  const [openPromotion, setOpenPromotion] = useState(false);
   const [restoreProduct, setRestoreProduct] = useState({});
   const [openRestore, setOpenRestore] = useState(false);
   const [openSubProdTab, setOpenSubProdTab] = useState(false);
@@ -80,6 +83,15 @@ const TableProduct = (props) => {
   return (
     <>
       <div className="button-create-new-product d-flex justify-content-end gap-3 p-4">
+        <Button variant="success" className=""
+        onClick={()=>{
+          if(dataChange.listProd.length > 0){
+            setOpenPromotion(true);
+          }else{
+            toast("Vui lòng chọn sản phẩm bằng cách tick vào ô!")
+          }
+        }}
+        >+ Thêm khuyến mãi</Button>
       <Button
     variant={post ? "outline-success" : "success"}
     onClick={() => {
@@ -294,7 +306,7 @@ const TableProduct = (props) => {
 
           {open && <ModalConfirmDeleteProduct item={deleteProduct} handleDelete={handleDelete} setOpen={setOpen} />}
           {openRestore && <RestoreProduct item={restoreProduct} handleRestore={handleRestore} setOpenRestore={setOpenRestore} />}
-
+              {openPromotion && <ModalAddProductPromotion setOpenPromotion={setOpenPromotion} listProd={dataChange.listProd} setDataChange={setDataChange}/>}
         </> : (<div className="not-found">
           <img src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/no_result.gif`}></img>
         </div>)}

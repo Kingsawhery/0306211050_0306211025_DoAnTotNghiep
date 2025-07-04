@@ -24,7 +24,8 @@ import { Context } from "../../../../App";
 import _ from "lodash";
 import ModalConfirm from "./ModalConfirm";
 import { Helmet } from "react-helmet";
-
+import Comment from "../../../../components/Comment/Comment";
+import { getComment } from "../../../../services/commentService";
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [showButton, setShowButton] = useState(true);
@@ -66,7 +67,6 @@ const ProductDetailPage = () => {
   //   setListTypeClassifyDetail({});
   //   window.scrollTo({ top: "0", behavior: "instant" });
   // }, []);
-  
   useEffect(() => {
     getProduct();
     getProductDetail();
@@ -182,9 +182,10 @@ const ProductDetailPage = () => {
     setPropertySelected({ ...propertySelected, [name]: index });
   };
 
+console.log(product, productDetail);
 
   return (
-    product && productDetail && (
+    product && productDetail ? (
       <>
       <Helmet>
         <meta charSet="utf-8" />
@@ -439,7 +440,6 @@ const ProductDetailPage = () => {
           </div>
         </div>
         
-        
         {productDetail.product?.post?.content && (
           <>
             <div className="post-page container">
@@ -451,8 +451,10 @@ const ProductDetailPage = () => {
       
       }
       {open && <ModalConfirm data={subProduct} handleAddCart={handleAddCart} setOpen={setOpen}/>}
+      {/* <Comment id={id}/> */}
+
       </>
-    )
+    ) : <div style={{display:"flex", justifyContent:"center"}}><img style={{width:"70%"}} src={`${process.env.REACT_APP_LOCALHOST_SERVER}/productImage/no_result.gif`}></img></div>
   );
 };
 export default ProductDetailPage;

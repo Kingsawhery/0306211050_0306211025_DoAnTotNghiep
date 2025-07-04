@@ -1,0 +1,145 @@
+import { Bar } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+    Tooltip,
+    ArcElement,
+    Legend,
+} from "chart.js";
+import { TimePicker } from "@mui/x-date-pickers";
+import MonthYearPicker from "./TimePicker";
+import { useEffect, useState } from "react";
+import { getTop10SubProd, getTop10Prod, getTop10Users, getTop10Invoices } from "../../../../services/dashboardService";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
+
+export default function TopInvoices() {
+    const [selectedTime, setSelectedTime] = useState({
+        year: new Date().getFullYear().toString(),
+        month: null,
+    });
+    const [data, setData] = useState([]);
+    const handleGetListData = async (year, month) => {
+        let rs = await getTop10Invoices(year, month);
+        if (rs && rs?.length > 0) {
+            setData(rs);
+        } else {
+            setData([])
+        }
+    }
+    useEffect(() => {
+        handleGetListData(selectedTime.year, selectedTime.month);
+    }, [selectedTime]);
+    const labels = data.map(
+        (item) => item.User?.username ? ` ${item.invoiceCode} (${item.User?.username})` : `${item.invoiceCode} (Khác)`
+    );
+    const values = data.map((item) => Number(item.total));
+    const options = {
+        indexAxis: 'x', // Dọc (cột đứng)
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            datalabels: {
+                color: '#333',
+                anchor: 'end',
+                align: 'top',
+                formatter: function (value) {
+                    return value.toLocaleString("vi-VN") + " ₫";
+                },
+                font: {
+                    weight: 'bold',
+                    size: 12,
+                },
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `Tổng tiền: ${context.raw.toLocaleString("vi-VN")} ₫`;
+                    },
+                },
+            },
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: "Mã Hóa Đơn",
+                    font: {
+                        weight: "bold",
+                        size: 14,
+                    }
+                },
+                ticks: {
+                    maxRotation: 45,
+                    minRotation: 30,
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function (value) {
+                        return value.toLocaleString("vi-VN") + " ₫";
+                    }
+                },
+                title: {
+                    display: true,
+                    text: "Tổng tiền",
+                    font: {
+                        weight: "bold",
+                        size: 14,
+                    }
+                }
+            }
+        }
+    };
+    
+    
+    
+    const COLORS = [
+        "#f87171",
+        "#fb923c",
+        "#facc15",
+        "#4ade80",
+        "#2dd4bf",
+        "#60a5fa",
+        "#a78bfa",
+        "#f472b6",
+        "#94a3b8",
+        "#fcd34d",
+    ];
+    const chartData = {
+        labels,
+        datasets: [
+            {
+                label: "Units Sold",
+                data: values,
+                backgroundColor: COLORS,
+                borderRadius: 8,
+            },
+        ],
+    };
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+            <MonthYearPicker onChange={(val) => setSelectedTime(val)} />
+            {/* Chart */}
+            <div className="p-4" >
+                <h2 className="text-xl font-semibold mb-2 text-center"
+                    style={{
+                        minHeight: "77px"
+                    }}>
+                    📊 Top 10 hóa đơn mua nhiều nhất theo {selectedTime.month !== null ? `tháng ${selectedTime.month}` : ``} năm {selectedTime.year}
+                </h2>
+                <div className="p-4">
+                    <Bar data={chartData} options={options} style={{ height: "400px", maxHeight: "100%" }} />
+                </div>
+            </div>
+        </div>
+    );
+}

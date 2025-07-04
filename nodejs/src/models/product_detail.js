@@ -19,7 +19,13 @@ module.exports = (sequelize, DataTypes) => {
       product_detail.belongsTo(models.post,{
         foreignKey: 'postId'
       })
-
+      product_detail.hasMany(models.Comment, {
+        foreignKey: 'productDetailId',
+        as: 'comments',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      });
+    
     }
   }
   product_detail.init(

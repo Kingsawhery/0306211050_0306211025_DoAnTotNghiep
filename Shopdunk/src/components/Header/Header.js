@@ -17,7 +17,7 @@ const Header = () => {
   let user = localStorage.getItem("user");
   const [categories, setCategories] = useState([]);
   const [admin, setAdmin] = useState(false);
-
+  
   try {
     user = JSON.parse(user);
   } catch (e) {}
@@ -25,7 +25,6 @@ const Header = () => {
   useEffect(() => {
     try {
       if(user){
-        console.log("Sao z");
         
         check();
         checkAdmin();
@@ -56,6 +55,7 @@ const Header = () => {
       const checkData = await checkAdminRole();
       if (checkData.data.EC === 1) {
         setAdmin(true);
+        navigate("/admin")
       }
       return checkData;
     } catch (e) {

@@ -14,7 +14,7 @@ const handleCreate = () =>{
       style={{ display: 'block', position: 'initial' }}
     >
       <Modal.Dialog>
-        <Modal.Header closeButton>
+        <Modal.Header closeButto onClick={()=>props.setShowModal(false)}>
           <Modal.Title>Xác nhận thanh toán</Modal.Title>
         </Modal.Header>
 

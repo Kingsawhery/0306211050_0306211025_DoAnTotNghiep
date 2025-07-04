@@ -10,8 +10,10 @@ import ProductCard from "../../../../components/Product/ProductCard/ProductCard"
 import PostRow from "../../../../components/Post/PostRow";
 
 import "./Homepage.scss";
-import { Form } from "react-bootstrap";
+import { Container, Form, TabContainer } from "react-bootstrap";
 import _ from "lodash";
+import OpenStreetMapExample from "../GoogleMaps/GoogleMap";
+import { MapContainer } from "react-leaflet";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
@@ -164,6 +166,10 @@ const HomePage = () => {
 
       {/* Posts below */}
       <PostRow />
+<div className="container">
+<OpenStreetMapExample/>
+</div>
+
     </>
   );
 };

@@ -36,6 +36,7 @@ import ListPost from "./view/pages/Admin/Management/Post/ListPost";
 import EditPost from "./view/pages/Admin/Management/Post/EditPost";
 import Brand from "./view/pages/Admin/Management/Brand/Brand";
 import Promotion from "./view/pages/Admin/Management/Promotion/Promotion";
+import Property from "./view/pages/Admin/Management/Property/Property";
 const App = () => {
   const user = localStorage.getItem("user");
   const [totalCart, setTotalCart] = useState(0);
@@ -136,6 +137,8 @@ useEffect(() => {
                 <Route path="brands" element={<Brand />}></Route>
 
                 <Route path="invoice" element={<Invoices />}></Route>
+                <Route path="properties" element={<Property />}></Route>
+
               </Route>
             
 

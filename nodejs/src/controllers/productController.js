@@ -22,7 +22,7 @@ import {
 const putBrandOrPost = async (req, res) => {
   try{
     let data = await req.body;
-    if(!data.code || data.listProd?.length <=0 || !data.type){
+    if(!data.code || data.listProd?.length <= 0 || !data.type){
       return res.status(200).json({
         err:"fail"
       })

@@ -1,13 +1,14 @@
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
-import { getInvoiceByStatus, getInvoiceStatus,getSubProd } from "../../../../../services/invoiceService";
+import { cancelInvoice, getInvoiceByStatus, getInvoiceStatus,getSubProd } from "../../../../../services/invoiceService";
 import { get } from "lodash";
 import UploadIcon from '@mui/icons-material/Upload';
 import ModalUpload from "./ModalUpload";
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import "./Invoice.scss"
-import { KeyboardArrowDownOutlined, KeyboardArrowUpOutlined } from "@mui/icons-material";
+import { CancelPresentation, KeyboardArrowDownOutlined, KeyboardArrowUpOutlined } from "@mui/icons-material";
+import { Form } from "react-bootstrap";
 export function Invoices() {
     const [isLoading, setIsLoading] = useState(false)
     const [page, setPage] = useState(1)
@@ -21,14 +22,22 @@ export function Invoices() {
         invoiceCode: "",
         username: ""
     })
+    const [keyword,setKeyword] = useState("");
     const [dataSub,setDataSub] = useState([]);
     const [currentRow, setCurrentRow] = useState(0);
     useEffect(() => {
         handleGetAllInvoiceStatus();
-        handleGetAllInvoiceByStatus(currentTab)
+        handleGetAllInvoiceByStatus(currentTab,null)
     }, [page])
+        const handleCancelInvoice = async (id) => {
+            let rs = await cancelInvoice(id);
+            console.log(rs);
     
-    const handleGetAllInvoiceByStatus = async (id) => {
+            if (rs.data.message == "Thành công!") {
+                handleGetAllInvoiceByStatus(1,null);
+            }
+        }
+    const handleGetAllInvoiceByStatus = async (id,value) => {
         try{
             let token = JSON.parse(user).token;
             let userId = JSON.parse(user).id;
@@ -38,9 +47,7 @@ export function Invoices() {
                 currentTab: id,
                 page
             }
-            const data = await getInvoiceByStatus(dataInvoice);
-            console.log(data);
-            
+            const data = await getInvoiceByStatus(dataInvoice, value);            
             if (data) {
                 setInvoiceList(data.data.data);
             } else {
@@ -97,14 +104,34 @@ export function Invoices() {
                     }}>
                         Danh sách hóa đơn
                     </h1>
+                    <div className="relative w-full max-w-sm d-flex justify-content-end">
+                    <span className=" d-flex items-center text-gray-400 align-items-center m-3">
+  <i className="fas fa-search" />
+</span>
+    <Form.Control
+        type="text"
+        placeholder="Tìm kiếm hóa đơn..."
+        value={keyword}
+        onChange={(e) => {
+            setKeyword(e.target.value);
+            handleGetAllInvoiceByStatus(currentTab, e.target.value);
+        }}
+        style={{
+            width:"300px"
+        }}
+        className="pl-10 pr-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+    />
+</div>
+
                     <div className="status-invoice d-flex justify-content-center">
                         {invoiceStatus && invoiceStatus.length > 0 ? (
                             invoiceStatus.map((item, index) => (
                                 <div
                                     onClick={() => {
                                         setCurrentTab(item.id)
+                                        setKeyword("")
                                         setPage(1)
-                                        handleGetAllInvoiceByStatus(item.id)
+                                        handleGetAllInvoiceByStatus(item.id, null)
                                     }
                                     }
                                     style={
@@ -183,7 +210,11 @@ export function Invoices() {
                                                         invoiceCode: item.invoiceCode,
                                                         username: item.name.split("khách hàng ")[1].split(" ")[0]
                                                     })
-                                                }} /> : ""}</td>
+                                                }} /> : ""}
+                                                {currentTab === 1 && <CancelPresentation onClick={() => {
+                                                                                                                handleCancelInvoice(item.id);
+                                                                                                            }} />}
+                                                </td>
 
 
                                             </tr>

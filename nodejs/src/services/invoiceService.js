@@ -49,25 +49,29 @@ let createInvoice = async (data) => {
           if (findPromotion) {
             if (findPromotion.products.length > 0) {
               for (let x = 0; x < data.data.length; x++) {
+                let isDiscounted = false;
+            
                 for (let i = 0; i < findPromotion.products.length; i++) {
-
-                  if (findPromotion.products[i].product_detail.sub_products.length > 0) {
-
-                    if (findPromotion.products[i].product_detail.sub_products.find(i => i.id === data.data[x].sub_productId)) {
-                      const subProduct = await db.sub_product.findOne({ where: { id: data.data[x].sub_productId } })
-                      total = total + ((subProduct.price * data.data[x].quantity) * ((100 - findPromotion.percent) / 100))
-                      totalNotIncludePro = totalNotIncludePro + (subProduct.price * data.data[x].quantity);
-                    } else {
-                      const subProduct = await db.sub_product.findOne({ where: { id: data.data[x].sub_productId } })
-                      total = total + (subProduct.price * data.data[x].quantity);
-                      totalNotIncludePro = totalNotIncludePro + (subProduct.price * data.data[x].quantity);
-                    }
+                  const subProducts = findPromotion.products[i].product_detail.sub_products;
+            
+                  if (subProducts.length > 0 && subProducts.find(sp => sp.id === data.data[x].sub_productId)) {
+                    isDiscounted = true;
+                    break; // Đã tìm thấy thì không cần kiểm nữa
                   }
-
                 }
+            
+                const subProduct = await db.sub_product.findOne({ where: { id: data.data[x].sub_productId } });
+            
+                if (isDiscounted) {
+                  total += (subProduct.price * data.data[x].quantity) * ((100 - findPromotion.percent) / 100);
+                } else {
+                  total += subProduct.price * data.data[x].quantity;
+                }
+            
+                totalNotIncludePro += subProduct.price * data.data[x].quantity;
               }
-
             }
+            
           }
         } else {
           resolve({
@@ -439,49 +443,61 @@ let getAllInvoiceByStatusUser = async (data) => {
 let getAllInvoiceByStatus = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let invoices = await db.invoice.findAndCountAll(
-        {
-          where: {
-            statusInvoiceId: data.id,
+      const whereClause = {
+        statusInvoiceId: data.id,
+      };
+      if (data.keyword && data.keyword.trim() !== "null") {
+        const { Op } = require("sequelize");
+        const keyword = data.keyword.trim();
+
+        whereClause[Op.and] = [
+          {
+            [Op.or]: [
+              { name: { [Op.like]: `%${keyword}%` } },
+              { email: { [Op.like]: `%${keyword}%` } },
+              { phone: { [Op.like]: `%${keyword}%` } },
+              { invoiceCode: { [Op.like]: `%${keyword}%` } },
+            ],
           },
-          include: [
-            {
-              model: db.paymentMethod
-            },
-            {
-              model: db.statusInvoice
-            },
-          ],
-          attributes: [
-            "address",
-            "createdAt",
-            "email",
-            "id",
-            "invoiceCode",
-            "name",
-            "note",
-            "paymentMethodId",
-            "phone",
-            "statusInvoiceId",
-            "total",
-            "totalNotIncludePro",
-            "paymentStatus"
-          ],
-          limit: 10,
-          offset: (data.page - 1) * 10,
-        }
-      );
-      if (invoices) {
-        resolve(invoices);
-      } else {
-        resolve();
+        ];
       }
 
+      let invoices = await db.invoice.findAndCountAll({
+        where: whereClause,
+        include: [
+          {
+            model: db.paymentMethod,
+          },
+          {
+            model: db.statusInvoice,
+          },
+        ],
+        attributes: [
+          "address",
+          "createdAt",
+          "email",
+          "id",
+          "invoiceCode",
+          "name",
+          "note",
+          "paymentMethodId",
+          "phone",
+          "statusInvoiceId",
+          "total",
+          "totalNotIncludePro",
+          "paymentStatus",
+        ],
+        limit: 10,
+        offset: (data.page - 1) * 10,
+      });
+
+      resolve(invoices || []);
     } catch (e) {
       reject(e);
     }
   });
-}
+};
+
 let getSubAllInvoice = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {

@@ -967,7 +967,7 @@ let setBrandorPost = async (data) => {
        })
        if(rs){
         for(let i = 0; i < data.listProd.length; i++){
-          let prod = await db.product.findOne({
+          let prod = await  db.product.findOne({
             where:{
               id:data.listProd[i]
             }
@@ -989,7 +989,47 @@ let setBrandorPost = async (data) => {
     }
   });
 };
+// let getProductBySubCategory = async (page, id,sort) => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       let orderOption = [];
 
+//       if (sort == 0) {
+        
+//         orderOption.push(['status', 'ASC']);
+//       } else {
+        
+//         orderOption.push(['status', 'DESC']);
+//       }
+//       console.log(orderOption);
+      
+//       let products = await db.product.findAndCountAll({
+//         where: {
+//           subCategoryId: id,
+//         },
+//         include: [
+//           {
+//             model: db.product_detail,
+//           },
+//           {
+//             model:db.brand
+//           }
+//         ],
+//         limit: 10,
+//         offset: (page - 1) * 10,
+//         order: orderOption,
+//       });
+
+//       if (products) {
+//         resolve(products);
+//       } else {
+//         resolve();
+//       }
+//     } catch (e) {
+//       reject(e);
+//     }
+//   });
+// };
 module.exports = {
   setBrandorPost,
   getSubProd,

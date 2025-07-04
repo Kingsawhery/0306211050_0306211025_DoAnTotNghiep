@@ -1,5 +1,69 @@
 getPromotionByCode
-import {getPromotionByCode, getPromotions, createNewPromotion} from "../services/promotion"
+import {getPromotionByCode, getPromotions, createNewPromotion,createPromotionProduct,editNewPromotion} from "../services/promotion"
+const handleEditPromotions = async(req,res) => {
+    try{
+        const data = await req.body;
+        
+        if(data.id && data.code && data.description && data.number){
+            const promotion = await editNewPromotion(data);
+        if(promotion){
+            return res.status(200).json({
+                promotion
+            })
+        }else{
+            return res.status(200).json({
+                promotion
+            })
+        }
+        }
+        else{
+            return res.status(200).json({
+                EM:"Thiếu mã khuyến mãi!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+
+    }
+}
+const handleCreatePromotionProduct = async(req,res) => {
+    try{
+        const code = req.body.code;
+        const list = req.body.list;
+
+        
+        if(code || code !== "" || list.length > 0){
+            const promotion = await createPromotionProduct(code, list);
+        if(promotion){
+            return res.status(200).json({
+                promotion
+            })
+        }else{
+            return res.status(200).json({
+                promotion
+            })
+        }
+        }
+        else{
+            return res.status(200).json({
+                EM:"Thiếu mã khuyến mãi!"
+            })
+        }
+    }   
+    catch(e){
+        console.log(e);
+
+        return res.status(200).json({
+            message:"Đã có lỗi xảy ra!"
+        })
+        
+    }
+}
 const handleCreatePromotions = async(req,res) => {
     try{
         const data = await req.body;
@@ -88,5 +152,8 @@ const getAllPromotions = async(req,res) => {
 module.exports = {
     getPromotion,
     getAllPromotions,
-    handleCreatePromotions
+    handleCreatePromotions,
+    handleCreatePromotionProduct,
+    handleEditPromotions,
+    
 }

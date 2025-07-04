@@ -8,14 +8,15 @@ import {
   TextField,
   Button
 } from "@mui/material";
-import { createPromotion } from "../../../../../services/promotionService";
+import { createPromotion, putPromotion } from "../../../../../services/promotionService";
 import { toast } from "react-toastify";
 
-export default function FormAddNewPromotion({ open, setOpen, handleGetList, setKeyword }) {
+export default function FormEditPromotion({ open, setOpen, handleGetList, setKeyword, promotion }) {
   const [form, setForm] = useState({
-    code: "",
-    description: "",
-    number: ""
+    id: promotion.id,
+    code: promotion.code,
+    description: promotion.description,
+    number: promotion.percent
   });
 
   const handleChange = (e) => {
@@ -44,7 +45,7 @@ export default function FormAddNewPromotion({ open, setOpen, handleGetList, setK
 
   const handleSubmit = async() => {
     if(form.code !== "" && form.number !== ""){
-        const rs = await createPromotion(form);
+        const rs = await putPromotion(form);
         if(rs?.promotion?.err == 1){
             toast(rs?.promotion?.message)
         }else{
