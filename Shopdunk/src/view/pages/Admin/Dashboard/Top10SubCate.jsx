@@ -27,7 +27,6 @@ export default function TopSubCate() {
     let rs = await getTop10SubCate(year, month);
     if (rs && rs?.length > 0) {
       console.log(rs);
-
       setData(rs);
     } else {
       setData([])
@@ -89,7 +88,6 @@ export default function TopSubCate() {
       },
     ],
   };
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
       <MonthYearPicker onChange={(val) => setSelectedTime(val)} />
@@ -108,7 +106,6 @@ export default function TopSubCate() {
         </div>) : (<div
           style={{
             position: "relative",
-
           }}
           className="text-center text-gray-500 italic p-8">
           <h2 className="mt-4 text-xl font-semibold mb-2 text-center"
@@ -126,7 +123,6 @@ export default function TopSubCate() {
               borderRadius: "50%"
             }}
           >
-
             <div style={{
               position: "absolute",
               right: "40px",

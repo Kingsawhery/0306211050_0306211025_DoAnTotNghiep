@@ -8,7 +8,6 @@ export const CartProvider = ({ children }) => {
       ? JSON.parse(localStorage.getItem("cartItems"))
       : []
   );
-
   const addToCart = (item) => {
     const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
     if (isItemInCart) {
@@ -23,10 +22,8 @@ export const CartProvider = ({ children }) => {
       setCartItems([...cartItems, { ...item, quantity: 1 }]);
     }
   };
-
   const removeFromCart = (item) => {
     const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
-
     if (isItemInCart.quantity === 1) {
       setCartItems(cartItems.filter((cartItem) => cartItem.id !== item.id));
     } else {
@@ -39,29 +36,24 @@ export const CartProvider = ({ children }) => {
       );
     }
   };
-
   const clearCart = () => {
     setCartItems([]);
   };
-
   const getCartTotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
   };
-
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
-
   useEffect(() => {
     const cartItems = localStorage.getItem("cartItems");
     if (cartItems) {
       setCartItems(JSON.parse(cartItems));
     }
   }, []);
-
   return (
     <CartContext.Provider
       value={{

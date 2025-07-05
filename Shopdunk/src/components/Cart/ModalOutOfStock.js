@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom";
 import { Modal,Button } from "react-bootstrap";
 const ModalOutOfStock = (props) => {
 console.log(props);
-
   return (
     <div
       className="modal  modal-confirm-pay"
@@ -12,7 +11,6 @@ console.log(props);
         <Modal.Header >
           <Modal.Title>Các món sau đây đã hết hàng</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           {props.listOutOfStock.map((item,index)=>{
             return(
@@ -22,7 +20,6 @@ console.log(props);
           )
           })}
         </Modal.Body>
-
         <Modal.Footer>
           <Button variant="primary" onClick={()=>{
             props.setShowModal(false);

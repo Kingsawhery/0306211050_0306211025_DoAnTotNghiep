@@ -58,7 +58,9 @@ const TableSubProduct = (props) => {
     const handleCreateSubProd = async () => {
         try {
             const results = await createSubProd(dataSubProd);
-            if (results.err == "success") {
+            console.log(results)
+
+            if (results.err !== "fail") {
                 getSubProducts(page);
                 setOpenCreateSubProd(false)
             }else{
