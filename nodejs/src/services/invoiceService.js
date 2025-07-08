@@ -535,6 +535,7 @@ let changeInvoiceStatus = async (data) => {
   })
 }
 let handleConfirmPayment = async (data) => {
+  try{
   return new Promise(async (resolve, reject) => {
     const invoiceCode = data.orderInfo.split(" ")[data.orderInfo.split(" ").length - 1];
     const invoice = await db.invoice.findOne({
@@ -545,8 +546,8 @@ let handleConfirmPayment = async (data) => {
         model: db.sub_product
       }
     })
-    console.log("ở đây nè cưng: ", invoice.total, data.amount);
-
+    console.log(invoiceCode);
+    
     if (invoice) {
       if (data.message == "Successful.") {
         
@@ -575,6 +576,7 @@ let handleConfirmPayment = async (data) => {
     } else {
       resolve();
     }
+  
     //   try{
     //     const rs = await db.invoice.findOne({
     //       where:{
@@ -591,7 +593,11 @@ let handleConfirmPayment = async (data) => {
     //     reject(e);
     //   }
     // })
-  })
+  })}
+  catch(e){
+    console.log(e);
+    
+  }
 }
 let handleCancelInvoice = async (data) => {
   return new Promise(async (resolve, reject) => {

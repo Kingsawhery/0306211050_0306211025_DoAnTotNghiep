@@ -133,7 +133,6 @@ const putDisplay = async (data) => {
       });
       if(count > 5 || count < 0){
         if(category.display){
-          console.log("t nè 1");
           category.display = false;
           await category.save();
           resolve({
@@ -148,14 +147,12 @@ const putDisplay = async (data) => {
       }else{
         
         if(category.display == true){
-          console.log("t nè 2");
           category.display = false;
           await category.save();
           resolve({
             errCode:1
           })
         }else{
-          console.log("t nè 3");
           category.display = true;
           await category.save();
           resolve({

@@ -5,12 +5,9 @@ const handleCreateInvoice = async(req,res) => {
     try{
        const data = await req.body;       
         if(data.data && data.data.length > 0 && data.phone && data.phone !== "" && data.address && data.address !== ""){
-           
             const rs = await createInvoice(data);   
-              
             if(rs){
                 if(rs.EC === 1){
-
                     res.status(200).json({
                         message:"Tạo hóa đơn thành công!",
                         payment:{
@@ -24,7 +21,6 @@ const handleCreateInvoice = async(req,res) => {
                         err:rs.EC
                     })
                 }
-               
             }else{
                 res.status(200).json({
                     message:"Tạo hóa đơn thất bại!"
@@ -44,7 +40,6 @@ const handleCreateInvoice = async(req,res) => {
         })
     }
 }
-
 const handleGetInvoiceStatus = async(req,res) => {
     try{
         const rs = await getAllInvoiceStatus();
@@ -61,18 +56,15 @@ const handleGetInvoiceStatus = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
     }
 }
-
 const handleGetInvoiceByStatusUser = async(req,res) => {
     try{
         const data = req.query;
         const rs = await getAllInvoiceByStatusUser(data);
-        
         if(rs){
             return res.status(200).json({
                 data:rs
@@ -86,7 +78,6 @@ const handleGetInvoiceByStatusUser = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
@@ -96,7 +87,6 @@ const handleGetSubInvoice = async(req,res)=>{
     try{
         const data = req.query;
         const rs = await getSubAllInvoice(data);
-        
         if(rs){
             return res.status(200).json({
                 data:rs
@@ -110,7 +100,6 @@ const handleGetSubInvoice = async(req,res)=>{
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
@@ -120,7 +109,6 @@ const handleGetInvoiceByStatus = async(req,res) => {
     try{
         const data = req.query;
         const rs = await getAllInvoiceByStatus(data);
-        
         if(rs){
             return res.status(200).json({
                 data:rs
@@ -134,7 +122,6 @@ const handleGetInvoiceByStatus = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
@@ -158,7 +145,6 @@ const cancelInvoice = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
@@ -181,7 +167,6 @@ const handleChangeStatus = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
@@ -206,13 +191,11 @@ const handlePaymentStatus = async(req,res) => {
     }   
     catch(e){
         console.log(e);
-        
         return res.status(200).json({
             message:"Đã có lỗi xảy ra!"
         })
     }
 }
-
 module.exports = {
     handleCreateInvoice,
     handleGetInvoiceStatus,

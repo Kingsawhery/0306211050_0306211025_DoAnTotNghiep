@@ -4,9 +4,7 @@ const { log } = require("console");
 
 let putProperty = async (data) => {
   return new Promise(async (resolve, reject) => {
-      try {
-        console.log("hehe");
-        
+      try {        
           let checkExist = await db.type_classify.findOne({where:{id: data.id}})
           if(checkExist){
             
