@@ -17,7 +17,6 @@ export default function InputOtp({
 
   const handleClick = async () => {
     const result = await verifyOtp(otp);
-    console.log("gui thanh cong: " + result);
   };
 
   const handleClickResend = async () => {
@@ -26,7 +25,6 @@ export default function InputOtp({
       setShowTime(true);
       setResetOTP(true);
       setIsShowPopupOTP(true);
-      console.log("gửi mã thành công");
     }
   };
 
