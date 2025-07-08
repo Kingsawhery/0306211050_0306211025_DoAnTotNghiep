@@ -21,7 +21,6 @@ let createInvoice = async (data) => {
       })
       if (invoices.length > 0) {
         console.log(invoices);
-
         resolve({
           EC: 0,
           EM: "Có hóa đơn bạn chưa thanh toán, hãy thanh toán hoặc hủy trước khi tạo hóa đơn khác!"
@@ -41,37 +40,29 @@ let createInvoice = async (data) => {
                 include: {
                   model: db.sub_product
                 }
-
               }
-
             }
           })
           if (findPromotion) {
             if (findPromotion.products.length > 0) {
               for (let x = 0; x < data.data.length; x++) {
                 let isDiscounted = false;
-            
                 for (let i = 0; i < findPromotion.products.length; i++) {
                   const subProducts = findPromotion.products[i].product_detail.sub_products;
-            
                   if (subProducts.length > 0 && subProducts.find(sp => sp.id === data.data[x].sub_productId)) {
                     isDiscounted = true;
                     break; // Đã tìm thấy thì không cần kiểm nữa
                   }
                 }
-            
                 const subProduct = await db.sub_product.findOne({ where: { id: data.data[x].sub_productId } });
-            
                 if (isDiscounted) {
                   total += (subProduct.price * data.data[x].quantity) * ((100 - findPromotion.percent) / 100);
                 } else {
                   total += subProduct.price * data.data[x].quantity;
                 }
-            
                 totalNotIncludePro += subProduct.price * data.data[x].quantity;
               }
             }
-            
           }
         } else {
           resolve({
@@ -81,9 +72,7 @@ let createInvoice = async (data) => {
         }
       }
       else {
-
         if (data.data && data.data.length > 0) {
-
           for (let i = 0; i < data.data.length; i++) {
             const subProduct = await db.sub_product.findOne({ where: { id: data.data[i].sub_productId } })
             if (!subProduct) {
@@ -107,7 +96,6 @@ let createInvoice = async (data) => {
           id: data.option
         }
       })
-
       if (option) {
         if (data.promotion.status) {
           const promotionId = await db.promotion.findOne({
@@ -144,7 +132,6 @@ let createInvoice = async (data) => {
               })
               subProduct.stock -= data.data[i].quantity;
               await subProduct.save();
-
             }
             // const urlPayment = await paymentMoMo(invoice);
             // if(urlPayment && urlPayment?.urlPayment){
@@ -177,23 +164,19 @@ let createInvoice = async (data) => {
                     id: item.subProductId
                   }
                 });
-
                 if (subprod) {
                   subprod.stock += item.quantity;
                   await subprod.save();
                 }
-
                 await item.destroy();
               }
               await invoice.destroy();
-
               resolve({
                 EC: -1,
                 EM: "Hạn mức tối thiểu cho giao dịch là 1.000VNĐ và tối đa là 50.000.000VNĐ!",
               });
               return;
             }
-
             if (urlPayment !== "") {
               invoice.urlPayment = urlPayment;
               await invoice.save();
@@ -214,12 +197,10 @@ let createInvoice = async (data) => {
                     id: item.subProductId
                   }
                 });
-
                 if (subprod) {
                   subprod.stock += item.quantity;
                   await subprod.save();
                 }
-
                 await item.destroy();
               }
               await invoice.destroy();
@@ -229,7 +210,6 @@ let createInvoice = async (data) => {
               });
             }
           }
-
           // const invoice = await db.invoice.create({
           //     name:data.name,
           //     phone:data.phone,
@@ -303,12 +283,10 @@ let createInvoice = async (data) => {
                   id: item.subProductId
                 }
               });
-
               if (subprod) {
                 subprod.stock += item.quantity;
                 await subprod.save();
               }
-
               await item.destroy();
             }
             await invoice.destroy();
@@ -318,7 +296,6 @@ let createInvoice = async (data) => {
             });
             return;
           }
-
           if (urlPayment !== "") {
             invoice.urlPayment = urlPayment;
             await invoice.save();
@@ -339,12 +316,10 @@ let createInvoice = async (data) => {
                   id: item.subProductId
                 }
               });
-
               if (subprod) {
                 subprod.stock += item.quantity;
                 await subprod.save();
               }
-
               await item.destroy();
             }
             await invoice.destroy();
@@ -356,10 +331,8 @@ let createInvoice = async (data) => {
         }
       }
       else {
-
         resolve();
       }
-
       // const invoice = await db.invoice.create({
       //     name:data.name,
       //     phone:data.phone,
@@ -371,11 +344,9 @@ let createInvoice = async (data) => {
       //     name:data.name,
       //     name:data.name,
       // })
-
     } catch (e) {
       reject(e);
       console.log(e);
-
     }
   });
 };
@@ -434,7 +405,6 @@ let getAllInvoiceByStatusUser = async (data) => {
       } else {
         resolve();
       }
-
     } catch (e) {
       reject(e);
     }
@@ -449,7 +419,6 @@ let getAllInvoiceByStatus = async (data) => {
       if (data.keyword && data.keyword.trim() !== "null") {
         const { Op } = require("sequelize");
         const keyword = data.keyword.trim();
-
         whereClause[Op.and] = [
           {
             [Op.or]: [
@@ -461,7 +430,6 @@ let getAllInvoiceByStatus = async (data) => {
           },
         ];
       }
-
       let invoices = await db.invoice.findAndCountAll({
         where: whereClause,
         include: [
@@ -490,14 +458,12 @@ let getAllInvoiceByStatus = async (data) => {
         limit: 10,
         offset: (data.page - 1) * 10,
       });
-
       resolve(invoices || []);
     } catch (e) {
       reject(e);
     }
   });
 };
-
 let getSubAllInvoice = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -525,7 +491,6 @@ let getSubAllInvoice = async (data) => {
               ]
             }
           ],
-
         }
       );
       if (invoices) {
@@ -533,19 +498,15 @@ let getSubAllInvoice = async (data) => {
       } else {
         resolve([]);
       }
-
     } catch (e) {
       reject(e);
     }
   });
 }
-
 let changeInvoiceStatus = async (data) => {
   return new Promise(async (resolve, reject) => {
     console.log(data.invoiceCode);
-
     try {
-
       const rs = await db.invoice.findOne({
         where: {
           invoiceCode: data.invoiceCode
@@ -584,10 +545,12 @@ let handleConfirmPayment = async (data) => {
         model: db.sub_product
       }
     })
-    if (invoice) {
-      if (invoice.total === data.amount) {
-        invoice.paymentStatus = "Đã thanh toán"
+    console.log("ở đây nè cưng: ", invoice.total, data.amount);
 
+    if (invoice) {
+      if (data.message == "Successful.") {
+        
+        invoice.paymentStatus = "Đã thanh toán"
         await invoice.save();
         const subInvoice = await db.sub_product_invoices.findAll({
           where: {
@@ -605,9 +568,6 @@ let handleConfirmPayment = async (data) => {
             await cart.destroy();
           }
         }
-
-
-
         resolve({
           message: "Update payment status success!"
         })
@@ -641,7 +601,6 @@ let handleCancelInvoice = async (data) => {
           id: data.invoiceCode
         }
       });
-
       if (rs.statusInvoiceId === 1) {
         const subprods = await db.sub_product_invoices.findAll({
           where: {
@@ -681,7 +640,6 @@ module.exports = {
 }
 const findCodeInvoiceFunction = async () => {
   const string = generateRandomString("I");
-
   const findCodeInvoice = await db.invoice.findOne({
     where: {
       invoiceCode: string
@@ -693,4 +651,3 @@ const findCodeInvoiceFunction = async () => {
     return findCodeInvoiceFunction();
   }
 };
-

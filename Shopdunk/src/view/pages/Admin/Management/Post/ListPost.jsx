@@ -43,7 +43,7 @@ export default function ListPost() {
       ) : (
         <>
           <h1 className="d-flex justify-content-start my-4">
-            Danh sách tài khoản
+            Danh sách tin tức
           </h1>
           <table class="table table-striped">
             <thead>

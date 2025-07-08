@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 export const validateEmail = (email) => {
   // setCheckValidInput(defaultValidInput);
   let validEmail =
-    /^(?:[a-z][a-z0-9_.]{0,31}@[a-z0-9]{2,}(?:.[a-z0-9]{2,4}){1,2})?$/gm;
+  /^[a-z0-9][a-z0-9_.]{0,31}@[a-z0-9]{2,}(?:\.[a-z0-9]{2,4}){1,2}$/gm
   if (!email) {
     toast.dismiss();
     toast.error("Email enter required!");

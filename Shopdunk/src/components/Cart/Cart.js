@@ -37,7 +37,6 @@ const Cart = () => {
   const [showModalConfirm, setShowModalConfirm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [listOutOfStock, setListOutOfStock] = useState([]);
-
   const user = localStorage.getItem("user");
   const navigate = useNavigate();
   const [currentSubProduct, setCurrentSubProduct] = useState(true);
@@ -63,7 +62,6 @@ const Cart = () => {
   const handleMockData = async () => {
     const rs = await handleMockDataPayment();
     console.log(rs);
-
   }
   const [loadingPage, setLoadingPage] = useState(true);
   const [address, setAddress] = useState({
@@ -91,7 +89,6 @@ const Cart = () => {
     }
     getDataCity();
   }, [navigate]);
-
   useEffect(() => {
     handleGetData();
   }, [currentSubProduct]);
@@ -101,7 +98,6 @@ const Cart = () => {
       setAddress({ ...address, city: dataCity.data.data });
     } catch (e) {
       console.log(e);
-
     }
   };
   const handlePromotion = _.debounce(async (e) => {
@@ -122,15 +118,12 @@ const Cart = () => {
         setPromotionInfor(promotion);
         if (promotion) {
           let newTotalPromotion = 0;
-
           listProductInCart.forEach((item) => {
             if (!item.status) return; // skip item ko active
             console.log(listProductInCart);
-            
             const isDiscounted = promotion.products.some(
               (p) => p.promotionProduct.productId === item.sub_product.product_detail.productId
             );
-          
             if (isDiscounted) {
               newTotalPromotion +=
                 (item.sub_product.price * item.quantity * (100 - promotion.percent)) / 100;
@@ -138,11 +131,8 @@ const Cart = () => {
               newTotalPromotion += item.sub_product.price * item.quantity;
             }
           });
-          
           setTotalPromotion(newTotalPromotion);
-          
           console.log(newTotalPromotion);
-          
         }
         setProductInPromotion(promotion.products);
       } else {
@@ -157,7 +147,6 @@ const Cart = () => {
       }
     }
   }, 1000);
-
   const handleGetData = async () => {
     try {
       if (JSON.parse(user).id && JSON.parse(user).token) {
@@ -217,7 +206,6 @@ const Cart = () => {
     }
   };
   const handleCheckStock = async () => {
-    
     const handleCheck = await checkStockData(paymentInformation.data);
     if (handleCheck) {
       setListOutOfStock(handleCheck);
@@ -230,10 +218,8 @@ const Cart = () => {
           behavior: 'smooth'
         });
         setShowModalConfirm(false);
-
       }
     }
-
   }
   const handleCreateInvoice = async () => {
     try{
@@ -286,16 +272,10 @@ const Cart = () => {
             behavior: 'smooth'
           });
           setShowModalConfirm(false);
-  
         }
       }
-      
     }catch{
-
     }
-    
-
-
   };
   // const formatDateTimeGMT7 = (dateString) => {
   //   const date = new Date(dateString);
@@ -308,7 +288,6 @@ const Cart = () => {
   //   date.setMinutes(date.getMinutes() + 10); // Cộng thêm 10 phút
   //   return date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
   // };
-
   const handleDestroyCart = async (id) => {
     try {
       const rs = await apiDeleteCart({
@@ -330,7 +309,6 @@ const Cart = () => {
     } catch (e) {
       toast.dismiss();
       console.log(e);
-
       toast.error("Đã có lỗi xảy ra!");
     }
   };
@@ -363,7 +341,6 @@ const Cart = () => {
       toast.error("Đã có lỗi xảy ra!");
     }
   };
-
   const totalAmount = listProductInCart.reduce(
     (total, item) => (item.status ? total + item.price : total),
     0
@@ -421,7 +398,6 @@ const Cart = () => {
                           .replace(/,/g, ".")}{" "}
                         VNĐ
                       </span>
-
                       <div className="quantity">
                         <i
                           className="fas fa-minus"
@@ -447,7 +423,6 @@ const Cart = () => {
               )}
             </div>
             <div className="all-product-detail">
-              <h3>Gợi ý phụ kiện đi kèm</h3>
               <ProductRowRandom />
             </div>
           </div>
@@ -551,7 +526,6 @@ const Cart = () => {
                                   ""
                                 )}
                               </td>
-
                               <td>
                                 {paymentInformation.promotion.status &&
                                   listProductInPromotion.find(
@@ -861,15 +835,12 @@ const Cart = () => {
                 <Row className="mt-3">
                   <Col xs={12} className="d-flex justify-content-end">
                     <Button
-                    
                       // disabled={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? true : false}
-                      
                       style={!(paymentInformation.phone && paymentInformation.email && paymentInformation.street) ? { backgroundColor: "rgb(160 158 158)", color: "#fff", padding:"12px 24px" } : { backgroundColor: "rgb(0 164 253)", color: "#fff", padding:"12px 24px" }}
                       // onClick={handleCreateInvoice}
                       onClick={handleCheckStock}
                     >
                       Thanh Toán
-
                     </Button>
                     {test && <Button
                       onClick={handleMockData}
@@ -896,7 +867,6 @@ const Cart = () => {
                   backdropFilter: "blur(2px)"
                 }}
               >
-
                 <div onClick={(e) => e.stopPropagation()}>
                   {
                     showModalConfirm ? <ModalConfirmPay handleCreateInvoice={handleCreateInvoice} price={
@@ -909,8 +879,6 @@ const Cart = () => {
               </div>
               }
             </div>
-
-
           )}
         </div>
       </div>

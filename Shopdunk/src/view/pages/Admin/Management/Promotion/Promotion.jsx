@@ -57,28 +57,6 @@ export default function Promotion() {
       setPage(e.selected + 1);
     }
   };
-  // const handleCreateData = async () => {
-  //     let rs = await postBrand(dataPromotions);
-  //     if (rs.status == 400) {
-  //         toast(rs.message)
-  //     } else {
-  //         setShowCreate(false)
-  //         setdataPromotions({ name: "" })
-  //         getListBrands();
-  //         toast(rs.message)
-  //     }
-  // };
-  // const handleEditData = async () => {
-  //     let rs = await editBrand(dataEditBrand);
-  //     if (rs.status == 400) {
-  //         toast(rs.message)
-  //     } else {
-  //         setShowEdit(false)
-  //         setDataEditBrand({ name: "", id: null })
-  //         getListBrands();
-  //         toast(rs.message)
-  //     }
-  // };
   return (
     <>
       {isLoading ? (
@@ -88,7 +66,7 @@ export default function Promotion() {
       ) : (
         <>
           <h1 className="d-flex justify-content-start my-4">
-            Danh sách thương hiệu
+            Danh sách khuyến mãi
           </h1>
           <div className="div-button d-flex justify-content-end">
             <Button onClick={() => {

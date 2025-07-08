@@ -10,7 +10,6 @@ let getPromotionByCode = async (code) => {
             include:{
                 model:db.product
             }
-
         });
         if (promotion) {
           resolve(promotion);
@@ -56,15 +55,12 @@ let getPromotionByCode = async (code) => {
       try {
         let whereCondition = {};
         console.log("hehe");
-
         // Nếu có keyword, thêm điều kiện lọc theo tên brand (ví dụ dùng LIKE)
         if (keyword && keyword.trim() !== "" && keyword !== "null") {
-          
           whereCondition.code = {
             [db.Sequelize.Op.like]: `%${keyword}%`
           };
         }
-  
         let promotions = await db.promotion.findAndCountAll({
           where: whereCondition,
           include:{
@@ -74,7 +70,6 @@ let getPromotionByCode = async (code) => {
           offset: (page - 1) * 10,
           order: [["createdAt", "DESC"]]
         });
-  
         if (promotions) {
           resolve(promotions);
         } else {
@@ -89,7 +84,6 @@ let getPromotionByCode = async (code) => {
     return new Promise(async (resolve, reject) => {
       try {
         console.log(code, " ", list);
-        
         let promotion = await db.promotion.findOne({
             where:{
                 code:code
@@ -106,7 +100,6 @@ let getPromotionByCode = async (code) => {
                 where:{
                   productId: list[i],
                   promotionId: promotion.id,
-
                 }
               })
               if(!prodproduct){
@@ -127,47 +120,44 @@ let getPromotionByCode = async (code) => {
     });
   };
   let editNewPromotion = async (data) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let promotion = await db.promotion.findOne({
-            where:{
-                code:data.code
-            },
-        });
-        if (promotion) {
-          resolve({
-            err:1,
-            message:"Đã tồn tại code!"
-          });
-        } else {
-          let promotionId = await db.promotion.findOne({
-            where:{
-                id:data.id
-            }
-        });
-        if(promotionId){
-          promotionId.code = data.code;
-          promotionId.description = data.description;
-          promotionId.percent = data.number;
-          await promotionId.save();
-          resolve({
-            err:0,
-            message:"Success!"
-          });
-        }else{
-          resolve({
-            err:1,
-            message:"Không tồn tại khuyến mãi!"
-          });
-        }
-        }
-      } catch (e) {
-        reject(e);
+    try {
+      const promotion = await db.promotion.findOne({
+        where: { id: data.id },
+      });
+      if (!promotion) {
+        return {
+          err: 1,
+          message: "Không tồn tại khuyến mãi!",
+        };
       }
-    });
+  
+      const codeUsed = await db.promotion.findOne({
+        where: {
+          code: data.code,
+          id: { [db.Sequelize.Op.ne]: data.id },
+        },
+      });
+      
+      if (codeUsed) {
+        return {
+          err: 1,
+          message: "Code khuyến mãi đã tồn tại!",
+        };
+      }
+      promotion.code = data.code;
+      promotion.description = data.description;
+      promotion.percent = data.number;
+      await promotion.save();
+  
+      return {
+        err: 0,
+        message: "Cập nhật thành công!",
+      };
+    } catch (e) {
+      throw e;
+    }
   };
   
-
   module.exports = {
     getPromotionByCode,
     getPromotions,

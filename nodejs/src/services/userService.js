@@ -2,11 +2,9 @@ import bcrypt from "bcrypt";
 import mysql from "mysql2/promise";
 import bluebird from "bluebird";
 import db from "../models";
-
 const saltRounds = bcrypt.genSaltSync(10);
-
-const hashUserPassword = (userPassword) => {
-  let hashPassword = bcrypt.hashSync(userPassword, saltRounds); // Băm nhỏ password để mã hóa
+const hashUserPassword = async (userPassword) => {
+  let hashPassword = await bcrypt.hashSync(userPassword, saltRounds); // Băm nhỏ password để mã hóa
   return hashPassword;
 };
 function random(length) {
@@ -20,9 +18,8 @@ function random(length) {
   return result;
 }
 const createUser = async (email, password, username, type_ = "LOCAL") => {
-  let hashPass = hashUserPassword(password);
+  let hashPass = await hashUserPassword(password);
   const token = await random(200);
-
   try {
     let user = null;
     if (type_ === "LOCAL") {
@@ -37,11 +34,12 @@ const createUser = async (email, password, username, type_ = "LOCAL") => {
       user = await db.User.create({
         email: email,
         token: token,
+        password: hashPass,
+        
         username: username,
         type: type_,
       });
     }
-
     return user.dataValues;
   } catch (err) {
     console.log(err);
@@ -55,7 +53,6 @@ const lockUser = async (id) => {
           id:id
         }
       });
-
       if (user) {
         user.status = !user.status;
         user.save();
@@ -89,7 +86,6 @@ const lockUser = async (id) => {
 //           },
 //         }
 //       });
-
 //       if (users) {
 //         resolve(users);
 //       } else {
@@ -103,22 +99,17 @@ const lockUser = async (id) => {
 const getUserList = async (page, keyword) => {
   return new Promise(async (resolve, reject) => {
     console.log("Page:", page, "Keyword:", keyword);
-
     try {
       let whereCondition = {};
-      
       if (keyword !== "null") {
         console.log(keyword !== "null");
         console.log(keyword);
-
-        
         whereCondition[db.Sequelize.Op.or] = [
           { username: { [db.Sequelize.Op.like]: `%${keyword}%` } },
           { email: { [db.Sequelize.Op.like]: `%${keyword}%` } },
           { phone: { [db.Sequelize.Op.like]: `%${keyword}%` } },
         ];
       }
-
       let users = await db.User.findAndCountAll({
         where: whereCondition,
         limit: 10,
@@ -134,14 +125,12 @@ const getUserList = async (page, keyword) => {
           attributes: []
         },
       });
-
       resolve(users || []);
     } catch (e) {
       reject(e);
     }
   });
 };
-
 const deleteUser = async (id) => {
   await db.User.destroy({
     where: {
@@ -197,8 +186,6 @@ const getDataUser = async (data) => {
     }
   });
 };
-
-
 module.exports = {
   getDataUser,
   createUser,

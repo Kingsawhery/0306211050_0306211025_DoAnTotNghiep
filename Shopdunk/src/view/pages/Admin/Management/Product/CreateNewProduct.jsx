@@ -108,28 +108,28 @@ const CreateNewProduct = () => {
   };
   const handleSubmit = async () => {
     try {
-      
-    const result = await postProduct({
-    price: data.price,
-    promotion: data.promotion,
-    category: data.category,
-    subCategoryName: data.subCategoryName,
-    subCategory: data.subCategory,
-    name: data.name,
-    stock: data.stock,
-    image: data.image,
-    fileImage: data.fileImage,
-    typeClassifies: data.typeClassifies,
-    typeClassifyDetail: data.typeClassifyDetail,
-    detailData: JSON.stringify(detailData)
+
+      const result = await postProduct({
+        price: data.price,
+        promotion: data.promotion,
+        category: data.category,
+        subCategoryName: data.subCategoryName,
+        subCategory: data.subCategory,
+        name: data.name,
+        stock: data.stock,
+        image: data.image,
+        fileImage: data.fileImage,
+        typeClassifies: data.typeClassifies,
+        typeClassifyDetail: data.typeClassifyDetail,
+        detailData: JSON.stringify(detailData)
       });
 
-      if(result.message == "Create new product successful!"){
+      if (result.message == "Create new product successful!") {
         navigate('/admin/danh-muc')
         window.scrollTo({
           top: 0,
-      });
-      }else{
+        });
+      } else {
         toast.dismiss();
         toast("Data is invalid!");
       }
@@ -143,7 +143,7 @@ const CreateNewProduct = () => {
       for (let i = 0; i < e.target.files.length; i++) {
         let exe =
           e.target.files[i].name.split(".")[
-            e.target.files[i].name.split(".").length - 1
+          e.target.files[i].name.split(".").length - 1
           ];
 
         if (exe !== "png" && exe !== "jpeg" && exe !== "jpg" && exe !== "webp") {
@@ -167,7 +167,19 @@ const CreateNewProduct = () => {
       console.log(e);
     }
   };
-
+  const formatNumber = (value) => {
+    if (!value) return "";
+    const number = value.toString().replace(/\D/g, "");
+    return Number(number).toLocaleString("vi-VN");
+  };
+  const validateNumber = (val) => /^[0-9]+$/.test(val);
+  const handlePriceChange = (e) => {
+    const rawValue = e.target.value.replace(/\./g, "").replace(/\D/g, "");
+    setData({
+      ...data,
+      price: rawValue,
+    });
+  };
   return (
     <>
       <Container className="div-cover">
@@ -219,7 +231,7 @@ const CreateNewProduct = () => {
 
           <Row className="mb-3">
             <Form.Group className="mb-4 col-6" controlId="formGridProductName">
-              <Form.Label onClick={()=>{
+              <Form.Label onClick={() => {
                 console.log(data.fileImage)
               }}>Tên sản phẩm</Form.Label>
               <Form.Control
@@ -233,22 +245,16 @@ const CreateNewProduct = () => {
             <Form.Group className="mb-4 col-6" controlId="formGridPrice1">
               <Form.Label>Price</Form.Label>
               <Form.Control
-                onChange={handleData}
-                value={data.price}
-                defaultValue={1000}
+                onChange={handlePriceChange}
+                value={formatNumber(data.price)}
                 name="price"
-                placeholder="Enter price..."
-                type="number"
+                placeholder="Nhập giá (VD: 1.000.000)"
+                inputMode="numeric"
+                type="text"
                 style={{ width: "100%" }}
-                pattern="[0-9]*"
-                min={1000}
               />
-              {!data.price && !validateNumber(data.price) ? (
-                <p className="text-danger error-message">
-                  Vui lòng chỉ nhập số!
-                </p>
-              ) : (
-                <></>
+              {!data.price && !validateNumber(data.price) && (
+                <p className="text-danger error-message">Vui lòng chỉ nhập số!</p>
               )}
             </Form.Group>
           </Row>
@@ -296,7 +302,7 @@ const CreateNewProduct = () => {
                   listSubCategories.length > 0 &&
                   listSubCategories.map((item, index) => {
                     return (
-                      <option  name={item.name} value={item.id}>
+                      <option name={item.name} value={item.id}>
                         {item.name}
                       </option>
                     );
@@ -305,11 +311,11 @@ const CreateNewProduct = () => {
             </Form.Group>
           </Row>
           <Row className="mb-2">
-            
 
-            
+
+
           </Row>
-          <Row> 
+          <Row>
             <Form.Group>
               <Form.Label>Phân loại</Form.Label>
               {/* <Form.Select
@@ -375,7 +381,7 @@ const CreateNewProduct = () => {
                             );
                             if (
                               typeClassifyDetail.find((i) => i.id == item.id) ==
-                                undefined &&
+                              undefined &&
                               !data.typeClassifies.includes(
                                 Number(e.target.value)
                               )
@@ -429,9 +435,9 @@ const CreateNewProduct = () => {
                                 prevState.map((item) =>
                                   item.id === detailDataItem.id
                                     ? {
-                                        ...item,
-                                        label: e.target.value, // Cập nhật label
-                                      }
+                                      ...item,
+                                      label: e.target.value, // Cập nhật label
+                                    }
                                     : item
                                 )
                               );
@@ -483,19 +489,19 @@ const CreateNewProduct = () => {
                                             prevState.map((item) =>
                                               item.id === detailDataItem.id
                                                 ? {
-                                                    ...item,
-                                                    data: item.data.map(
-                                                      (subItem) =>
-                                                        subItem.id ===
+                                                  ...item,
+                                                  data: item.data.map(
+                                                    (subItem) =>
+                                                      subItem.id ===
                                                         detailDataDataItem.id
-                                                          ? {
-                                                              ...subItem,
-                                                              labelData:
-                                                                e.target.value, // Cập nhật labelData
-                                                            }
-                                                          : subItem
-                                                    ),
-                                                  }
+                                                        ? {
+                                                          ...subItem,
+                                                          labelData:
+                                                            e.target.value, // Cập nhật labelData
+                                                        }
+                                                        : subItem
+                                                  ),
+                                                }
                                                 : item
                                             )
                                           );
@@ -509,17 +515,17 @@ const CreateNewProduct = () => {
                                             prevState.map((item) =>
                                               item.id === detailDataItem.id
                                                 ? {
-                                                    ...item,
-                                                    data: [
-                                                      ...item.data,
-                                                      {
-                                                        id:
-                                                          item.data.length + 1, // Tạo id mới cho đối tượng con
-                                                        labelData: "",
-                                                        data: "",
-                                                      },
-                                                    ],
-                                                  }
+                                                  ...item,
+                                                  data: [
+                                                    ...item.data,
+                                                    {
+                                                      id:
+                                                        item.data.length + 1, // Tạo id mới cho đối tượng con
+                                                      labelData: "",
+                                                      data: "",
+                                                    },
+                                                  ],
+                                                }
                                                 : item
                                             )
                                           );
@@ -541,19 +547,19 @@ const CreateNewProduct = () => {
                                               prevState.map((item) =>
                                                 item.id === detailDataItem.id
                                                   ? {
-                                                      ...item,
-                                                      data: item.data.map(
-                                                        (subItem) =>
-                                                          subItem.id ===
+                                                    ...item,
+                                                    data: item.data.map(
+                                                      (subItem) =>
+                                                        subItem.id ===
                                                           detailDataDataItem.id
-                                                            ? {
-                                                                ...subItem,
-                                                                data: e.target
-                                                                  .value, // Cập nhật labelData
-                                                              }
-                                                            : subItem
-                                                      ),
-                                                    }
+                                                          ? {
+                                                            ...subItem,
+                                                            data: e.target
+                                                              .value, // Cập nhật labelData
+                                                          }
+                                                          : subItem
+                                                    ),
+                                                  }
                                                   : item
                                               )
                                             );

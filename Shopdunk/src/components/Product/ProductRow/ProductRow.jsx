@@ -52,7 +52,7 @@ const ProductRow = (props) => {
                 })}
             </div>
           </div>
-        
+          
       </div>
     );
   }

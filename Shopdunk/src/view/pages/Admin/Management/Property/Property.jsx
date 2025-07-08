@@ -3,10 +3,13 @@ import "../Brand/Brand.css"
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "../../../../../components/Spinner/Spinner";
-import { editBrand, getAllBrands, postBrand, putDisplay } from "../../../../../services/brandService";
+import {postProperty, putProperty } from "../../../../../services/propertyService";
+
 import { Button, Form } from "react-bootstrap";
-import { EditDocument } from "@mui/icons-material";
+import { ArrowBack, EditDocument } from "@mui/icons-material";
 import { getAllProperties } from "../../../../../services/propertyService";
+import { ArrowRightIcon } from "@mui/x-date-pickers";
+import { useNavigate } from "react-router-dom";
 export default function Property() {
     const [properties, setProperties] = useState([]);
     const [page, setPage] = useState(1);
@@ -15,6 +18,7 @@ export default function Property() {
     const [selectedItems, setSelectedItems] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [dataBrand, setDataBrand] = useState({
         name: ""
@@ -36,7 +40,9 @@ export default function Property() {
     }, [page]);
     const handleSelectItem = async (id) => {
         setSelectedItems([id]);
-        const rs = await putDisplay({id});
+        
+        // const rs = await putDisplay({id});
+        const rs = {errCode: 1}; // Viết chống cháy
         if(rs.errCode === 1){
             getListProperty();
         }
@@ -61,7 +67,7 @@ export default function Property() {
         }
     };
     const handleCreateData = async () => {
-        let rs = await postBrand(dataBrand);
+        let rs = await postProperty(dataBrand);
         if (rs.status == 400) {
             toast(rs.message)
         } else {
@@ -72,7 +78,7 @@ export default function Property() {
         }
     };
     const handleEditData = async () => {
-        let rs = await editBrand(dataEditProperty);
+        let rs = await putProperty(dataEditProperty);
         if (rs.status == 400) {
             toast(rs.message)
         } else {
@@ -91,11 +97,11 @@ export default function Property() {
             ) : (
                 <>
                     <h1 className="d-flex justify-content-start my-4">
-                        Danh sách thương hiệu
+                        Danh sách phân loại
                     </h1>
                     {showCreate &&
                         <div className="fields-name">
-                            <label>Nhập tên thương hiệu:</label>
+                            <label>Nhập tên phân loại:</label>
                             <Form.Control name="name" value={dataBrand.name}
                                 onChange={(e) => {
                                     setDataBrand({ name: e.target.value })
@@ -123,7 +129,7 @@ export default function Property() {
                                 <th></th>
                                 <th scope="col">STT</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Property</th>
+                                <th scope="col">Danh sách chi tiết</th>
                             </tr>
                         </thead>
                         <tbody style={{ height: "200px" }}>
@@ -142,7 +148,7 @@ export default function Property() {
                                             </td>
                                             <td scope="row">{index + 1 + ((page - 1) * 10)}</td>
 
-                                            <td className="edit-name">
+                                            <td className="edit-name d-flex">
                                                 {showEdit && property.id === dataEditProperty.id ? <Form.Control
                                                     onChange={(e) => {
                                                         setDataEditProperty({
@@ -153,9 +159,13 @@ export default function Property() {
                                                     value={dataEditProperty.name}
                                                 /> : property.name}
 
-                                                <EditDocument onClick={() => {
+                                                <EditDocument 
+                                                style={{
+                                                    marginTop:"12px"
+                                                }}
+                                                onClick={() => {
                                                     if (showEdit == false) {
-                                                        setDataEditProperty({ ...dataEditProperty, id: property.id })
+                                                        setDataEditProperty({ ...dataEditProperty, id: property.id, name:property.name })
                                                         setShowEdit(true)
                                                     } else {
                                                         if (dataEditProperty.name == "" || dataEditProperty.id == null) {
@@ -168,7 +178,11 @@ export default function Property() {
                                                 }} className="edit-icon" />
                                             </td>
 
-                                            <td>{property.brandCode}</td>
+                                            <td>
+                                                <ArrowRightIcon onClick={()=>{
+                                                    navigate(`${property.id}`)
+                                                }}/>
+                                            </td>
 
                                         </tr>
                                     );

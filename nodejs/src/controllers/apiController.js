@@ -224,14 +224,10 @@ const handleResetPassword = async (req, res) => {
 
 const handleLoginGG = async (req, res) => {
   const token = req.body.access_token;
-  console.log("ccc" + token);
-  
   const str = token.split(".");
   const infor_email = jwtDecode(token)
+  // Sẽ lưu token trong db của user vào trình duyệt user.
 
-  // Sẽ lưu token trong db của user vào trình duyệt user.
-  // Sẽ lưu token trong db của user vào trình duyệt user.
-  console.log(infor_email.name);
   const email = infor_email.email;
   const checkUser = await db.User.findOne({
     where: {
@@ -239,12 +235,16 @@ const handleLoginGG = async (req, res) => {
     },
   });
   let userNew;
+  console.log("haha");
+  
   if (!checkUser) {
     let user = await userService.createUser(
       infor_email.email,
-      "",
+      "123",
       infor_email.name,
       "GOOGLE"
+      ,
+     
     ); // (email, password, username, type)
   userNew = user;
 

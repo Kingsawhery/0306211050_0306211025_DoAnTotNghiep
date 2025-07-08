@@ -63,7 +63,7 @@ import { getTop10Invoices, getTopTenBrand, getTopTenProd, getTopTenSubCate} from
 import { getTopTenSubProd } from "../controllers/dashboardController";
 import { getTop10User } from "../controllers/dashboardController";
 import { handleGetCommentsByProductDetailId } from "../controllers/commentController";
-import { handleGetProperties } from "../controllers/propertyController";
+import { handleGetDetailProperties, handleGetProperties, handlePostProperties,handlePostPropertiesDetail,handlePutProperties, handlePutPropertiesDetail } from "../controllers/propertyController";
 handleGetCommentsByProductDetailId
 let router = express.Router();
 let storage = multer.diskStorage({
@@ -170,7 +170,15 @@ let apiWebRoutes = (app) => {
   router.get("/banners", bannerController.getAllBanners);
   router.put("/brand-post", putBrandOrPost)
   router.get("/properties", handleGetProperties);
+  router.post("/property", handlePostProperties);
+  router.post("/property-detail", handlePostPropertiesDetail);
 
+  router.put("/put-property", handlePutProperties);
+  router.put("/put-property-detail", handlePutPropertiesDetail);
+
+  
+  router.get("/property-details", handleGetDetailProperties);
+  // router.get("/detail-properties", handleGetProperties);
   router.get("/brands", getAllBrands);
   router.get("/product-by-brand", getAllProductBrands);
   router.post("/create-brand", postNewBrand);

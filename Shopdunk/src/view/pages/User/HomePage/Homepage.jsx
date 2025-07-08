@@ -118,7 +118,7 @@ const HomePage = () => {
         {listBrands.map((item, index) => (
           <span
             className="div-brand"
-            style={currentTab.id === index + 1 ? { backgroundColor: "#c1c1c1" } : {}}
+            style={currentTab.id === item.id ? { backgroundColor: "#c1c1c1" } : {}}
             key={index + 1}
             onClick={() => {
               setSwitchList(true);
@@ -151,8 +151,9 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+        
       ) : (
-        <div className="not-found-product d-flex justify-content-center" style={{
+        <div className="not-found-product mt-4 d-flex justify-content-center" style={{
         }}>
           <img
             style={{

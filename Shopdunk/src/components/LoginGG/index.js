@@ -22,12 +22,10 @@ export default function LoginGG({ onGet }) {
         email: response.email,
         token: response.token,
         image: response.image
-      };
-      console.log(response);
-      
+      };      
       localStorage.setItem("user", JSON.stringify(dataSaveLocal));
-      window.location.reload();
-      navigate("/");
+      // window.location.reload();
+      // navigate("/");
     }
     onGet(response);
   };
